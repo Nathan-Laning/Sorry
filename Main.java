@@ -1,5 +1,3 @@
-package sample;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -66,7 +64,7 @@ public class Main{
 
     public static JLabel loadImage(String source){
         try {
-            BufferedImage img = ImageIO.read(new File("src/sample/res/"+source));
+            BufferedImage img = ImageIO.read(new File("res/"+source));
             //scaling to window size
             int height = (dimension*img.getHeight())/original_size;
             int width  = (dimension*img.getWidth())/original_size;
@@ -80,7 +78,7 @@ public class Main{
     }
     public static JLabel loadImage(String source,int size,int location){
         try {
-            BufferedImage img = ImageIO.read(new File("src/sample/res/"+source));
+            BufferedImage img = ImageIO.read(new File("res/"+source));
             int height = img.getHeight();
             int width = img.getWidth();
             img = img.getSubimage(((width*location)-width)/size,0,width/size,height);
