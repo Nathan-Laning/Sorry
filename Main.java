@@ -1,18 +1,4 @@
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
-
 public class Main{
-    final private static JFrame frame = new JFrame("Sorry!");
-    final public static int refreshRate = 4;
-    final private static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    final public static int dimension=(int)screenSize.height;
-    final private static int original_size=5000;
-
     public static void main(String[] args) {
         testing();
 //        deck DECK = new deck();
@@ -31,10 +17,29 @@ public class Main{
 
     public static void testing(){
 //        Window w = new Window();
-        image pawn = new image("Sorry-pawns.png",4,2);
-        image board = new image("Sorry-board.jpg");
+        Display d = new Display();
+//        Display.image i = d.new image("Sorry-pawns.png",4,2);
+        Display.image e = d.new image("Sorry-board.jpg");
+        Display.image a = d.new image("Sorry-pawns.png",4,2);
+        Display.image b = d.new image("Sorry-pawns.png",4,1);
+        Display.image c = d.new image("Sorry-pawns.png",4,3);
+        Display.image f = d.new image("Sorry-pawns.png",4,4);
+
+
+//
+        a.move(50,50,1);
+        a.hide();
+        b.move(50,40,1);
+        c.move(50,10,1);
+        f.move(50,90,1);
+        a.show();
+
+//        e.move(10,10,1);
+//        j.move(0,0,1);
+
+//        image board = new Display.image("Sorry-board.jpg");
 //        pawn.init();
-        pawn.move(100,100);
+//        pawn.move(100,100);
 //        image back = new image("sorry-board.jpg");
 
 //        JLabel splash = loadImage("sorry-Splash.jpg");
@@ -75,37 +80,6 @@ public class Main{
 
     }
 
-    public static JLabel loadImage(String source){
-        try {
-            BufferedImage img = ImageIO.read(new File("res/"+source));
-            //scaling to window size
-            int height = (dimension*img.getHeight())/original_size;
-            int width  = (dimension*img.getWidth())/original_size;
-            JLabel label = new JLabel(new ImageIcon(img.getScaledInstance(width,height,Image.SCALE_SMOOTH)));
-            label.setBounds(0,0,width,height);
-            return label;
-        }catch (IOException i) {
-            System.out.println("failed to find file");
-            return null;
-        }
-    }
-    public static JLabel loadImage(String source,int size,int location){
-        try {
-            BufferedImage img = ImageIO.read(new File("res/"+source));
-            int height = img.getHeight();
-            int width = img.getWidth();
-            img = img.getSubimage(((width*location)-width)/size,0,width/size,height);
-            //scaling to window size
-            height = (dimension*img.getHeight())/original_size;
-            width  = (dimension*img.getWidth())/original_size;
-            JLabel label = new JLabel(new ImageIcon(img.getScaledInstance(width,height,Image.SCALE_SMOOTH)));
-            label.setBounds(0,0,width,height);
-            return label;
-        }catch (IOException i) {
-            System.out.println("failed to find file");
-            return null;
-        }
-    }
 
 
 }
