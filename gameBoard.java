@@ -21,10 +21,9 @@ import java.util.ArrayList;
  */
 class gameBoard extends Main {
     Display.image GAMEBOARD = DISPLAY.new image("Sorry-board.jpg");
-    static double ratio = DISPLAY.size/5000.0;
     gameBoard() {
         Display.image drawPile = DISPLAY.new image("Sorry-Card-Back-Horizontal.png");
-        drawPile.move((int)(ratio*2020),(int)(ratio*1409));
+        drawPile.move(2020,1409);
     }
 }
 
