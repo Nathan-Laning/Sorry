@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.Thread.*;
 
 /**
  * /- Display -/
@@ -34,7 +33,7 @@ class Display {
     private static JLayeredPane panel = new JLayeredPane();
     private static final JFrame frame = new JFrame("Sorry!");
     private static int height, width, heightGap=0,widthGap=0;
-    private static int size = 1000;
+    public static int size = 1000;
 
     /**
      * Creates an entirely new display for images to exist in

@@ -9,27 +9,32 @@ import java.util.ArrayList;
  *   /     SORRY!     /
  *  /                /
  * /________________/
- *
+ * <p>
  * saves information about peg location, the game board as a whole,
  * and whether or not moves can be made
  * there is a different board for each color
  * the information is saved for each board as its own class below.
- *
+ * <p>
  * TODO: How would we want to save/create the board?
  * TODO: need to incorporate drawing cards? or should that be in main.....
  * TODO: need to figure out moving around the board as well, but spaces should probably be sequential.
- *
  */
-public class gameBoard {
-
+class gameBoard extends Main {
+    Display.image GAMEBOARD = DISPLAY.new image("Sorry-board.jpg");
+    static double ratio = DISPLAY.size/5000.0;
+    gameBoard() {
+        Display.image drawPile = DISPLAY.new image("Sorry-Card-Back-Horizontal.png");
+        drawPile.move((int)(ratio*2020),(int)(ratio*1409));
+    }
 }
+
 /**
  * /- SPACE -/
  * ________
  * |      |
  * |(type)|
  * |______|
- *
+ * <p>
  * Space class represents the individual spaces that can be populated by a peg
  * there are four types, normal (default call), "slide", "start", and "home".
  * creating these is as simple as passing the strings seen above ^
@@ -39,40 +44,40 @@ public class gameBoard {
  * 2 -> yellow
  * 3 -> green
  * And empty call will default to a regular space unless told otherwise
- *
+ * <p>
  * these spaces can also be populated with pawns utilizing the add and remove pawn method calls
  * as before, an add call takes an int as the team (see above) a remove call needs no input
  * and there will be the test call "isFilled"to see if a space is filled
- *
+ * <p>
  * The Space class also populates the pawns when the start is called for the respective color.
- *
+ * <p>
  * TODO:need to add positions on the board for items like pawns to navigate to (i.e. pawn.placeAt = (x,y))
  * TODO:    Also need ability to hold multiple pawns in multiple places (i.e. home)
  * TODO:Need click-ability (maybe even hover effect?)
- *
  */
-class space{
+class space {
 
-    private boolean slide=false,safe=false;
+    private boolean slide = false, safe = false;
     private int color;
     private ArrayList<pawn> occupants;
+
     //Space creation, see above for use
-    space(String type,int color){
-        if(color > 3||color<0) System.out.println("Incorrect color for space!");
-        else{
-            this.color=color;
-            switch (type){
+    space(String type, int color) {
+        if (color > 3 || color < 0) System.out.println("Incorrect color for space!");
+        else {
+            this.color = color;
+            switch (type) {
                 case "slide":
-                    slide=true;
+                    slide = true;
                     break;
                 case "start":
                     for (int i = 0; i < 4; i++) {
                         occupants.add(new pawn(color));
                     }
-                    safe=true;
+                    safe = true;
                     break;
                 case "home":
-                    safe=true;
+                    safe = true;
                     break;
                 default:
                     System.out.println("Incorrect tile information!");
@@ -84,24 +89,29 @@ class space{
 
     /**
      * Basic getters, all return values within.
+     *
      * @return Item Inquired
      */
     public boolean isSlide() {
         return slide;
     }
+
     public boolean isSafe() {
         return safe;
     }
+
     public int getColor() {
         return color;
     }
+
     public ArrayList<pawn> getOccupants() {
         return occupants;
     }
-    public pawn removeOccupant(){
+
+    public pawn removeOccupant() {
         try {
             return occupants.remove(0);
-        }catch (NullPointerException n){
+        } catch (NullPointerException n) {
             System.out.println("NO PAWNS TO BE REMOVED FROM SPACE");
             return null;
         }
@@ -115,26 +125,27 @@ class space{
  *    / \
  *  _/_ \_
  * (______)
- *
+ * <p>
  * Pawn class saves each pawn as instigated and it is only needed to be given
  * an integer to represent its color/team:
  * 0 -> red
  * 1 -> blue
  * 2 -> yellow
  * 3 -> green
- *
+ * <p>
  * TODO: positioning based on board
  * TODO: Need click-ability, But we could just use the space its in instead
  * TODO: Imaging
- *
  */
-class pawn{
+class pawn {
     private int color;
+
     // returns color pawn
-    pawn(int color){
-        this.color=color;
+    pawn(int color) {
+        this.color = color;
     }
-    public int getColor(){
+
+    public int getColor() {
         return color;
     }
     //need image processing

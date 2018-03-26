@@ -1,4 +1,5 @@
 public class Main{
+    static Display DISPLAY = new Display();
     public static void main(String[] args) {
         testing();
 //        deck DECK = new deck();
@@ -16,23 +17,24 @@ public class Main{
 
 
     public static void testing(){
+        gameBoard g = new gameBoard();
 //        Window w = new Window();
-        Display d = new Display();
-//        Display.image i = d.new image("Sorry-pawns.png",4,2);
-        Display.image e = d.new image("Sorry-board.jpg");
-        Display.image a = d.new image("Sorry-pawns.png",4,2);
-        Display.image b = d.new image("Sorry-pawns.png",4,1);
-        Display.image c = d.new image("Sorry-pawns.png",4,3);
-        Display.image f = d.new image("Sorry-pawns.png",4,4);
+
+//        Display.image i = DISPLAY.new image("Sorry-pawns.png",4,2);
+//        Display.image e = d.new image("Sorry-board.jpg");
+//        Display.image a = d.new image("Sorry-pawns.png",4,2);
+//        Display.image b = d.new image("Sorry-pawns.png",4,1);
+//        Display.image c = d.new image("Sorry-pawns.png",4,3);
+//        Display.image f = d.new image("Sorry-pawns.png",4,4);
 
 
 //
-        a.move(50,50,1);
-        a.hide();
-        b.move(50,40,1);
-        c.move(50,10,1);
-        f.move(50,90,1);
-        a.show();
+//        i.move(50,50,1);
+//        a.hide();
+//        b.move(50,40,1);
+//        c.move(50,10,1);
+//        f.move(50,90,1);
+//        a.show();
 
 //        e.move(10,10,1);
 //        j.move(0,0,1);
