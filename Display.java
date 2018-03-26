@@ -32,7 +32,7 @@ class Display {
     private static int layer = 1;
     private static JLayeredPane panel = new JLayeredPane();
     private static final JFrame frame = new JFrame("Sorry!");
-    private static int height, width, heightGap=0,widthGap=0;
+    private static int height, width, heightGap=22,widthGap=0;//default for osx and linux
     public static int size = 1000;
 
     /**
@@ -43,14 +43,18 @@ class Display {
             widthGap=16;
             heightGap=39;
         }
-        frame.setSize(size+ widthGap, size + heightGap);
+        setSize(size);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         panel.setBounds(0, 0, size, size);
         frame.setResizable(false);
     }
-
+    void setSize(int size){
+        //need to add loading from file instead of call so desired resolution is saved
+        this.size=size;
+        frame.setSize(size+ widthGap, size + heightGap);
+    }
     class image{
         private BufferedImage img;
         private Point location = new Point(0, 0);
