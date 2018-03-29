@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 /**
- * /- GAMEBOARD -/
+ * /- GAME BOARD -/
  *      _________________
  *     /                /
  *    /                /
@@ -17,15 +17,53 @@ import java.util.ArrayList;
  * <p>
  * TODO: How would we want to save/create the board?
  * TODO: need to incorporate drawing cards? or should that be in main.....
- * TODO: need to figure out moving around the board as well, but spaces should probably be sequential.
+ * TODO: need to figure out moving around the board as well, but spaces should probably be sequential?
  */
 class gameBoard extends Main {
     Display.image GAMEBOARD = DISPLAY.new image("Sorry-board.jpg");
-    static double ratio = DISPLAY.size/5000.0;
     gameBoard() {
         Display.image drawPile = DISPLAY.new image("Sorry-Card-Back-Horizontal.png");
-        drawPile.move((int)(ratio*2020),(int)(ratio*1409));
+        drawPile.move(2020,1409);
+        //creating the board spaces around the board
+        ArrayList<space> SPACES = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            //creating home for color
+            ArrayList<space> home = new ArrayList<>();
+            for (int j = 0; j < 6; j++) {
+                home.add(new space());
+            }
+            //allowing final space to hold multiple
+            home.get(home.size()-1).setHoldMultiple(true);
+            //creating start for color
+            ArrayList<space> start = new ArrayList<>();
+            start.add(new space());
+            //allowing start space to hold multiple pawns
+            start.get(0).setHoldMultiple(true);
+            //creating side for color
+            ArrayList<space> side=new ArrayList<>();
+            side.add(new space(i,4));//first slide
+            side.add(new space(i,home));//home junction, note its index is 1 + i*15
+            side.add(new space());//one empty space
+            side.add(new space(i,start));//start junction, note its index is 3 + i*15
+            //4 empty spaces
+            for (int j = 0; j < 4; j++) {
+                side.add(new space());
+            }
+            side.add(new space(i,5));//slide of length 5
+            //6 empty spaces
+            for (int j = 0; j < 6; j++) {
+                side.add(new space());
+            }
+            //adding each pawn to their home
+            for (int j = 0; j < 4; j++) {
+                side.get(3).junctionSpaces.get(0).addOccupent(new pawn(i));
+            }
+            //adding the total finished side to the entire array (board)
+            SPACES.addAll(side);
+        }
+
     }
+
 }
 
 /**
@@ -40,9 +78,9 @@ class gameBoard extends Main {
  * creating these is as simple as passing the strings seen above ^
  * and passing which team it will be associated with 0,1,2, or 3 where
  * 0 -> red
+ * 3 -> green
  * 1 -> blue
  * 2 -> yellow
- * 3 -> green
  * And empty call will default to a regular space unless told otherwise
  * <p>
  * these spaces can also be populated with pawns utilizing the add and remove pawn method calls
@@ -57,33 +95,31 @@ class gameBoard extends Main {
  */
 class space {
 
-    private boolean slide = false, safe = false;
+    private boolean slide = false, junction=false;
+    public boolean holdMultiple=true;
     private int color;
-    private ArrayList<pawn> occupants;
+    private ArrayList<pawn> occupants=new ArrayList<>();
+    public ArrayList<space> junctionSpaces=new ArrayList<>();
+    private int slideLength;
 
-    //Space creation, see above for use
-    space(String type, int color) {
-        if (color > 3 || color < 0) System.out.println("Incorrect color for space!");
-        else {
-            this.color = color;
-            switch (type) {
-                case "slide":
-                    slide = true;
-                    break;
-                case "start":
-                    for (int i = 0; i < 4; i++) {
-                        occupants.add(new pawn(color));
-                    }
-                    safe = true;
-                    break;
-                case "home":
-                    safe = true;
-                    break;
-                default:
-                    System.out.println("Incorrect tile information!");
-                    break;
-
-            }
+    space(){
+    }
+    //slide creation, see above for use
+    space(int color,int slideLength) {
+        if (color > 3 || color < 0) {
+            System.out.println("Incorrect color for space!");
+        }else {
+            this.slideLength = slideLength;
+            this.color=color;
+        }
+    }
+    //reserved for after junction spaces
+    space(int color,ArrayList<space> E){
+        if (color > 3 || color < 0) {
+            System.out.println("Incorrect color for space!");
+        }else {
+            junction=true;
+            junctionSpaces.addAll(E);
         }
     }
 
@@ -96,16 +132,29 @@ class space {
         return slide;
     }
 
-    public boolean isSafe() {
-        return safe;
-    }
 
     public int getColor() {
         return color;
     }
 
+    public void setHoldMultiple(boolean bool){
+        holdMultiple=bool;
+    }
+
+    public boolean canHoldMultiple(){
+        return holdMultiple;
+    }
+    public void addOccupent(pawn p){
+        occupants.add(p);
+    }
+
     public ArrayList<pawn> getOccupants() {
-        return occupants;
+        try {
+            return occupants;
+        } catch (NullPointerException n) {
+            System.out.println("NO PAWNS TO BE SEEN IN SPACE");
+            return null;
+        }
     }
 
     public pawn removeOccupant() {
@@ -129,18 +178,18 @@ class space {
  * Pawn class saves each pawn as instigated and it is only needed to be given
  * an integer to represent its color/team:
  * 0 -> red
+ * 3 -> green
  * 1 -> blue
  * 2 -> yellow
- * 3 -> green
  * <p>
  * TODO: positioning based on board
  * TODO: Need click-ability, But we could just use the space its in instead
  * TODO: Imaging
  */
-class pawn {
+class pawn extends Main{
     private int color;
-
     // returns color pawn
+    Display.image PAWN = DISPLAY.new image("Sorry-pawns.png",4,color++);
     pawn(int color) {
         this.color = color;
     }
@@ -151,3 +200,4 @@ class pawn {
     //need image processing
     //need movement processing for image
 }
+

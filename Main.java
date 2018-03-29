@@ -2,17 +2,6 @@ public class Main{
     static Display DISPLAY = new Display();
     public static void main(String[] args) {
         testing();
-//        deck DECK = new deck();
-//        int i =1;
-//        for(;;){
-////            System.out.println(i);
-//            DECK.draw();
-//            i++;
-//        }
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setBackground(BLACK);
-//        screenSize.setSize(screenSize.getHeight(),screenSize.getHeight());
-//        testing();
     }
 
 

@@ -32,8 +32,9 @@ class Display {
     private static int layer = 1;
     private static JLayeredPane panel = new JLayeredPane();
     private static final JFrame frame = new JFrame("Sorry!");
-    private static int height, width, heightGap=0,widthGap=0;
+    private static int height, width, heightGap=22,widthGap=0;//default for osx and linux
     public static int size = 1000;
+    public static double ratio = size/5000.0;
 
     /**
      * Creates an entirely new display for images to exist in
@@ -43,14 +44,18 @@ class Display {
             widthGap=16;
             heightGap=39;
         }
-        frame.setSize(size+ widthGap, size + heightGap);
+        setSize(size);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         panel.setBounds(0, 0, size, size);
         frame.setResizable(false);
     }
-
+    void setSize(int size){
+        //need to add loading from file instead of call so desired resolution is saved
+        this.size=size;
+        frame.setSize(size+ widthGap, size + heightGap);
+    }
     class image{
         private BufferedImage img;
         private Point location = new Point(0, 0);
@@ -80,7 +85,7 @@ class Display {
          * @param y new y
          */
         void move(int x, int y) {
-            location = new Point(x, y);
+            location = new Point((int)(x*ratio), (int)(y*ratio));
             label.setLocation(location);
         }
 
@@ -92,6 +97,8 @@ class Display {
          * @param delay delay in seconds
          */
         void move(int x, int y,double delay) {
+            x=(int)(x*ratio);
+            y=(int)(y*ratio);
             double millis_delay = delay*1000*(2.0/3.0);//the 2/3 is because of the natural running delay
             double xRate = ((x-location.getX())/(millis_delay));
             double yRate = ((y-location.getY())/(millis_delay));

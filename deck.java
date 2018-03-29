@@ -66,45 +66,62 @@ public class deck {
  * TODO: need image processing???
  * TODO: positioning processes for above i.e. card.graphicslocation = (x,y)
  */
-class card {
+class card extends Main{
     private int cardNumber = 0, distanceForward = 0, distanceBackward = 0;
     private boolean leaveStart = false,
             replace = false,
             split = false;
     public boolean drawAgain = false;
+    public Display.image cardFace;
 
     //changes creation based on cards face value
     card(int number) {
+        int individual = number;
         cardNumber = number;
         distanceForward = cardNumber;
         switch (cardNumber) {
             case 1://can be used to get out of start
                 leaveStart = true;
+                individual++;
                 break;
             case 2://can be used to get out of start and draw again
                 leaveStart = true;
                 drawAgain = true;
+                individual++;
                 break;
             // no need for 3
             case 4://goes backwards 4
                 distanceBackward = 4;
+                individual++;
                 break;
-            // no need for 5
+            case 5:
+                individual++;
+                break;
             case 7://seven can be split up
                 split = true;
                 break;
             // no need for 8
             case 10://can also go backwards 1
                 distanceBackward = 1;
+                individual--;
                 break;
             case 11://can be used to replace or moved!
                 replace = true;
+                individual--;
                 break;
-            // no need for 12
+            case 12:
+                individual--;
+                break;
             case 0://sorry!
+                individual=12;
                 replace = true;
                 break;
         }
+
+        cardFace=DISPLAY.new image("Sorry_cards.png",12,individual);
+    }
+    public void hide(){
+        cardFace.hide();
     }
 
     /**
