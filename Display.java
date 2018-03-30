@@ -1,7 +1,10 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -32,7 +35,7 @@ class Display {
     private static int layer = 1;
     private static JLayeredPane panel = new JLayeredPane();
     private static final JFrame frame = new JFrame("Sorry!");
-    private static int height, width, heightGap=22,widthGap=0;//default for osx and linux
+    private static int heightGap=22,widthGap=0;//default for osx and linux
     public static int size = 1000;
     public static double ratio = size/5000.0;
 
@@ -56,11 +59,51 @@ class Display {
         this.size=size;
         frame.setSize(size+ widthGap, size + heightGap);
     }
+    class clickSpace{
+        Point pos;
+        int height,width;
+        private JButton button;
+        clickSpace(image i){
+            this.height=i.height;
+            this.width=i.width;
+            pos = i.location;
+            i.hide();
+            button = new JButton();
+            button.setSize(width,height);
+            button.setLocation(pos);
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("clicked");
+                    i.show();
+                }
+            });
+            button.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    i.show();
+                }
+
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    i.hide();
+                }
+            });
+            button.setOpaque(false);
+            button.setBorderPainted(false);
+            panel.add(button);
+            layer++;
+            panel.setLayer(button,layer);
+
+        }
+
+
+
+
+    }
     class image{
         private BufferedImage img;
         private Point location = new Point(0, 0);
         private JLabel label;
-
+        private int width,height;
 
         image(String imageName) {
             loadImage(imageName);
@@ -72,8 +115,8 @@ class Display {
         image(String imageName, int total, int individual) {
             loadImage(imageName);
             img = img.getSubimage(((width * individual) - width) / total, 0, width / total, height);
-            width = img.getWidth();
-            height = img.getHeight();
+            this.width = img.getWidth();
+            this.height = img.getHeight();
             reScale();
             panel.setBounds(0, 0, size, size);
         }
@@ -169,7 +212,9 @@ class Display {
         }
 
     }
+
 }
+
 
 
 

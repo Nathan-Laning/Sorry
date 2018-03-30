@@ -20,10 +20,16 @@ import java.util.ArrayList;
  * TODO: need to figure out moving around the board as well, but spaces should probably be sequential?
  */
 class gameBoard extends Main {
-    Display.image GAMEBOARD = DISPLAY.new image("Sorry-board.jpg");
+    Display.image GAMEBOARD = DISPLAY.new image("Sorry-splash.jpg");
     gameBoard() {
-        Display.image drawPile = DISPLAY.new image("Sorry-Card-Back-Horizontal.png");
-        drawPile.move(2020,1409);
+        Display.image new_game = DISPLAY.new image("new_game_button.png");
+        new_game.move(710,2118);
+        Display.clickSpace c = DISPLAY.new clickSpace(new_game);
+
+//        Display.image drawPile = DISPLAY.new image("Sorry-Card-Back-Horizontal.png");
+//        drawPile.move(2020,1409);
+//        Display.clickSpace c = DISPLAY.new clickSpace(drawPile);
+
         //creating the board spaces around the board
         ArrayList<space> SPACES = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
@@ -189,7 +195,7 @@ class space {
 class pawn extends Main{
     private int color;
     // returns color pawn
-    Display.image PAWN = DISPLAY.new image("Sorry-pawns.png",4,color++);
+//    Display.image PAWN = DISPLAY.new image("Sorry-pawns.png",4,color++);
     pawn(int color) {
         this.color = color;
     }
