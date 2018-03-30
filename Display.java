@@ -8,6 +8,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 
+
 /**
  * /- Display -/
  * <p>
@@ -76,6 +77,7 @@ class Display {
                 public void actionPerformed(ActionEvent e) {
                     System.out.println("clicked");
                     i.show();
+
                 }
             });
             button.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -92,11 +94,7 @@ class Display {
             panel.add(button);
             layer++;
             panel.setLayer(button,layer);
-
         }
-
-
-
 
     }
     class image{
