@@ -118,7 +118,7 @@ class card extends Main{
                 break;
         }
 
-        cardFace=DISPLAY.new image("Sorry_cards.png",12,individual);
+//        cardFace=DISPLAY.new image("Sorry_cards.png",12,individual);
     }
     public void hide(){
         cardFace.hide();

@@ -60,11 +60,37 @@ class Display {
         this.size=size;
         frame.setSize(size+ widthGap, size + heightGap);
     }
+
+
+
     class clickSpace{
         Point pos;
         int height,width;
-        private JButton button;
+        public JButton button;
+        private boolean enabled;
+        image i ;
+        public java.awt.event.MouseListener M = new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                i.show();
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                i.hide();
+            }
+        };
+        ActionListener A = new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                i.clicked = true;
+                i.hide();
+                disable();
+            }
+        };
+
+        public void clicked(){
+
+        }
         clickSpace(image i){
+            this.i=i;
             this.height=i.height;
             this.width=i.width;
             pos = i.location;
@@ -72,23 +98,7 @@ class Display {
             button = new JButton();
             button.setSize(width,height);
             button.setLocation(pos);
-            button.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.out.println("clicked");
-                    i.show();
-
-                }
-            });
-            button.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent evt) {
-                    i.show();
-                }
-
-                public void mouseExited(java.awt.event.MouseEvent evt) {
-                    i.hide();
-                }
-            });
+            enable();
             button.setOpaque(false);
             button.setBorderPainted(false);
             panel.add(button);
@@ -96,13 +106,28 @@ class Display {
             panel.setLayer(button,layer);
         }
 
+        public void enable(){
+            button.addActionListener(A);
+            button.addMouseListener(M);
+            enabled=true;
+        }
+        public void disable(){
+            button.removeActionListener(A);
+            button.removeMouseListener(M);
+            enabled=false;
+        }
+        public boolean isEnabled(){
+            return enabled;
+        }
+
     }
-    class image{
+
+    class image {
         private BufferedImage img;
         private Point location = new Point(0, 0);
         private JLabel label;
         private int width,height;
-
+        public boolean clicked=false;
         image(String imageName) {
             loadImage(imageName);
             reScale();
