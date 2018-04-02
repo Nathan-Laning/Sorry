@@ -1,13 +1,13 @@
-public class Main{
-    static Display DISPLAY = new Display();
+public class Main extends Display{
+//    static Display DISPLAY = new Display();
     public static void main(String[] args) {
         testing();
     }
 
-
-    public static void testing(){
+    public static void testing() {
         gameBoard g = new gameBoard();
-//        Window w = new Window();
+
+        //        Window w = new Window();
 
 //        Display.image i = DISPLAY.new image("Sorry-pawns.png",4,2);
 //        Display.image e = d.new image("Sorry-board.jpg");

@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -20,11 +21,26 @@ import java.util.ArrayList;
  * TODO: need to figure out moving around the board as well, but spaces should probably be sequential?
  */
 class gameBoard extends Main {
-    Display.image GAMEBOARD = DISPLAY.new image("Sorry-splash.jpg");
+    image GAMEBOARD = new image("Sorry-splash.jpg");
     gameBoard() {
-        Display.image new_game = DISPLAY.new image("new_game_button.png");
+        image new_game = new image("new_game_button.png");
         new_game.move(710,2118);
-        Display.clickSpace c = DISPLAY.new clickSpace(new_game);
+        clickSpace c = new clickSpace(new_game);
+        c.button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("yup");
+            }
+        });
+//        c.clicked();
+
+//        boolean item_clicked=false;
+//        while(!item_clicked){
+//            if(!c.isEnabled()){
+//                item_clicked=true;
+//                System.out.println("clicked");
+//            }
+//        }
 
 //        Display.image drawPile = DISPLAY.new image("Sorry-Card-Back-Horizontal.png");
 //        drawPile.move(2020,1409);
