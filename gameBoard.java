@@ -22,14 +22,30 @@ import java.util.ArrayList;
  */
 class gameBoard extends Main {
     image GAMEBOARD = new image("Sorry-splash.jpg");
+
     gameBoard() {
-        image new_game = new image("new_game_button.png");
-        new_game.move(710,2118);
-        clickSpace c = new clickSpace(new_game);
-        c.button.addMouseListener(new MouseAdapter() {
+        clickSpace newGame = new clickSpace(3425,665,725,2120);
+        newGame.button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("yup");
+                System.out.println("new game");
+                newGame.disable();
+            }
+        });
+        clickSpace loadGame = new clickSpace(3425,665,725,2785);
+        loadGame.button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("game loaded");
+                loadGame.disable();
+            }
+        });
+        clickSpace rules = new clickSpace(3425,665,725,2785+665);
+        rules.button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("rules Clicked");
+                rules.disable();
             }
         });
 //        c.clicked();
@@ -55,23 +71,23 @@ class gameBoard extends Main {
                 home.add(new space());
             }
             //allowing final space to hold multiple
-            home.get(home.size()-1).setHoldMultiple(true);
+            home.get(home.size() - 1).setHoldMultiple(true);
             //creating start for color
             ArrayList<space> start = new ArrayList<>();
             start.add(new space());
             //allowing start space to hold multiple pawns
             start.get(0).setHoldMultiple(true);
             //creating side for color
-            ArrayList<space> side=new ArrayList<>();
-            side.add(new space(i,4));//first slide
-            side.add(new space(i,home));//home junction, note its index is 1 + i*15
+            ArrayList<space> side = new ArrayList<>();
+            side.add(new space(i, 4));//first slide
+            side.add(new space(i, home));//home junction, note its index is 1 + i*15
             side.add(new space());//one empty space
-            side.add(new space(i,start));//start junction, note its index is 3 + i*15
+            side.add(new space(i, start));//start junction, note its index is 3 + i*15
             //4 empty spaces
             for (int j = 0; j < 4; j++) {
                 side.add(new space());
             }
-            side.add(new space(i,5));//slide of length 5
+            side.add(new space(i, 5));//slide of length 5
             //6 empty spaces
             for (int j = 0; j < 6; j++) {
                 side.add(new space());
@@ -117,30 +133,32 @@ class gameBoard extends Main {
  */
 class space {
 
-    private boolean slide = false, junction=false;
-    public boolean holdMultiple=true;
+    private boolean slide = false, junction = false;
+    public boolean holdMultiple = true;
     private int color;
-    private ArrayList<pawn> occupants=new ArrayList<>();
-    public ArrayList<space> junctionSpaces=new ArrayList<>();
+    private ArrayList<pawn> occupants = new ArrayList<>();
+    public ArrayList<space> junctionSpaces = new ArrayList<>();
     private int slideLength;
 
-    space(){
+    space() {
     }
+
     //slide creation, see above for use
-    space(int color,int slideLength) {
+    space(int color, int slideLength) {
         if (color > 3 || color < 0) {
             System.out.println("Incorrect color for space!");
-        }else {
+        } else {
             this.slideLength = slideLength;
-            this.color=color;
+            this.color = color;
         }
     }
+
     //reserved for after junction spaces
-    space(int color,ArrayList<space> E){
+    space(int color, ArrayList<space> E) {
         if (color > 3 || color < 0) {
             System.out.println("Incorrect color for space!");
-        }else {
-            junction=true;
+        } else {
+            junction = true;
             junctionSpaces.addAll(E);
         }
     }
@@ -159,14 +177,15 @@ class space {
         return color;
     }
 
-    public void setHoldMultiple(boolean bool){
-        holdMultiple=bool;
+    public void setHoldMultiple(boolean bool) {
+        holdMultiple = bool;
     }
 
-    public boolean canHoldMultiple(){
+    public boolean canHoldMultiple() {
         return holdMultiple;
     }
-    public void addOccupent(pawn p){
+
+    public void addOccupent(pawn p) {
         occupants.add(p);
     }
 
@@ -208,8 +227,9 @@ class space {
  * TODO: Need click-ability, But we could just use the space its in instead
  * TODO: Imaging
  */
-class pawn extends Main{
+class pawn extends Main {
     private int color;
+
     // returns color pawn
 //    Display.image PAWN = DISPLAY.new image("Sorry-pawns.png",4,color++);
     pawn(int color) {
