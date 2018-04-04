@@ -1,44 +1,36 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 
 
 /**
  * /- Display -/
- * <p>
+ *
  * *---------------*
  * |       /\      |
  * |  /\  /  \   /\|
  * | /  \/    \/   |
  * |/   /    /     |
  * *---------------*
- * <p>
+ *
  * Class built to handle all imaging processing, which includes:
  * loading images
  * changing image location
  * scaling window/images uniformly
  * cropping images
  * window naming
- * <p>
- * Should it include?
- * mouse and click events?
- * rotating if we can get it working?
- * A "grid" type system for movement and images since it will be always square?
- * A message board of types?
  */
 class Display {
     private static int layer = 1;
     private static JLayeredPane panel = new JLayeredPane();
     private static final JFrame frame = new JFrame("Sorry!");
     private static int heightGap=22,widthGap=0;//default for osx and linux
-    public static int size = 1000;
+    public static int size = 600;
     public static double ratio = size/5000.0;
+    public final image glow;
 
     /**
      * Creates an entirely new display for images to exist in
@@ -54,6 +46,8 @@ class Display {
         frame.add(panel);
         panel.setBounds(0, 0, size, size);
         frame.setResizable(false);
+        glow=new image("glow.png");
+        glow.hide();
     }
     void setSize(int size){
         //need to add loading from file instead of call so desired resolution is saved
@@ -67,59 +61,40 @@ class Display {
         Point pos;
         int height,width;
         public JButton button;
-        private boolean enabled;
-        image i ;
         public java.awt.event.MouseListener M = new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                i.show();
+                glow.reSize(width,height);
+                glow.move((int)(pos.x/(size/5000.0)),(int)(pos.y/(size/5000.0)));
+                glow.show();
             }
 
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                i.hide();
-            }
-        };
-        ActionListener A = new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                i.clicked = true;
-                i.hide();
-                disable();
+                glow.hide();
             }
         };
 
-        public void clicked(){
-
-        }
-        clickSpace(image i){
-            this.i=i;
-            this.height=i.height;
-            this.width=i.width;
-            pos = i.location;
-            i.hide();
+        clickSpace(int width,int height,int x, int y){
+            this.height = (int) (ratio * height);
+            this.width = (int) (ratio * width);
+            pos = new Point((int)(x*ratio),(int)(y*ratio));
             button = new JButton();
-            button.setSize(width,height);
+            button.setSize(this.width,this.height);
             button.setLocation(pos);
+
             enable();
             button.setOpaque(false);
             button.setBorderPainted(false);
             panel.add(button);
-            layer++;
             panel.setLayer(button,layer);
         }
 
         public void enable(){
-            button.addActionListener(A);
             button.addMouseListener(M);
-            enabled=true;
         }
         public void disable(){
-            button.removeActionListener(A);
             button.removeMouseListener(M);
-            enabled=false;
+            glow.hide();
         }
-        public boolean isEnabled(){
-            return enabled;
-        }
-
     }
 
     class image {
@@ -133,7 +108,6 @@ class Display {
             reScale();
             panel.setBounds(0, 0, size, size);
         }
-
 
         image(String imageName, int total, int individual) {
             loadImage(imageName);
@@ -200,6 +174,11 @@ class Display {
             label.setBounds(0, 0, width, height);
         }
 
+        public void reSize(int width,int height){
+            this.height=(int)(height/(size/5000.0));
+            this.width=(int)(width/(size/5000.0));
+            reScale();
+        }
         /**
          * /- LOAD IMAGE -/
          * loads the image into the panel using the name
