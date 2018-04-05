@@ -46,7 +46,7 @@ class Display {
         frame.add(panel);
         panel.setBounds(0, 0, size, size);
         frame.setResizable(false);
-        glow=new image("glow.png");
+        glow=new image("glow_colored.png");
         glow.hide();
     }
     void setSize(int size){
@@ -56,8 +56,41 @@ class Display {
     }
 
 
-
+    /**
+     * /- Click Space -/
+     * ____________
+     * |      /|  |
+     * |    /  |  |
+     * |  /    |  |
+     * |/__  _ |  |
+     * |  / / \|  |
+     * |_/_/______|
+     *
+     * Click Space is a callable method that creates a portion of space specified
+     * in position and dimension. It also has a glow affect that will resize and move a
+     * pre-rendered image called glow. this is to save on load times as loading new images is taxing.
+     * To create a new one you need to call the constructer "clickSpace" and specify:
+     *
+     * NOTE: Items entered in reference to the maximum size 5000, for example
+     * clickSpace(500,500,2250,2250) will but a box directly in the middle regardless of the window size
+     * int width -> the width of the Click Space
+     * int height -> height of the Click Space
+     * int x-> the upper left corner of the CLick Space's x co-ordinate
+     * int y-> the upper left corner of the CLick Space's y co-ordinate
+     *
+     * The Mouse initiation must be overwritten for it to work properly as button, this can be done as follows:
+     * Note: the disabling part is optional, but makes it no longer clickable until it is re-enabled
+     * clickSpace CLICK_HERE = new clickSpace(500,500,2250,2250);
+     * CLICK_HERE.button.addMouseListener(new MouseAdapter() {
+     *  @Override
+     *  public void mouseClicked(MouseEvent e) {
+     *      //Do
+     *      CLICK_HERE.disable();
+     *  }
+     * });
+     **/
     class clickSpace{
+        // default init
         Point pos;
         int height,width;
         public JButton button;
@@ -73,6 +106,13 @@ class Display {
             }
         };
 
+        /**
+         * Constructor
+         * @param width the width of the Click Space
+         * @param height the height of the Click Space
+         * @param x the upper left corner of the CLick Space's x co-ordinate
+         * @param y the upper left corner of the CLick Space's y co-ordinate
+         */
         clickSpace(int width,int height,int x, int y){
             this.height = (int) (ratio * height);
             this.width = (int) (ratio * width);
@@ -88,15 +128,41 @@ class Display {
             panel.setLayer(button,layer);
         }
 
+        //enables button
         public void enable(){
             button.addMouseListener(M);
         }
+        //disables button
         public void disable(){
             button.removeMouseListener(M);
             glow.hide();
         }
     }
 
+    /**
+     * /- Image -/
+     *
+     * *---------------*
+     * |       /\      |
+     * |  /\  /  \   /\|
+     * | /  \/    \/   |
+     * |/   /    /     |
+     * *---------------*
+     *
+     * Loads a new image based on the given image. It is essential that
+     * images are within the res/ folder or else it will not successfully load
+     * as this is an assumption within the load function
+     *
+     * Images will automatically scaled to the current window size, but can also be
+     * resized using the resize function.
+     *
+     * Images can also be moved either by specifying position, or specifying position and the
+     * time it takes to get there in seconds
+     *
+     * Images can also be loaded from larger maps by using the slicing function. this is entirely
+     * automated by specifying the total number of images within the file, and the individual you desire.
+     * This assumes that all images are the same width, but not height as a point of note...
+     */
     class image {
         private BufferedImage img;
         private Point location = new Point(0, 0);
@@ -174,7 +240,13 @@ class Display {
             label.setBounds(0, 0, width, height);
         }
 
-        public void reSize(int width,int height){
+        /**
+         * /- RE-SIZE -/
+         * re-sizes the image based on...
+         * @param width desired width
+         * @param height desired height
+         */
+         private void reSize(int width,int height){
             this.height=(int)(height/(size/5000.0));
             this.width=(int)(width/(size/5000.0));
             reScale();
