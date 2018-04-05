@@ -5,6 +5,7 @@ public class Main extends Display {
     //    static Display DISPLAY = new Display();
     public static void main(String[] args) {
         new mainMenu();
+
     }
 }
 class mainMenu extends Main{
