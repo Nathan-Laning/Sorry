@@ -11,13 +11,21 @@ public class Main extends Display {
 class mainMenu extends Main{
 
     mainMenu(){
+
         clickSpace newGame = new clickSpace(3425, 665, 725, 2120);
         clickSpace loadGame = new clickSpace(3425, 665, 725, 2785);
         clickSpace rules = new clickSpace(3425, 665, 725, 2785 + 665);
         image StartingPage = new image("Sorry-splash.jpg");
+
+
+//        grow_test.hide();
+//        grow_test.grow(1);
+
+
         newGame.button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                System.out.println("clicked");
                 newGame();
                 loadGame.disable();
                 rules.disable();
@@ -46,7 +54,9 @@ class mainMenu extends Main{
         private void newGame(){
             //just displaying gameboard for fun
             //start new Game, however we want to do that
-            image GAMEBOARD=new image("Sorry-board.jpg");
+
+        gameBoard G = new gameBoard();
+
         }
         private void Rules(){
             //open rules page
