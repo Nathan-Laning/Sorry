@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
@@ -118,7 +119,7 @@ class gameBoard extends Main {
  * TODO:    Also need ability to hold multiple pawns in multiple places (i.e. home)
  * TODO:Need click-ability (maybe even hover effect?)
  */
-class space {
+class space extends gameBoard{
 
     private boolean slide = false, junction = false;
     public boolean holdMultiple = true;
@@ -126,6 +127,9 @@ class space {
     private ArrayList<pawn> occupants = new ArrayList<>();
     public ArrayList<space> junctionSpaces = new ArrayList<>();
     private int slideLength;
+    private int size=305;
+    int x,y;
+    clickSpace A;
 
     space() {
     }
@@ -149,7 +153,24 @@ class space {
             junctionSpaces.addAll(E);
         }
     }
+    Point getPawnPlacement(){
+        if(canHoldMultiple()){
+            return null;
+        }else return new Point(x+40,y+40);
+    }
 
+    void activateClickSpace(int xpos,int ypos){
+        x=xpos;
+        y=ypos;
+        A = new clickSpace(size,size,x,y);
+        A.button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+               //do something
+                A.disable();
+            }
+        });
+    }
     /**
      * Basic getters, all return values within.
      *

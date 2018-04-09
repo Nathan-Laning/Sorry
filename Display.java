@@ -303,6 +303,7 @@ class Display {
 
         /**
          * /- GROW -/
+         * CURRENTLY BROKEN, DO NOT USE!!!
          * grows an image from 0,0 size to true size within the time given
          *
          * @param delay how long it takes in seconds
