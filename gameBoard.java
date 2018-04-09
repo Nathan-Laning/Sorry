@@ -21,10 +21,22 @@ import java.util.ArrayList;
  */
 class gameBoard extends Main {
 
-    
+
 
     gameBoard() {
+        deck DECK = new deck();
+        image GAMEBOARD=new image("Sorry-board.jpg");
+        image drawPile = new image("Sorry-Card-Back-Horizontal.png");
+        drawPile.move(2025,1415);
 
+        drawPile.show();
+                    clickSpace c = new clickSpace(drawPile);
+            c.button.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    DECK.draw();
+                }
+            });
 //        c.clicked();
 
 //        boolean item_clicked=false;
@@ -35,9 +47,7 @@ class gameBoard extends Main {
 //            }
 //        }
 
-//        Display.image drawPile = DISPLAY.new image("Sorry-Card-Back-Horizontal.png");
-//        drawPile.move(2020,1409);
-//        Display.clickSpace c = DISPLAY.new clickSpace(drawPile);
+
 
         //creating the board spaces around the board
         ArrayList<space> SPACES = new ArrayList<>();

@@ -1,6 +1,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +29,7 @@ class Display {
     private static JLayeredPane panel = new JLayeredPane();
     private static final JFrame frame = new JFrame("Sorry!");
     private static int heightGap=22,widthGap=0;//default for osx and linux
-    public static int size = 600;
+    public static int size = 1000;
     public static double ratio = size/5000.0;
     public final image glow;
 
@@ -75,8 +76,11 @@ class Display {
      * clickSpace(500,500,2250,2250) will but a box directly in the middle regardless of the window size
      * int width -> the width of the Click Space
      * int height -> height of the Click Space
-     * int x-> the upper left corner of the CLick Space's x co-ordinate
-     * int y-> the upper left corner of the CLick Space's y co-ordinate
+     * int x-> the upper left corner of the Click Space's x co-ordinate
+     * int y-> the upper left corner of the Click Space's y co-ordinate
+     *
+     * You can also just pass an image and it will extract the bounds from the image itself to create a perfect
+     * fit around an image box
      *
      * The Mouse initiation must be overwritten for it to work properly as button, this can be done as follows:
      * Note: the disabling part is optional, but makes it no longer clickable until it is re-enabled
@@ -108,10 +112,27 @@ class Display {
 
         /**
          * Constructor
+         * @param img uses img bounds to create  click object
+         */
+        clickSpace(image img){
+            this.height = img.height;
+            this.width = img.width;
+            pos = new Point(img.location.x,img.location.y);
+            button = new JButton();
+            button.setSize(this.width,this.height);
+            button.setLocation(pos);
+            enable();
+            button.setOpaque(false);
+            button.setBorderPainted(false);
+            panel.add(button);
+            panel.setLayer(button,layer);
+        }
+        /**
+         * Constructor
          * @param width the width of the Click Space
          * @param height the height of the Click Space
-         * @param x the upper left corner of the CLick Space's x co-ordinate
-         * @param y the upper left corner of the CLick Space's y co-ordinate
+         * @param x the upper left corner of the Click Space's x co-ordinate
+         * @param y the upper left corner of the Click Space's y co-ordinate
          */
         clickSpace(int width,int height,int x, int y){
             this.height = (int) (ratio * height);
@@ -120,7 +141,6 @@ class Display {
             button = new JButton();
             button.setSize(this.width,this.height);
             button.setLocation(pos);
-
             enable();
             button.setOpaque(false);
             button.setBorderPainted(false);
@@ -134,7 +154,10 @@ class Display {
         }
         //disables button
         public void disable(){
-            button.removeMouseListener(M);
+            MouseListener[] lis = button.getMouseListeners();
+            for (MouseListener l:lis) {
+                button.removeMouseListener(l);
+            }
             glow.hide();
         }
     }
@@ -233,6 +256,8 @@ class Display {
             double scale = size / 5000.0;
             height = (int) (scale * height);
             width = (int) (scale * width);
+            if(width==0) width=1;
+            if(height==0) height=1;
             label = new JLabel(new ImageIcon(img.getScaledInstance(width, height, Image.SCALE_SMOOTH)));
             panel.add(label);
             layer++;
@@ -274,6 +299,40 @@ class Display {
          */
         void hide(){
             panel.setLayer(label,0);
+        }
+
+        /**
+         * /- GROW -/
+         * grows an image from 0,0 size to true size within the time given
+         *
+         * @param delay how long it takes in seconds
+         */
+        void grow(double delay){
+            double millis_delay = delay*100*(1.0/7.0);//the 2/3 is because of the natural running delay
+            //Storing old data incase of interrupt
+            int xLimit=location.x;
+            int yLimit=location.y;
+            int maxWidth=width;
+            int maxHeight=height;
+            //current positioning
+            double x=xLimit+(width/2.0);//current x
+            double y=yLimit+(height/2.0);//current y
+            //rates of change
+            double xRate=(x-xLimit)/millis_delay;
+            double yRate=(y-yLimit)/millis_delay;
+            for(int i = 0; i < millis_delay*10; i+=10) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    location=new Point(xLimit,yLimit);
+                    reSize(maxWidth,maxHeight);
+                }
+                x-=xRate;
+                y-=yRate;
+                location = new Point((int)x, (int)y);
+                reSize((int)(2*((maxWidth/2.0)-(x-xLimit))),(int)(2*((maxHeight/2.0)-(y-yLimit))));
+                label.setLocation(location);
+            }
         }
 
         /**

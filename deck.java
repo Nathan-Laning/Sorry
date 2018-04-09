@@ -18,10 +18,15 @@ import java.util.Random;
  * TODO:  ->  need click-ability
  *
  */
-public class deck {
+public class deck extends Main{
     private ArrayList<card> DECK = new ArrayList<>();
     private Random R = new Random(System.currentTimeMillis());
+
+    // image location
+    private image[] deckImages = new image[13];
+
     deck() {
+
         //adding 5 "one cards"
         card CARD = new card(1);
         for (int i = 0; i < 5; i++) {
@@ -29,13 +34,35 @@ public class deck {
         }
         //adding all other cards
         for (int j = 0; j < 12; j++) {
-            if (j != 1 && j != 6) {
+            if (j != 1 && j != 6&& j!=9) {
                 for (int i = 0; i < 4; i++) {
                     card C = new card(j);
                     DECK.add(C);
                 }
             }
 
+        }
+        loadDeckImages();
+    }
+    //loads all images to cutback on loading in-game
+    private void loadDeckImages(){
+        String name = "Sorry-cards-Enlarged-Shadow.png";
+        deckImages[0]=new image(name,12,12);
+        deckImages[1]=new image(name,12,2);
+        deckImages[2]=new image(name,12,3);
+        deckImages[3]=new image(name,12,4);
+        deckImages[4]=new image(name,12,5);
+        deckImages[5]=new image(name,12,6);
+        deckImages[7]=new image(name,12,7);
+        deckImages[8]=new image(name,12,8);
+        deckImages[10]=new image(name,12,9);
+        deckImages[11]=new image(name,12,10);
+        deckImages[12]=new image(name,12,11);
+        for (int j = 0; j < deckImages.length; j++) {
+            if(j!=6&&j!=9){
+                deckImages[j].move(1990,1820);
+                deckImages[j].hide();
+            }
         }
     }
 
@@ -46,7 +73,12 @@ public class deck {
     public card draw() {
        if(DECK.size()==0) {
            return null;
-       }else return DECK.remove(R.nextInt(DECK.size()));
+       }else {
+           card newCard = DECK.remove(R.nextInt(DECK.size()));
+           System.out.println(newCard.cardNumber);
+           deckImages[newCard.cardNumber].show();
+           return newCard;
+       }
 
     }
 }
@@ -66,36 +98,31 @@ public class deck {
  * TODO: need image processing???
  * TODO: positioning processes for above i.e. card.graphicslocation = (x,y)
  */
-class card extends Main{
-    private int cardNumber = 0, distanceForward = 0, distanceBackward = 0;
+class card {
+    public int cardNumber = 0;
+    private int distanceForward = 0, distanceBackward = 0;
     private boolean leaveStart = false,
             replace = false,
             split = false;
     public boolean drawAgain = false;
-    public Display.image cardFace;
 
     //changes creation based on cards face value
     card(int number) {
-        int individual = number;
         cardNumber = number;
         distanceForward = cardNumber;
         switch (cardNumber) {
             case 1://can be used to get out of start
                 leaveStart = true;
-                individual++;
                 break;
             case 2://can be used to get out of start and draw again
                 leaveStart = true;
                 drawAgain = true;
-                individual++;
                 break;
             // no need for 3
             case 4://goes backwards 4
                 distanceBackward = 4;
-                individual++;
                 break;
             case 5:
-                individual++;
                 break;
             case 7://seven can be split up
                 split = true;
@@ -103,25 +130,18 @@ class card extends Main{
             // no need for 8
             case 10://can also go backwards 1
                 distanceBackward = 1;
-                individual--;
                 break;
             case 11://can be used to replace or moved!
                 replace = true;
-                individual--;
                 break;
             case 12:
-                individual--;
                 break;
             case 0://sorry!
-                individual=12;
                 replace = true;
                 break;
         }
 
 //        cardFace=DISPLAY.new image("Sorry_cards.png",12,individual);
-    }
-    public void hide(){
-        cardFace.hide();
     }
 
     /**
