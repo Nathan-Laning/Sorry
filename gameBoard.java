@@ -39,55 +39,7 @@ class gameBoard extends Main {
                     DECK.draw();
                 }
             });
-//        c.clicked();
 
-//        boolean item_clicked=false;
-//        while(!item_clicked){
-//            if(!c.isEnabled()){
-//                item_clicked=true;
-//                System.out.println("clicked");
-//            }
-//        }
-
-
-
-        //creating the board spaces around the board
-        ArrayList<space> SPACES = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            //creating home for color
-            ArrayList<space> home = new ArrayList<>();
-            for (int j = 0; j < 6; j++) {
-                home.add(new space());
-            }
-            //allowing final space to hold multiple
-            home.get(home.size() - 1).setHoldMultiple(true);
-            //creating start for color
-            ArrayList<space> start = new ArrayList<>();
-            start.add(new space());
-            //allowing start space to hold multiple pawns
-            start.get(0).setHoldMultiple(true);
-            //creating side for color
-            ArrayList<space> side = new ArrayList<>();
-            side.add(new space(i, 4));//first slide
-            side.add(new space(i, home));//home junction, note its index is 1 + i*15
-            side.add(new space());//one empty space
-            side.add(new space(i, start));//start junction, note its index is 3 + i*15
-            //4 empty spaces
-            for (int j = 0; j < 4; j++) {
-                side.add(new space());
-            }
-            side.add(new space(i, 5));//slide of length 5
-            //6 empty spaces
-            for (int j = 0; j < 6; j++) {
-                side.add(new space());
-            }
-            //adding each pawn to their home
-            for (int j = 0; j < 4; j++) {
-                side.get(3).junctionSpaces.get(0).addOccupent(new pawn(i));
-            }
-            //adding the total finished side to the entire array (board)
-            SPACES.addAll(side);
-        }
 
     }
 
@@ -145,32 +97,10 @@ class space extends gameBoard{
         }
     }
 
-    //reserved for after junction spaces
-    space(int color, ArrayList<space> E) {
-        if (color > 3 || color < 0) {
-            System.out.println("Incorrect color for space!");
-        } else {
-            junction = true;
-            junctionSpaces.addAll(E);
-        }
-    }
     Point getPawnPlacement(){
         if(canHoldMultiple()){
             return null;
         }else return new Point(x+40,y+40);
-    }
-
-    void activateClickSpace(int xpos,int ypos){
-        x=xpos;
-        y=ypos;
-        A = new clickSpace(size,size,x,y);
-        A.button.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-               //do something
-                A.disable();
-            }
-        });
     }
     /**
      * Basic getters, all return values within.
