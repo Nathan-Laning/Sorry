@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * testing for yongyi
@@ -25,31 +26,32 @@ class gameBoard extends Main {
     Pawn[] pawns = new Pawn[16];
 
     protected int[][][] whole_board = {
-            { {4,1}, {3,5}, {3,5}, {3,5}, {3,5}, {4,1}, {4,1}, {4,1}, {4,1}, {3,4}, {3,4}, {3,4}, {3,4}, {3,4}, {4,1}, {4,1} },
-            { {4,1}, {4,0}, {3,6}, {3,3}, {3,3}, {3,3}, {4,0}, {4,0}, {1,2}, {1,2}, {1,2}, {4,0}, {4,0}, {4,0}, {4,0}, {1,5}},
-            { {0,4}, {4,0}, {3,6}, {3,3}, {3,3}, {3,3}, {4,0}, {4,0}, {1,2}, {1,2}, {1,2}, {1,6}, {1,6}, {1,6}, {1,6}, {1,5}},
-            { {0,4}, {4,0}, {3,6}, {3,3}, {3,3}, {3,3}, {4,0}, {4,0}, {1,2}, {1,2}, {1,2}, {4,0}, {1,3}, {1,3}, {1,3}, {1,5}},
-            { {0,4}, {4,0}, {3,6}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {1,3}, {1,3}, {1,3}, {1,5}},
-            { {0,4}, {3,2}, {3,2}, {3,2}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {1,3}, {1,3}, {1,3}, {4,1}},
-            { {0,4}, {3,2}, {3,2}, {3,2}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,1}},
-            { {4,1}, {3,2}, {3,2}, {3,2}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,1}},
-            { {4,1}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {2,2}, {2,2}, {2,2}, {4,1}},
-            { {4,1}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {2,2}, {2,2}, {2,2}, {1,4}},
-            { {4,1}, {0,3}, {0,3}, {0,3}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {2,2}, {2,2}, {2,2}, {1,4}},
-            { {0,5}, {0,3}, {0,3}, {0,3}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {2,6}, {4,0}, {1,4}},
-            { {0,5}, {0,3}, {0,3}, {0,3}, {4,0}, {0,2}, {0,2}, {0,2}, {4,0}, {4,0}, {2,3}, {2,3}, {2,3}, {2,6}, {4,0}, {1,4}},
-            { {0,5}, {0,6}, {0,6}, {0,6}, {0,6}, {0,2}, {0,2}, {0,2}, {4,0}, {4,0}, {2,3}, {2,3}, {2,3}, {2,6}, {4,0}, {1,4}},
-            { {0,5}, {4,0}, {4,0}, {4,0}, {4,0}, {0,2}, {0,2}, {0,2}, {4,0}, {4,0}, {2,3}, {2,3}, {2,3}, {2,6}, {4,0}, {4,1}},
-            { {4,1}, {4,1}, {2,4}, {2,4}, {2,4}, {2,4}, {2,4}, {4,1}, {4,1}, {4,1}, {4,1}, {2,5}, {2,5}, {2,5}, {2,5}, {4,1} },};
+            {{4, 1}, {3, 5}, {3, 5}, {3, 5}, {3, 5}, {4, 1}, {4, 1}, {4, 1}, {4, 1}, {3, 4}, {3, 4}, {3, 4}, {3, 4}, {3, 4}, {4, 1}, {4, 1}},
+            {{4, 1}, {4, 0}, {3, 6}, {3, 3}, {3, 3}, {3, 3}, {4, 0}, {4, 0}, {1, 2}, {1, 2}, {1, 2}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {1, 5}},
+            {{0, 4}, {4, 0}, {3, 6}, {3, 3}, {3, 3}, {3, 3}, {4, 0}, {4, 0}, {1, 2}, {1, 2}, {1, 2}, {1, 6}, {1, 6}, {1, 6}, {1, 6}, {1, 5}},
+            {{0, 4}, {4, 0}, {3, 6}, {3, 3}, {3, 3}, {3, 3}, {4, 0}, {4, 0}, {1, 2}, {1, 2}, {1, 2}, {4, 0}, {1, 3}, {1, 3}, {1, 3}, {1, 5}},
+            {{0, 4}, {4, 0}, {3, 6}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {1, 3}, {1, 3}, {1, 3}, {1, 5}},
+            {{0, 4}, {3, 2}, {3, 2}, {3, 2}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {1, 3}, {1, 3}, {1, 3}, {4, 1}},
+            {{0, 4}, {3, 2}, {3, 2}, {3, 2}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 1}},
+            {{4, 1}, {3, 2}, {3, 2}, {3, 2}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 1}},
+            {{4, 1}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {2, 2}, {2, 2}, {2, 2}, {4, 1}},
+            {{4, 1}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {2, 2}, {2, 2}, {2, 2}, {1, 4}},
+            {{4, 1}, {0, 3}, {0, 3}, {0, 3}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {2, 2}, {2, 2}, {2, 2}, {1, 4}},
+            {{0, 5}, {0, 3}, {0, 3}, {0, 3}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {2, 6}, {4, 0}, {1, 4}},
+            {{0, 5}, {0, 3}, {0, 3}, {0, 3}, {4, 0}, {0, 2}, {0, 2}, {0, 2}, {4, 0}, {4, 0}, {2, 3}, {2, 3}, {2, 3}, {2, 6}, {4, 0}, {1, 4}},
+            {{0, 5}, {0, 6}, {0, 6}, {0, 6}, {0, 6}, {0, 2}, {0, 2}, {0, 2}, {4, 0}, {4, 0}, {2, 3}, {2, 3}, {2, 3}, {2, 6}, {4, 0}, {1, 4}},
+            {{0, 5}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {0, 2}, {0, 2}, {0, 2}, {4, 0}, {4, 0}, {2, 3}, {2, 3}, {2, 3}, {2, 6}, {4, 0}, {4, 1}},
+            {{4, 1}, {4, 1}, {2, 4}, {2, 4}, {2, 4}, {2, 4}, {2, 4}, {4, 1}, {4, 1}, {4, 1}, {4, 1}, {2, 5}, {2, 5}, {2, 5}, {2, 5}, {4, 1}},};
     ArrayList<String> road = new ArrayList<String>();
     ArrayList<String> home = new ArrayList<String>();
     ArrayList<String> start = new ArrayList<String>();
     ArrayList<String> slider = new ArrayList<String>();
+
     //determine whether it is home
-    int is_home(Pawn pawn){
-        for (int i=0;i<16;i++){
-            for (int j=0;j<16;j++){
-                if(whole_board[pawn.get_x()][pawn.get_y()][2]==2){
+    int is_home(Pawn pawn) {
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 16; j++) {
+                if (whole_board[pawn.get_x()][pawn.get_y()][2] == 2) {
                     return 1;
 
                 }
@@ -60,35 +62,139 @@ class gameBoard extends Main {
 
     gameBoard() {
         deck DECK = new deck();
-        image GAMEBOARD=new image("Sorry-board.jpg");
+        image GAMEBOARD = new image("Sorry-board.jpg");
         image drawPile = new image("Sorry-Card-Back-Horizontal.png");
-        drawPile.move(2025,1415);
-
+        drawPile.move(2025, 1415);
+        card CARD;
         drawPile.show();
-                    clickSpace c = new clickSpace(drawPile);
-            c.button.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    DECK.draw();
-                }
-            });
-            //all pawn starting positons
-            int[][] pos = {
-                    {2,10},{2,11},{2,12},{3,11},
-                    {3,2},{4,2},{5,2},{4,3},
-                    {13,3},{13,4},{13,5},{12,4},
-                    {12,13},{11,13},{10,13},{11,12}
-            };
-            int k=0;
-        for (int j = 0; j < 16; j++) {
-            pawns[j]=new Pawn(k,pos[j][0],pos[j][1]);
-            k=(j+1)/4;
-        }
-        Pawn test = new Pawn(0,0,0);
-        Pawn test2 = new Pawn(0,15,15);
-        test.move(0,15,1);
-        test2.move(0,15,2);
+        clickSpace c = new clickSpace(drawPile);
+        c.button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                card CARD = DECK.draw();
+                switch (CARD.cardNumber) {
+                    case 1://can be used to get out of start
+                        /**
+                         * let the pawn move to start position
+                         */
+                        break;
+                    case 2://can be used to get out of start and draw again
+                        /**
+                         * let the pawn move to start position
+                         * call deck.draw() again for a new card
+                         */
+                        break;
+                    case 4://goes backwards 4
+                        /**
+                         * four cases:
+                         * 1) x = 16, y-= 4
+                         * 2) y = 16, x -= 4
+                         * 3) x = 0, y -=4
+                         * 4) y = 0, x -=4
+                         *
+                         * need to check for corners ...
+                         */
+                        break;
+                    case 5:
+                        /**
+                         * four cases:
+                         * 1) x = 16, y += 5
+                         * 2) y = 16, x += 5
+                         * 3) x = 0, y +=5
+                         * 4) y = 0, x +=5
+                         */
+                        break;
+                    case 7://seven can be split up
+                        /**
+                         * Move one pawn seven spaces forward, or split the seven spaces between two pawns (such as four spaces for one pawn and three for another).
+                         * This makes it possible for two pawns to enter Home on the same turn, for example.
+                         * The seven cannot be used to move a pawn out of Start, even if the player splits it into a six and one or a five and two.
+                         * The entire seven spaces must be used or the turn is lost. You may not move backwards with a split.
+                         * oof
+                         * keep counter for number of coordinates/steps taken (?)
+                         * no cases here, just need to give user full reign somehow... and options to choose what they wanna do....
+                         */
 
+                        break;
+                    case 10://can also go backwards 1
+                        /**
+                         * four basic cases if choose to move forward:
+                         * 1) x = 16, y+= 10
+                         * 2) y = 16, x += 10
+                         * 3) x = 0, y += 10
+                         * 4) y = 0, x += 10
+                         *
+                         * four cases if choose to move back one:
+                         * 1) x = 16, y-= 1
+                         * 2) y = 16, x -= 1
+                         * 3) x = 0, y -= 1
+                         * 4) y = 0, x -= 1
+                         */
+
+                        break;
+                    case 11://can be used to replace or moved!
+                        /**
+                         *Move 11 spaces forward, or switch the places of one of the player's own pawns and an opponent's pawn.
+                         *  A player that cannot move 11 spaces is not forced to switch and instead can forfeit the turn.
+                         *  An 11 cannot be used to switch a pawn that is in a Safety Zone.
+                         *
+                         *  if switch:
+                         */
+
+                        break;
+                    case 12:
+                        /**
+                        * four cases :
+                         * 1) x = 16, y+=12
+                         * 2) y = 16, x +=12
+                         * 3) x = 0, y +=12
+                         * 4) y = 0, x +=12
+                         */
+                        break;
+                    case 0://sorry!
+
+                        break;
+                }
+            }
+
+
+        });
+
+        //all pawn starting positions
+        int[][] pos = {
+                {2, 10}, {2, 11}, {2, 12}, {3, 11},
+                {3, 2}, {4, 2}, {5, 2}, {4, 3},
+                {13, 3}, {13, 4}, {13, 5}, {12, 4},
+                {12, 13}, {11, 13}, {10, 13}, {11, 12}
+        };
+        int k = 0;
+        for (int j = 0; j < 16; j++) {
+            pawns[j] = new Pawn(k, pos[j][0], pos[j][1]);
+            k = (j + 1) / 4;
+        }
+//        Pawn test = new Pawn(0,0,0);
+//        Pawn test2 = new Pawn(0,15,15);
+//        test.move(0,15,1);
+//        test2.move(0,15,2);
+        int player_turn = whosTurn();
+
+
+
+    }
+
+
+    //NEED TO BEGIN THE GAME; SHOW WHOSE TURN IT IS
+
+    private static int whosTurn(){
+        Random rand = new Random();
+        int num = rand.nextInt(4);
+        return num;
+    }
+
+    public void mouseClicked(MouseEvent e){
+        int x = e.getX();
+        int y = e.getY();
+        System.out.println("x " + x + " y " + y);
     }
 
 }
