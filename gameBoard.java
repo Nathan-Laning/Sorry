@@ -41,6 +41,7 @@ class gameBoard extends Main {
             });
 
 
+
     }
 
 }
@@ -60,6 +61,7 @@ class gameBoard extends Main {
  * 3 -> green
  * 1 -> blue
  * 2 -> yellow
+ * 4 -> white
  * And empty call will default to a regular space unless told otherwise
  * <p>
  * these spaces can also be populated with pawns utilizing the add and remove pawn method calls
@@ -77,12 +79,60 @@ class space extends gameBoard{
     private boolean slide = false, junction = false;
     public boolean holdMultiple = true;
     private int color;
-    private ArrayList<pawn> occupants = new ArrayList<>();
+    private ArrayList<Pawn> occupants = new ArrayList<>();
     public ArrayList<space> junctionSpaces = new ArrayList<>();
     private int slideLength;
     private int size=305;
     int x,y;
     clickSpace A;
+    //String[][] whole_board=new String[16][16];
+    //1:road
+    //2:home
+    //3:start
+    //4:slider
+    //5:junction
+    //6:safe
+    //0:null
+    //basic layout for gameboard
+    protected int[][][] whole_board = {
+            { {4,1}, {3,5}, {3,5}, {3,5}, {3,5}, {4,1}, {4,1}, {4,1}, {4,1}, {3,4}, {3,4}, {3,4}, {3,4}, {3,4}, {4,1}, {4,1} },
+            { {4,1}, {4,0}, {3,6}, {3,3}, {3,3}, {3,3}, {4,0}, {4,0}, {1,2}, {1,2}, {1,2}, {4,0}, {4,0}, {4,0}, {4,0}, {1,5}},
+            { {0,4}, {4,0}, {3,6}, {3,3}, {3,3}, {3,3}, {4,0}, {4,0}, {1,2}, {1,2}, {1,2}, {1,6}, {1,6}, {1,6}, {1,6}, {1,5}},
+            { {0,4}, {4,0}, {3,6}, {3,3}, {3,3}, {3,3}, {4,0}, {4,0}, {1,2}, {1,2}, {1,2}, {4,0}, {1,3}, {1,3}, {1,3}, {1,5}},
+            { {0,4}, {4,0}, {3,6}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {1,3}, {1,3}, {1,3}, {1,5}},
+            { {0,4}, {3,2}, {3,2}, {3,2}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {1,3}, {1,3}, {1,3}, {4,1}},
+            { {0,4}, {3,2}, {3,2}, {3,2}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,1}},
+            { {4,1}, {3,2}, {3,2}, {3,2}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,1}},
+            { {4,1}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {2,2}, {2,2}, {2,2}, {4,1}},
+            { {4,1}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {2,2}, {2,2}, {2,2}, {1,4}},
+            { {4,1}, {0,3}, {0,3}, {0,3}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {2,2}, {2,2}, {2,2}, {1,4}},
+            { {0,5}, {0,3}, {0,3}, {0,3}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {2,6}, {4,0}, {1,4}},
+            { {0,5}, {0,3}, {0,3}, {0,3}, {4,0}, {0,2}, {0,2}, {0,2}, {4,0}, {4,0}, {2,3}, {2,3}, {2,3}, {2,6}, {4,0}, {1,4}},
+            { {0,5}, {0,6}, {0,6}, {0,6}, {0,6}, {0,2}, {0,2}, {0,2}, {4,0}, {4,0}, {2,3}, {2,3}, {2,3}, {2,6}, {4,0}, {1,4}},
+            { {0,5}, {4,0}, {4,0}, {4,0}, {4,0}, {0,2}, {0,2}, {0,2}, {4,0}, {4,0}, {2,3}, {2,3}, {2,3}, {2,6}, {4,0}, {4,1}},
+            { {4,1}, {4,1}, {2,4}, {2,4}, {2,4}, {2,4}, {2,4}, {4,1}, {4,1}, {4,1}, {4,1}, {2,5}, {2,5}, {2,5}, {2,5}, {4,1} },};
+    ArrayList<String> road = new ArrayList<String>();
+    ArrayList<String> home = new ArrayList<String>();
+    ArrayList<String> start = new ArrayList<String>();
+    ArrayList<String> slider = new ArrayList<String>();
+    //determine whether it is home
+    int is_home(Pawn pawn){
+        for (int i=0;i<16;i++){
+            for (int j=0;j<16;j++){
+                if(whole_board[pawn.get_x()][pawn.get_y()][2]==2){
+                    return 1;
+
+                }
+            }
+        }
+        return 0;
+    }
+
+
+
+
+
+
 
     space() {
     }
@@ -124,11 +174,11 @@ class space extends gameBoard{
         return holdMultiple;
     }
 
-    public void addOccupent(pawn p) {
+    public void addOccupent(Pawn p) {
         occupants.add(p);
     }
 
-    public ArrayList<pawn> getOccupants() {
+    public ArrayList<Pawn> getOccupants() {
         try {
             return occupants;
         } catch (NullPointerException n) {
@@ -137,7 +187,7 @@ class space extends gameBoard{
         }
     }
 
-    public pawn removeOccupant() {
+    public Pawn removeOccupant() {
         try {
             return occupants.remove(0);
         } catch (NullPointerException n) {
@@ -166,13 +216,21 @@ class space extends gameBoard{
  * TODO: Need click-ability, But we could just use the space its in instead
  * TODO: Imaging
  */
-class pawn extends Main {
+class Pawn extends Main {
     private int color;
 
     // returns color pawn
 //    Display.image PAWN = DISPLAY.new image("Sorry-pawns.png",4,color++);
-    pawn(int color) {
+    Pawn(int color) {
         this.color = color;
+    }
+
+    //NEED TO RETURN PAWN'S POSITION IN ARRAY
+    public static int get_x() {
+        return 0;
+    }
+    public static int get_y() {
+        return 0;
     }
 
     public int getColor() {
