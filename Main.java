@@ -36,7 +36,7 @@ class mainMenu extends Main{
         loadGame.button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                loadGame();
+//                loadGame();
                 loadGame.disable();
                 rules.disable();
                 newGame.disable();
@@ -63,7 +63,23 @@ class mainMenu extends Main{
             //open rules page
             //allow exit
             //re-instantiate game if started
+            //*****TESTING: Still need to work on re sizing instructions image
+
+            image back = new image("back.jpg");
+            image infoPage = new image("sorry_rules.png");
+            back.reSize(70, 20);
+            back.move(10, 10);
+            clickSpace backButton = new clickSpace(back);
+            backButton.button.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    //image clickedBack = new image("clickedBack.jpg");
+                    new mainMenu();
+                }
+            });
+
         }
+
         private void loadGame(){
             //figure out load game dialogue
 

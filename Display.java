@@ -29,7 +29,7 @@ class Display {
     private static JLayeredPane panel = new JLayeredPane();
     private static final JFrame frame = new JFrame("Sorry!");
     private static int heightGap=22,widthGap=0;//default for osx and linux
-    public static int size = 1000;
+    public static int size = 600;
     public static double ratio = size/5000.0;
     public final image glow;
 
@@ -271,9 +271,9 @@ class Display {
          * @param width desired width
          * @param height desired height
          */
-         private void reSize(int width,int height){
-            this.height=(int)(height/(size/5000.0));
-            this.width=(int)(width/(size/5000.0));
+        void reSize(int width, int height){
+            this.height=(int)(height/ratio);
+            this.width=(int)(width/ratio);
             reScale();
         }
         /**
