@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * TODO: need to figure out moving around the board as well, but spaces should probably be sequential?
  */
 class gameBoard extends Main {
-    Pawn[][] pawns = new Pawn[4][4];
+    Pawn[] pawns = new Pawn[16];
 
     protected int[][][] whole_board = {
             { {4,1}, {3,5}, {3,5}, {3,5}, {3,5}, {4,1}, {4,1}, {4,1}, {4,1}, {3,4}, {3,4}, {3,4}, {3,4}, {3,4}, {4,1}, {4,1} },
@@ -72,38 +72,22 @@ class gameBoard extends Main {
                     DECK.draw();
                 }
             });
-//            Pawn PWN = new Pawn(0);
-//            PWN.placePawn(new Point(5,5));
-
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j <4 ; j++) {
-                pawns[i][j]=new Pawn(i);
-                placePawnAtStart(pawns[i][j]);
-            }
+            //all pawn starting positons
+            int[][] pos = {
+                    {2,10},{2,11},{2,12},{3,11},
+                    {3,2},{4,2},{5,2},{4,3},
+                    {13,3},{13,4},{13,5},{12,4},
+                    {12,13},{11,13},{10,13},{11,12}
+            };
+            int k=0;
+        for (int j = 0; j < 16; j++) {
+            pawns[j]=new Pawn(k,pos[j][0],pos[j][1]);
+            k=(j+1)/4;
         }
-
-    }
-
-    void placePawnAtStart(Pawn p) {
-        Point position=new Point(0,0);
-        switch (p.getColor()){
-            case 0:
-                position=new Point(2,10);
-                break;
-            case 1:
-                position=new Point(5,2);
-                break;
-            case 2:
-                position=new Point(15,5);
-                break;
-            case 3:
-                position=new Point(12,13);
-                break;
-        }
-
-        p.placePawn(position);
-        //place pawn at position
-        //  end
+        Pawn test = new Pawn(0,0,0);
+        Pawn test2 = new Pawn(0,15,15);
+        test.move(0,15,1);
+        test2.move(0,15,2);
 
     }
 
@@ -250,10 +234,16 @@ class space extends gameBoard{
 class Pawn extends Main {
     private int color;
     private int x,y;
+    private int originalX,originalY;
 
     // returns color pawn
     image PAWN=null;
-    Pawn(int color) {
+    Pawn(int color,int x, int y) {
+        originalX=x;
+        originalY=y;
+        this.x=x;
+        this.y=y;
+
         this.color = color;
         int placement=0;
         switch (color){
@@ -271,12 +261,13 @@ class Pawn extends Main {
                 break;
         }
         PAWN = new image("Sorry-pawns.png",4,placement);
+        placePawn(x,y);
     }
 
-    void placePawn(Point P){
-        PAWN.move((P.x*305)+60,(P.y*305)+60);
-        this.x=P.x;
-        this.y=P.y;
+    void placePawn(int x, int y){
+        PAWN.move((x*300)+120+2*x,(y*300)+120+2*y);
+        this.x=x;
+        this.y=y;
     }
     //NEED TO RETURN PAWN'S POSITION IN ARRAY
     public static int get_x() {
@@ -286,6 +277,11 @@ class Pawn extends Main {
         return 0;
     }
 
+    public void move(int x, int y, double seconds){
+        PAWN.move((x*300)+120+2*x,(y*300)+120+2*y,1);
+        this.x=x;
+        this.y=y;
+    }
     public int getColor() {
         return color;
     }
