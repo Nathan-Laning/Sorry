@@ -30,6 +30,19 @@ class gameBoard extends Main {
             Clicked(e.getX(),e.getY());
         }
         };
+    //String[][] whole_board=new String[16][16];
+    //1:road
+    //2:home
+    //3:start
+    //4:slider
+    //5:junction
+    //6:safe
+    //0:null
+    //basic layout for gameboard
+
+
+
+
     protected int[][][] whole_board = {
             { {4,1}, {3,5}, {3,5}, {3,5}, {3,5}, {4,1}, {4,1}, {4,1}, {4,1}, {3,4}, {3,4}, {3,4}, {3,4}, {3,4}, {4,1}, {4,1}},
             { {4,1}, {4,0}, {3,6}, {3,3}, {3,3}, {3,3}, {4,0}, {4,0}, {1,2}, {1,2}, {1,2}, {4,0}, {4,0}, {4,0}, {4,0}, {1,5}},
@@ -47,11 +60,6 @@ class gameBoard extends Main {
             { {0,5}, {0,6}, {0,6}, {0,6}, {0,6}, {0,2}, {0,2}, {0,2}, {4,0}, {4,0}, {2,3}, {2,3}, {2,3}, {2,6}, {4,0}, {1,4}},
             { {0,5}, {4,0}, {4,0}, {4,0}, {4,0}, {0,2}, {0,2}, {0,2}, {4,0}, {4,0}, {2,3}, {2,3}, {2,3}, {2,6}, {4,0}, {4,1}},
             { {4,1}, {4,1}, {2,4}, {2,4}, {2,4}, {2,4}, {2,4}, {4,1}, {4,1}, {4,1}, {4,1}, {2,5}, {2,5}, {2,5}, {2,5}, {4,1}},};
-    ArrayList<String> road = new ArrayList<String>();
-    ArrayList<String> home = new ArrayList<String>();
-    ArrayList<String> start = new ArrayList<String>();
-    ArrayList<String> slider = new ArrayList<String>();
-    //determine whether it is home
     int is_home(Pawn pawn){
         for (int i=0;i<16;i++){
             for (int j=0;j<16;j++){
@@ -186,8 +194,8 @@ class gameBoard extends Main {
 
 
     public void Clicked(int x,int y) { ;
-        double clicked_space_x=0;
-        double clicked_space_y=0;
+        double clicked_space_x=15;
+        double clicked_space_y=15;
         for (int i = 0; i < 16; i++) {
             double lowerBound = i*(size/16)+(ratio*60);
             double upperBound = lowerBound+(size/16)+(ratio*60);
@@ -224,99 +232,33 @@ class gameBoard extends Main {
  * The Space class also populates the pawns when the start is called for the respective color.
  * <p>
  * TODO:need to add positions on the board for items like pawns to navigate to (i.e. pawn.placeAt = (x,y))
- * TODO:    Also need ability to hold multiple pawns in multiple places (i.e. home)
+ * TODO:Also need ability to hold multiple pawns in multiple places (i.e. home)
  * TODO:Need click-ability (maybe even hover effect?)
  */
-class space extends gameBoard{
+class space{
 
-    private boolean slide = false, junction = false;
-    public boolean holdMultiple = true;
-    private int color;
-    private ArrayList<Pawn> occupants = new ArrayList<>();
-    public ArrayList<space> junctionSpaces = new ArrayList<>();
-    private int slideLength;
-    private int size=305;
-    int x,y;
-    clickSpace A;
-    //String[][] whole_board=new String[16][16];
-    //1:road
-    //2:home
-    //3:start
-    //4:slider
-    //5:junction
-    //6:safe
-    //0:null
-    //basic layout for gameboard
-
-
-
-
-
-
-
-
+    private boolean slide = false,safe=false;
+    private int color=4;
+    private int spaceSize=305;
     space() {
     }
-
-    //slide creation, see above for use
-    space(int color, int slideLength) {
-        if (color > 3 || color < 0) {
-            System.out.println("Incorrect color for space!");
-        } else {
-            this.slideLength = slideLength;
-            this.color = color;
-        }
+    space(int color){
+        this.color=color;
+        safe=true;
     }
-
-    Point getPawnPlacement(){
-        if(canHoldMultiple()){
-            return null;
-        }else return new Point(x+40,y+40);
-    }
-    /**
-     * Basic getters, all return values within.
-     *
-     * @return Item Inquired
-     */
+//    space(int color){
+//        this.slide=true;
+//        this.color=color;
+//    }
     public boolean isSlide() {
         return slide;
     }
-
-
     public int getColor() {
-        return color;
+            return color;
     }
 
-    public void setHoldMultiple(boolean bool) {
-        holdMultiple = bool;
-    }
-
-    public boolean canHoldMultiple() {
-        return holdMultiple;
-    }
-
-    public void addOccupent(Pawn p) {
-        occupants.add(p);
-    }
-
-    public ArrayList<Pawn> getOccupants() {
-        try {
-            return occupants;
-        } catch (NullPointerException n) {
-            System.out.println("NO PAWNS TO BE SEEN IN SPACE");
-            return null;
-        }
-    }
-
-    public Pawn removeOccupant() {
-        try {
-            return occupants.remove(0);
-        } catch (NullPointerException n) {
-            System.out.println("NO PAWNS TO BE REMOVED FROM SPACE");
-            return null;
-        }
-    }
 }
+
 
 /**
  * /- PAWN -/
