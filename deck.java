@@ -11,30 +11,34 @@ import java.util.Random;
  * | |        |
  * | |________|
  * |/________/
- *
+ * <p>
  * CREATES A NEW DECK OF SORRY CARDS THAT CAN BE DRAWN.
- * TODO: Need image processing? if so:
- * TODO:  ->  positioning processes for above i.e. deck.graphicslocation = (x,y)
- * TODO:  ->  need click-ability
- *
  */
-public class deck extends Main{
+public class deck extends Main {
     private ArrayList<card> DECK = new ArrayList<>();
     private Random R = new Random(System.currentTimeMillis());
-
+    image discardPile = null;
     // image location
     private image[] deckImages = new image[13];
 
     deck() {
+        discardPile = new image("Sorry-Card-Back-Horizontal.png");
+        discardPile.move((int) (2025 * ratio), (int) (2930 * ratio));
+        shuffle();
+        loadDeckImages();
+    }
 
+    //refreshes the deck with all new cards, but skips re-rendering the images.
+    void shuffle() {
+        discardPile.hide();
         //adding 5 "one cards"
         card CARD = new card(1);
         for (int i = 0; i < 5; i++) {
             DECK.add(CARD);
         }
         //adding all other cards
-        for (int j = 0; j < 12; j++) {
-            if (j != 1 && j != 6&& j!=9) {
+        for (int j = 0; j < 13; j++) {
+            if (j != 1 && j != 6 && j != 9) {
                 for (int i = 0; i < 4; i++) {
                     card C = new card(j);
                     DECK.add(C);
@@ -42,25 +46,25 @@ public class deck extends Main{
             }
 
         }
-        loadDeckImages();
     }
+
     //loads all images to cutback on loading in-game
-    private void loadDeckImages(){
+    private void loadDeckImages() {
         String name = "Sorry-cards-Enlarged-Shadow.png";
-        deckImages[0]=new image(name,12,12);
-        deckImages[1]=new image(name,12,2);
-        deckImages[2]=new image(name,12,3);
-        deckImages[3]=new image(name,12,4);
-        deckImages[4]=new image(name,12,5);
-        deckImages[5]=new image(name,12,6);
-        deckImages[7]=new image(name,12,7);
-        deckImages[8]=new image(name,12,8);
-        deckImages[10]=new image(name,12,9);
-        deckImages[11]=new image(name,12,10);
-        deckImages[12]=new image(name,12,11);
+        deckImages[0] = new image(name, 12, 12);
+        deckImages[1] = new image(name, 12, 2);
+        deckImages[2] = new image(name, 12, 3);
+        deckImages[3] = new image(name, 12, 4);
+        deckImages[4] = new image(name, 12, 5);
+        deckImages[5] = new image(name, 12, 6);
+        deckImages[7] = new image(name, 12, 7);
+        deckImages[8] = new image(name, 12, 8);
+        deckImages[10] = new image(name, 12, 9);
+        deckImages[11] = new image(name, 12, 10);
+        deckImages[12] = new image(name, 12, 11);
         for (int j = 0; j < deckImages.length; j++) {
-            if(j!=6&&j!=9){
-                deckImages[j].move(1990,1820);
+            if (j != 6 && j != 9) {
+                deckImages[j].move((int) (1990 * ratio), (int) (ratio * 1820));
                 deckImages[j].hide();
             }
         }
@@ -71,15 +75,18 @@ public class deck extends Main{
      * once empty returns null to indicate the deck is in need of reshuffling.
      */
     public card draw() {
-       if(DECK.size()==0) {
-           return null;
-       }else {
-           card newCard = DECK.remove(R.nextInt(DECK.size()));
-           System.out.println(newCard.cardNumber);
-           deckImages[newCard.cardNumber].show();
-           return newCard;
-       }
+        System.out.println(DECK.size());
+        if (DECK.size() == 0) {
 
+            shuffle();
+        }
+        if (DECK.size() == 44) {
+            discardPile.show();
+        }
+        card newCard = DECK.remove(R.nextInt(DECK.size()));
+        System.out.println(newCard.cardNumber);
+        deckImages[newCard.cardNumber].show();
+        return newCard;
     }
 }
 
@@ -93,10 +100,8 @@ public class deck extends Main{
  * |        |
  * |        |
  * |________|
- *
+ * <p>
  * HOLDS INFORMATION FOR EACH "CARD" TO BE CALLED AND USED
- * TODO: need image processing???
- * TODO: positioning processes for above i.e. card.graphicslocation = (x,y)
  */
 class card {
     public int cardNumber = 0;
@@ -160,7 +165,7 @@ class card {
         if (num == 0 && replace) {
             return true;
         }
-        if(num>0 && split)
+        if (num > 0 && split)
             return true;
         distanceForward -= num;
         return false;

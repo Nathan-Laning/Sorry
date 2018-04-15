@@ -1,6 +1,4 @@
-import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -18,18 +16,21 @@ import java.util.Random;
  * there is a different board for each color
  * the information is saved for each board as its own class below.
  * <p>
- * TODO: How would we want to save/create the board?
- * TODO: need to incorporate drawing cards? or should that be in main.....
- * TODO: need to figure out moving around the board as well, but spaces should probably be sequential?
  */
 class gameBoard extends Main {
+    clickSpace board = null;
+    space[][] spaces;
     Pawn[] pawns = new Pawn[16];
-    int x,y;
+    int x, y;
+    Thread D, P, S, H;
     public java.awt.event.MouseListener M = new java.awt.event.MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
-            Clicked(e.getX(),e.getY());
+            Clicked(e.getX(), e.getY());
         }
-        };
+    };
+
+
+    deck DECK;
     //String[][] whole_board=new String[16][16];
     //1:road
     //2:home
@@ -41,46 +42,71 @@ class gameBoard extends Main {
     //basic layout for gameboard
 
 
-
-
     protected int[][][] whole_board = {
-            { {4,1}, {3,5}, {3,5}, {3,5}, {3,5}, {4,1}, {4,1}, {4,1}, {4,1}, {3,4}, {3,4}, {3,4}, {3,4}, {3,4}, {4,1}, {4,1}},
-            { {4,1}, {4,0}, {3,6}, {3,3}, {3,3}, {3,3}, {4,0}, {4,0}, {1,2}, {1,2}, {1,2}, {4,0}, {4,0}, {4,0}, {4,0}, {1,5}},
-            { {0,4}, {4,0}, {3,6}, {3,3}, {3,3}, {3,3}, {4,0}, {4,0}, {1,2}, {1,2}, {1,2}, {1,6}, {1,6}, {1,6}, {1,6}, {1,5}},
-            { {0,4}, {4,0}, {3,6}, {3,3}, {3,3}, {3,3}, {4,0}, {4,0}, {1,2}, {1,2}, {1,2}, {4,0}, {1,3}, {1,3}, {1,3}, {1,5}},
-            { {0,4}, {4,0}, {3,6}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {1,3}, {1,3}, {1,3}, {1,5}},
-            { {0,4}, {3,2}, {3,2}, {3,2}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {1,3}, {1,3}, {1,3}, {4,1}},
-            { {0,4}, {3,2}, {3,2}, {3,2}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,1}},
-            { {4,1}, {3,2}, {3,2}, {3,2}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,1}},
-            { {4,1}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {2,2}, {2,2}, {2,2}, {4,1}},
-            { {4,1}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {2,2}, {2,2}, {2,2}, {1,4}},
-            { {4,1}, {0,3}, {0,3}, {0,3}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {2,2}, {2,2}, {2,2}, {1,4}},
-            { {0,5}, {0,3}, {0,3}, {0,3}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {4,0}, {2,6}, {4,0}, {1,4}},
-            { {0,5}, {0,3}, {0,3}, {0,3}, {4,0}, {0,2}, {0,2}, {0,2}, {4,0}, {4,0}, {2,3}, {2,3}, {2,3}, {2,6}, {4,0}, {1,4}},
-            { {0,5}, {0,6}, {0,6}, {0,6}, {0,6}, {0,2}, {0,2}, {0,2}, {4,0}, {4,0}, {2,3}, {2,3}, {2,3}, {2,6}, {4,0}, {1,4}},
-            { {0,5}, {4,0}, {4,0}, {4,0}, {4,0}, {0,2}, {0,2}, {0,2}, {4,0}, {4,0}, {2,3}, {2,3}, {2,3}, {2,6}, {4,0}, {4,1}},
-            { {4,1}, {4,1}, {2,4}, {2,4}, {2,4}, {2,4}, {2,4}, {4,1}, {4,1}, {4,1}, {4,1}, {2,5}, {2,5}, {2,5}, {2,5}, {4,1}},};
-    int is_home(Pawn pawn){
-        for (int i=0;i<16;i++){
-            for (int j=0;j<16;j++){
-                if(whole_board[pawn.get_x()][pawn.get_y()][2]==2){
-                    return 1;
-                }
-            }
+            {{4, 1}, {3, 5}, {3, 5}, {3, 5}, {3, 5}, {4, 1}, {4, 1}, {4, 1}, {4, 1}, {3, 4}, {3, 4}, {3, 4}, {3, 4}, {3, 4}, {4, 1}, {4, 1}},
+            {{4, 1}, {4, 0}, {3, 6}, {3, 3}, {3, 3}, {3, 3}, {4, 0}, {4, 0}, {1, 2}, {1, 2}, {1, 2}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {1, 5}},
+            {{0, 4}, {4, 0}, {3, 6}, {3, 3}, {3, 3}, {3, 3}, {4, 0}, {4, 0}, {1, 2}, {1, 2}, {1, 2}, {1, 6}, {1, 6}, {1, 6}, {1, 6}, {1, 5}},
+            {{0, 4}, {4, 0}, {3, 6}, {3, 3}, {3, 3}, {3, 3}, {4, 0}, {4, 0}, {1, 2}, {1, 2}, {1, 2}, {4, 0}, {1, 3}, {1, 3}, {1, 3}, {1, 5}},
+            {{0, 4}, {4, 0}, {3, 6}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {1, 3}, {1, 3}, {1, 3}, {1, 5}},
+            {{0, 4}, {3, 2}, {3, 2}, {3, 2}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {1, 3}, {1, 3}, {1, 3}, {4, 1}},
+            {{0, 4}, {3, 2}, {3, 2}, {3, 2}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 1}},
+            {{4, 1}, {3, 2}, {3, 2}, {3, 2}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 1}},
+            {{4, 1}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {2, 2}, {2, 2}, {2, 2}, {4, 1}},
+            {{4, 1}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {2, 2}, {2, 2}, {2, 2}, {1, 4}},
+            {{4, 1}, {0, 3}, {0, 3}, {0, 3}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {2, 2}, {2, 2}, {2, 2}, {1, 4}},
+            {{0, 5}, {0, 3}, {0, 3}, {0, 3}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {2, 6}, {4, 0}, {1, 4}},
+            {{0, 5}, {0, 3}, {0, 3}, {0, 3}, {4, 0}, {0, 2}, {0, 2}, {0, 2}, {4, 0}, {4, 0}, {2, 3}, {2, 3}, {2, 3}, {2, 6}, {4, 0}, {1, 4}},
+            {{0, 5}, {0, 6}, {0, 6}, {0, 6}, {0, 6}, {0, 2}, {0, 2}, {0, 2}, {4, 0}, {4, 0}, {2, 3}, {2, 3}, {2, 3}, {2, 6}, {4, 0}, {1, 4}},
+            {{0, 5}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {0, 2}, {0, 2}, {0, 2}, {4, 0}, {4, 0}, {2, 3}, {2, 3}, {2, 3}, {2, 6}, {4, 0}, {4, 1}},
+            {{4, 1}, {4, 1}, {2, 4}, {2, 4}, {2, 4}, {2, 4}, {2, 4}, {4, 1}, {4, 1}, {4, 1}, {4, 1}, {2, 5}, {2, 5}, {2, 5}, {2, 5}, {4, 1}},};
+
+//    int is_home(Pawn pawn) {
+//        for (int i = 0; i < 16; i++) {
+//            for (int j = 0; j < 16; j++) {
+//                if (whole_board[Pawn.get_x()][Pawn.get_y()][2] == 2) {
+//                    return 1;
+//                }
+//            }
+//        }
+//        return 0;
+//    }
+
+    private void loadAssets(){
+        image LOADINGSCREEN = new image("loading4.png");
+        LOADINGSCREEN.setLayer(600);
+        image GAMEBOARD = new image("Sorry-board.jpg");
+        board = new clickSpace(GAMEBOARD);
+        board.disable();
+        GAMEBOARD.show();
+        //starting the spaces load
+        S = new Thread(() -> loadSpaces());
+        S.start();
+        //starting the deck load
+        D = new Thread(() -> loadDeck());
+        D.start();
+        //starting the pawn load
+        P = new Thread(() -> loadPawns());
+        P.start();
+        try {
+            P.join();
+            S.join();
+            D.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        return 0;
+
+        board.button.addMouseListener(M);
+        LOADINGSCREEN.move(5000,5000);
     }
 
-    gameBoard() {
-        deck DECK = new deck();
-        image GAMEBOARD=new image("Sorry-board.jpg");
-        image drawPile = new image("Sorry-Card-Back-Horizontal.png");
-        drawPile.move(2025,1415);
-        clickSpace board = new clickSpace(GAMEBOARD);
 
-        board.disable();
+    gameBoard() {
+        loadAssets();
+        //loading background first
+        //adding drawing pile
+        image drawPile = new image("Sorry-Card-Back-Horizontal.png");
+        drawPile.move((int) (2025 * ratio), (int) (1415 * ratio));
         int player_turn = whosTurn();
-        drawPile.show();
         clickSpace c = new clickSpace(drawPile);
         c.button.addMouseListener(new MouseAdapter() {
             @Override
@@ -173,38 +199,101 @@ class gameBoard extends Main {
 
 
         });
-            int[][] pos = {
-                    {2,10},{2,11},{2,12},{3,11},
-                    {3,2},{4,2},{5,2},{4,3},
-                    {13,3},{13,4},{13,5},{12,4},
-                    {12,13},{11,13},{10,13},{11,12}
-            };
-            int k=0;
-        for (int j = 0; j < 16; j++) {
-            pawns[j]=new Pawn(k,pos[j][0],pos[j][1]);
-            k=(j+1)/4;
+    }
+
+
+    /**
+     * /- LOAD SPACES -/
+     * Loading all of the spaces to be interacted with.
+     */
+    private void loadSpaces() {
+        spaces = new space[16][16];
+        //ring of board
+        for (int i = 0; i < 16; i++) {
+            spaces[0][i] = new space();
+            spaces[15][i] = new space();
+            spaces[i][0] = new space();
+            spaces[i][15] = new space();
+        }
+        //first slide
+        for (int i = 0; i < 4; i++) {
+            spaces[0][1 + i] = new space(1);//green
+            spaces[15][14 - i] = new space(3);//yellow
+            spaces[1 + i][15] = new space(2);//blue
+            spaces[14 - i][0] = new space(0);//red
+        }
+        //second slide
+        for (int i = 0; i < 5; i++) {
+            spaces[0][9 + i] = new space(1);//green
+            spaces[15][6 - i] = new space(3);//yellow
+            spaces[9 + i][15] = new space(2);//blue
+            spaces[6 - i][0] = new space(0);//red
+        }
+        //home/start
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (!((j == 2 || j == 0) && i > 0)) spaces[10 + j][2 + i] = new space(0);//red
+                if (!((j == 2 || j == 0) && i > 0)) spaces[12 + j][6 + i] = new space(0);//red
+                if (!((j == 2 || j == 0) && i > 0)) spaces[2 + i][3 + j] = new space(1);//green
+                if (!((j == 2 || j == 0) && i > 0)) spaces[6 + i][1 + j] = new space(1);//green
+                if (!((j == 2 || j == 0) && i == 0)) spaces[3 + j][12 + i] = new space(2);//blue
+                if (!((j == 2 || j == 0) && i == 0)) spaces[1 + j][8 + i] = new space(2);//blue
+                if (!((j == 2 || j == 0) && i == 0)) spaces[12 + i][10 + j] = new space(3);//yellow
+                if (!((j == 2 || j == 0) && i == 0)) spaces[8 + i][12 + j] = new space(3);//yellow
+            }
+        }
+//        home walkways
+        for (int i = 0; i < 5; i++) {
+            spaces[13][1 + i] = new space(0);//red
+            spaces[1 + i][2] = new space(1);//green
+            spaces[2][10 + i] = new space(2);//blue
+            spaces[10 + i][13] = new space(3);//yellow
+        }
+//        spaces[][]
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 16; j++) {
+                try {
+                    out(spaces[i][j].getColor());
+                    spaces[i][j].moveImage(j, i);
+                } catch (NullPointerException N) {
+                    out(9);
+                }
+                System.out.print(" ");
+
+            }
+            System.out.println();
         }
     }
 
-    private static int whosTurn(){
+    private void loadDeck() {
+        DECK = new deck();
+    }
+
+    private void loadPawns() {
+        int[][] pos = {
+                {2, 10}, {2, 11}, {2, 12}, {3, 11},
+                {3, 2}, {4, 2}, {5, 2}, {4, 3},
+                {13, 3}, {13, 4}, {13, 5}, {12, 4},
+                {12, 13}, {11, 13}, {10, 13}, {11, 12}
+        };
+        int k = 0;
+        for (int j = 0; j < 16; j++) {
+            pawns[j] = new Pawn(k, pos[j][0], pos[j][1]);
+            k = (j + 1) / 4;
+        }
+        pawns[0].move(0, 11, .9);
+    }
+    private static int whosTurn() {
         Random rand = new Random();
         int num = rand.nextInt(4);
         return num;
     }
 
+    public void Clicked(int x, int y) {
 
-    public void Clicked(int x,int y) { ;
-        double clicked_space_x=15;
-        double clicked_space_y=15;
-        for (int i = 0; i < 16; i++) {
-            double lowerBound = i*(size/16)+(ratio*60);
-            double upperBound = lowerBound+(size/16)+(ratio*60);
-            if(lowerBound<x && upperBound>x) clicked_space_x=i;
-            if(lowerBound<y && upperBound>y) clicked_space_y=i;
-        }
-        System.out.println(clicked_space_y);
-        pawns[0].move((int)clicked_space_x,(int)clicked_space_y,1);
+        pawns[0].moveForward();
     }
+
 }
 
 /**
@@ -229,34 +318,47 @@ class gameBoard extends Main {
  * as before, an add call takes an int as the team (see above) a remove call needs no input
  * and there will be the test call "isFilled"to see if a space is filled
  * <p>
- * The Space class also populates the pawns when the start is called for the respective color.
- * <p>
- * TODO:need to add positions on the board for items like pawns to navigate to (i.e. pawn.placeAt = (x,y))
- * TODO:Also need ability to hold multiple pawns in multiple places (i.e. home)
- * TODO:Need click-ability (maybe even hover effect?)
  */
-class space{
+class space extends Main {
 
-    private boolean slide = false,safe=false;
-    private int color=4;
-    private int spaceSize=305;
+    private boolean slide = false, safe = false;
+    private int color = 4;
+    private int spaceSize = 305;
+    private image img;
+
     space() {
+        img = new image("space-highlight.png");
+        img.hide();
     }
-    space(int color){
-        this.color=color;
-        safe=true;
+
+    space(int color) {
+        this.color = color;
+        img = new image("space-highlight.png");
+        img.hide();
     }
-//    space(int color){
-//        this.slide=true;
-//        this.color=color;
-//    }
+
+    //displays highlight for tile
+    public void highlight() {
+        img.show();
+    }
+    //hides highlight for tile
+    public void hideHighlight() {
+        img.hide();
+    }
+    //moving the highlight images (hidden)
+    void moveImage(int x, int y) {
+        //snuck this in here, it creates safe areas where necessary
+        if (!(x == 15 || x == 0 || y == 15 || y == 0)) safe = true;
+        img.move(convertFromCooridinate(x), convertFromCooridinate(y));
+    }
+    //returns whether or not it is a sliding block
     public boolean isSlide() {
         return slide;
     }
+    //returns the color, see above for reference
     public int getColor() {
-            return color;
+        return color;
     }
-
 }
 
 
@@ -267,73 +369,174 @@ class space{
  *    / \
  *  _/_ \_
  * (______)
- * <p>
  * Pawn class saves each pawn as instigated and it is only needed to be given
  * an integer to represent its color/team:
  * 0 -> red
  * 3 -> green
  * 1 -> blue
  * 2 -> yellow
- * <p>
- * TODO: positioning based on board
- * TODO: Need click-ability, But we could just use the space its in instead
- * TODO: Imaging
+ * Movement is also handled using current directions of x and y.
+ * -> such as (0,1) is positive y (down on the screen)
+ * -> such as (-1,0) is negative x (left on the screen)
  */
 class Pawn extends Main {
     private int color;
-    private int x,y;
-    private int originalX,originalY;
+    private int[] direction,homeEntrance,boardEntrance;
+    private int x, y;
+    private int originalX, originalY;
+    private image PAWN, PAWN_HIGHLIGHT;
+    private boolean completed=false;
 
-    // returns color pawn
-    image PAWN=null;
-    Pawn(int color,int x, int y) {
-        originalX=x;
-        originalY=y;
-        this.x=x;
-        this.y=y;
 
+    /**
+     * creates new pawn based on its color, and x,y position in the coordinate  plane
+     *
+     * @param color 0, 1, 2, or 3 for red, green, blue, or yellow
+     * @param x     (0->15)
+     * @param y     (0->15)
+     */
+    Pawn(int color, int x, int y) {
+        originalX = x;
+        originalY = y;
+        this.x = x;
+        this.y = y;
         this.color = color;
-        int placement=0;
-        switch (color){
+        int placement = 0;
+        switch (color) {
             case 0:
-                placement=3;
+                placement = 3;
+                direction = new int[]{0, -1};
+                boardEntrance = new int[]{0, 11};
+                homeEntrance = new int[]{0, 13};
                 break;
             case 1:
-                placement=4;
+                placement = 4;
+                direction = new int[]{1, 0};
+                boardEntrance = new int[]{4, 0};
+                homeEntrance = new int[]{2, 0};
                 break;
             case 2:
-                placement=1;
+                placement = 1;
+                direction = new int[]{0, 1};
+                boardEntrance = new int[]{15, 4};
+                homeEntrance = new int[]{15, 2};
                 break;
             case 3:
-                placement=2;
+                placement = 2;
+                direction = new int[]{-1, 0};
+                boardEntrance = new int[]{13, 15};
+                homeEntrance = new int[]{11, 15};
                 break;
         }
-        PAWN = new image("Sorry-pawns.png",4,placement);
-        placePawn(x,y);
+        PAWN = new image("Sorry-pawns.png", 4, placement);
+        PAWN_HIGHLIGHT = new image("Sorry-pawns-highlight.png", 4, placement);
+        placePawn(x, y);
+        PAWN_HIGHLIGHT.hide();
     }
 
-    void placePawn(int x, int y){
-        PAWN.move((x*300)+120+2*x,(y*300)+120+2*y);
-        this.x=x;
-        this.y=y;
+
+    /**
+     * /- PLACE PAWN -/
+     *
+     * Places pawn at a specified coordinate location
+     *
+     * @param x (0->15)
+     * @param y (0->15)
+     */
+    void placePawn(int x, int y) {
+        PAWN_HIGHLIGHT.move(convertFromCooridinate(x), convertFromCooridinate(y));
+        PAWN.move(convertFromCooridinate(x), convertFromCooridinate(y));
+        this.x = x;
+        this.y = y;
     }
+
     //NEED TO RETURN PAWN'S POSITION IN ARRAY
-    public static int get_x() {
-        return 0;
-    }
-    public static int get_y() {
-        return 0;
+    int get_x() {
+        return x;
     }
 
-    public void move(int x, int y, double seconds){
-        PAWN.move((x*302)+120,(y*302)+120,1);
-        this.x=x;
-        this.y=y;
+    int get_y() {
+        return y;
     }
+
+    public void finish(){
+        completed=true;
+
+    }
+    public void highlight() {
+        PAWN_HIGHLIGHT.show();
+    }
+
+    public void hideHighlight() {
+        PAWN_HIGHLIGHT.hide();
+    }
+
+    //moves pawn back to its start position
+    void moveToStart() {
+        PAWN_HIGHLIGHT.move(convertFromCooridinate(originalX), convertFromCooridinate(originalY));
+        PAWN.move(convertFromCooridinate(originalX), convertFromCooridinate(originalY));
+    }
+    //moves to initial position
+    void EnterBoard(){
+        move(boardEntrance[0],boardEntrance[1],.2);
+    }
+
+
+    /**
+     * /- MOVE -/
+     * moves pawn to specific coordinate position in a specified amount of time
+     *
+     * @param x       (0->15)
+     * @param y       (0->15)
+     * @param seconds approx. time it will take
+     */
+    public void move(int x, int y, double seconds) {
+        PAWN_HIGHLIGHT.move(convertFromCooridinate(x), convertFromCooridinate(y));
+        PAWN_HIGHLIGHT.hide();
+        PAWN.threadedMove(convertFromCooridinate(x), convertFromCooridinate(y), seconds);
+
+        this.x = x;
+        this.y = y;
+    }
+
     public int getColor() {
         return color;
     }
-    //need image processing
-    //need movement processing for image
+
+    /**
+     * /- MOVE FORWARD -/
+     *
+     * determines local surroundings and saved personal team data to determine the next location to travel
+     * in, then increments by one in that direction. To be used in conjunction with some type of moving plot.
+     *
+     */
+    public void moveForward() {
+        if(!completed) {
+            if ((x + 1) > 15 && (y - 1) < 0) {
+                direction = new int[]{0, 1};
+            } else if ((x - 1) < 0 && (y - 1) < 0) {
+                direction = new int[]{1, 0};
+            } else if ((x - 1) < 0 && (y + 1) > 15) {
+                direction = new int[]{0, -1};
+            } else if ((x + 1) > 15 && (y + 1) > 15) {
+                direction = new int[]{-1, 0};
+            }
+            if (x == homeEntrance[0] && y == homeEntrance[1]) {
+                if (x - 1 < 0) {
+                    direction = new int[]{1, 0};
+                }
+                if (x + 1 > 15) {
+                    direction = new int[]{-1, 0};
+                }
+                if (y - 1 < 0) {
+                    direction = new int[]{0, 1};
+                }
+                if (y + 1 > 15) {
+                    direction = new int[]{0, -1};
+                }
+            }
+            move(x + direction[0], y + direction[1], .2);
+        }
+    }
 }
 
