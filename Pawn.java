@@ -17,7 +17,7 @@
  */
 class Pawn extends Main {
     private int color;
-    private int[] direction,homeEntrance,boardEntrance,homeSpace,finishPosition;
+    private int[] homeEntrance,boardEntrance,homeSpace,finishPosition;
     private int x, y;
     private int originalX, originalY;
     private image PAWN, PAWN_HIGHLIGHT;
@@ -37,43 +37,46 @@ class Pawn extends Main {
         this.x = x;
         this.y = y;
         this.color = color;
-        int placement = 0;
+        int individualNumber = 1;
+        /**
+         * for each color there is:
+         * individualNumber -> the individual within the image pawn.png
+         * boardEntrance -> where the pawn goes when it leaves home
+         * homeEntrance -> the entrance to the pawns home(on the ring)
+         * finishPosition -> what space is considered finished pos.
+         * homeSpace -> where it will placed when it reaches home
+         */
         switch (color) {
             case 0:
-                placement = 3;
-                direction = new int[]{0, -1};
+                individualNumber = 3;
                 boardEntrance = new int[]{0, 11};
                 homeEntrance = new int[]{0, 13};
                 finishPosition=new int[] {6,13};
                 homeSpace= new int[]{originalX+4,originalY+2};
                 break;
             case 1:
-                placement = 4;
-                direction = new int[]{1, 0};
+                individualNumber = 4;
                 boardEntrance = new int[]{4, 0};
                 homeEntrance = new int[]{2, 0};
                 finishPosition=new int[] {2,6};
                 homeSpace= new int[]{originalX-2,originalY+4};
                 break;
             case 2:
-                placement = 1;
-                direction = new int[]{0, 1};
                 boardEntrance = new int[]{15, 4};
                 homeEntrance = new int[]{15, 2};
                 finishPosition=new int[] {9,2};
                 homeSpace= new int[]{originalX-4,originalY-2};
                 break;
             case 3:
-                placement = 2;
-                direction = new int[]{-1, 0};
+                individualNumber = 2;
                 boardEntrance = new int[]{13, 15};
                 homeEntrance = new int[]{11, 15};
                 finishPosition=new int[] {13,9};
                 homeSpace= new int[]{originalX+2,originalY-4};
                 break;
         }
-        PAWN = new image("Sorry-pawns.png", 4, placement);
-        PAWN_HIGHLIGHT = new image("Sorry-pawns-highlight.png", 4, placement);
+        PAWN = new image("Sorry-pawns.png", 4, individualNumber);
+        PAWN_HIGHLIGHT = new image("Sorry-pawns-highlight.png", 4, individualNumber);
         placePawn(x, y);
         PAWN_HIGHLIGHT.hide();
     }
@@ -207,18 +210,42 @@ class Pawn extends Main {
     /**
      * /- Move Backwards -/
      * Moves a pawn backwards to a specified amount.
+     * there is a bit of redundant calls here, could be optimized.
      * @param distance how many spaces to be moved
+     *
      */
     public void moveBackward(int distance){
         //if already home do nothing
-        if(!completed) {
             for (int i = 0; i < distance; i++) {
-//                determineDirection();
-                x+=direction[0]*-1;
-                y+=direction[1]*-1;
+                if (x == 15 && y == 15) {
+                    y--;
+                } else if (x == 0 && y == 15) {
+                    x++;
+                } else if (x == 15 && y == 0) {
+                    x--;
+                } else if (x == 0 && y == 0) {
+                    y++;
+
+                } else if (x == homeEntrance[0] && y == homeEntrance[1]) {
+                    switch (color) {
+                        case 0:
+                            y++;
+                            break;
+                        case 1:
+                            x--;
+                            break;
+                        case 2:
+                            y++;
+                            break;
+                        case 3:
+                            x++;
+                            break;
+                    }
+                } else {
+                    determinePosition();
+                }
             }
             move(x, y, distance*.15);
-        }
 
     }
     /**

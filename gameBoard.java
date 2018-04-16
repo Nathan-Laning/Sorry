@@ -295,7 +295,7 @@ class gameBoard extends Main {
 
     public void Clicked(int x, int y) {
 
-        pawns[0].moveForward(4);
+        pawns[0].moveBackward(1);
     }
 
 }
