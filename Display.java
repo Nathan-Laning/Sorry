@@ -30,7 +30,7 @@ class Display {
     private static final JFrame frame = new JFrame("Sorry!");
     private static int heightGap = 22, widthGap = 0;//default for osx and linux
     public static int size = 800;
-    public static double ratio = size / 5000.0;
+    public static double ratio = size / 2500.0;
     public final image glow;
 
     /**
@@ -127,7 +127,7 @@ class Display {
         public java.awt.event.MouseListener M = new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 glow.reSize(width, height);
-                glow.move((int) (pos.x / (size / 5000.0)), (int) (pos.y / (size / 5000.0)));
+                glow.move((int) (pos.x / (ratio)), (int) (pos.y / (ratio)));
                 glow.show();
             }
 
@@ -305,9 +305,8 @@ class Display {
          * rescales image based on window size
          */
         private void reScale() {
-            double scale = size / 5000.0;
-            height = (int) (scale * height);
-            width = (int) (scale * width);
+            height = (int) (ratio * height);
+            width = (int) (ratio * width);
             if (width == 0) width = 1;
             if (height == 0) height = 1;
             ImageIcon I = new ImageIcon(img.getScaledInstance(width, height, Image.SCALE_SMOOTH));

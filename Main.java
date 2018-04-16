@@ -95,7 +95,7 @@ class mainMenu extends Main {
         //re-instantiate game if started
         //*****TESTING: Still need to work on re sizing instructions image
 
-        image back = new image("back.jpg");
+        image back = new image("back.png");
         image infoPage = new image("sorry_rules.png");
         back.reSize(70, 20);
         back.move(10, 10);

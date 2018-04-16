@@ -18,11 +18,11 @@ import java.util.Random;
  * <p>
  */
 class gameBoard extends Main {
-    clickSpace board = null;
-    space[][] spaces;
-    Pawn[] pawns = new Pawn[16];
+    private clickSpace board = null;
+    private space[][] spaces;
+    private Pawn[] pawns = new Pawn[16];
     int x, y;
-    Thread D, P, S, H;
+    private Thread D, P, S;
     public java.awt.event.MouseListener M = new java.awt.event.MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
             Clicked(e.getX(), e.getY());
@@ -74,7 +74,7 @@ class gameBoard extends Main {
     private void loadAssets(){
         image LOADINGSCREEN = new image("loading4.png");
         LOADINGSCREEN.setLayer(600);
-        image GAMEBOARD = new image("Sorry-board.jpg");
+        image GAMEBOARD = new image("Sorry-board.png");
         board = new clickSpace(GAMEBOARD);
         board.disable();
         GAMEBOARD.show();
@@ -105,7 +105,7 @@ class gameBoard extends Main {
         //loading background first
         //adding drawing pile
         image drawPile = new image("Sorry-Card-Back-Horizontal.png");
-        drawPile.move((int) (2025 * ratio), (int) (1415 * ratio));
+        drawPile.move((int) (1010* ratio), (int) (710 * ratio));
         int player_turn = whosTurn();
         clickSpace c = new clickSpace(drawPile);
         c.button.addMouseListener(new MouseAdapter() {
@@ -142,6 +142,8 @@ class gameBoard extends Main {
                          * 2) y = 16, x += 5
                          * 3) x = 0, y +=5
                          * 4) y = 0, x +=5
+                         *
+                         * Can use method call to move "forward" five times, but need to check that it can be performed first...
                          */
                         break;
                     case 7://seven can be split up
@@ -189,6 +191,7 @@ class gameBoard extends Main {
                          * 2) y = 16, x +=12
                          * 3) x = 0, y +=12
                          * 4) y = 0, x +=12
+                         * Can use method call to move "forward" 12 times, but need to check that it can be performed first...
                          */
                         break;
                     case 0://sorry!
@@ -311,7 +314,7 @@ class gameBoard extends Main {
  * 3 -> green
  * 1 -> blue
  * 2 -> yellow
- * 4 -> white
+ * 4 -> white/no team
  * And empty call will default to a regular space unless told otherwise
  * <p>
  * these spaces can also be populated with pawns utilizing the add and remove pawn method calls
@@ -323,7 +326,6 @@ class space extends Main {
 
     private boolean slide = false, safe = false;
     private int color = 4;
-    private int spaceSize = 305;
     private image img;
 
     space() {

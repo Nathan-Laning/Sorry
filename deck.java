@@ -23,7 +23,7 @@ public class deck extends Main {
 
     deck() {
         discardPile = new image("Sorry-Card-Back-Horizontal.png");
-        discardPile.move((int) (2025 * ratio), (int) (2930 * ratio));
+        discardPile.move((int) (1010 * ratio), (int) (1490 * ratio));
         shuffle();
         loadDeckImages();
     }
@@ -64,7 +64,7 @@ public class deck extends Main {
         deckImages[12] = new image(name, 12, 11);
         for (int j = 0; j < deckImages.length; j++) {
             if (j != 6 && j != 9) {
-                deckImages[j].move((int) (1990 * ratio), (int) (ratio * 1820));
+                deckImages[j].move((int) (995 * ratio), (int) (ratio * 910));
                 deckImages[j].hide();
             }
         }
