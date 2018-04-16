@@ -65,7 +65,7 @@ class Display {
      * @return realtime positioning (0->size)
      */
     public int convertFromCooridinate(int num) {
-        return (int) (num * ((size - (ratio * 122)) / 16) + (ratio * 61));
+        return (int) (num * ((size - (ratio * 66)) / 16) + (ratio * 30));
     }
 
     /**
@@ -76,8 +76,8 @@ class Display {
      */
     public int convertToCooridinate(int num) {
         for (int i = 0; i < 16; i++) {
-            double lowerBound = i * ((size - (ratio * 122)) / 16) + (ratio * 61);
-            double upperBound = lowerBound + ((size - (ratio * 122)) / 16) + (ratio * 61);
+            double lowerBound = i * ((size - (ratio * 61)) / 16) + (ratio * 30);
+            double upperBound = lowerBound + ((size - (ratio * 61)) / 16) + (ratio * 30);
             if (num <= upperBound && num >= lowerBound) return i;
         }
         return 0;

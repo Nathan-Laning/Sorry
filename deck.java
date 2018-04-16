@@ -84,7 +84,6 @@ public class deck extends Main {
             discardPile.show();
         }
         card newCard = DECK.remove(R.nextInt(DECK.size()));
-        System.out.println(newCard.cardNumber);
         deckImages[newCard.cardNumber].show();
         return newCard;
     }

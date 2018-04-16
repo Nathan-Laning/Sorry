@@ -2,6 +2,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class Main extends Display {
+
     //    static Display DISPLAY = new Display();
     public static void main(String[] args) {
         new mainMenu();
@@ -39,46 +40,44 @@ public class Main extends Display {
 class mainMenu extends Main {
 
     mainMenu() {
+        image LOADINGSCREEN = new image("loading4.png");
 
-//        clickSpace newGame = new clickSpace(3425, 665, 725, 2120);
-//        clickSpace loadGame = new clickSpace(3425, 665, 725, 2785);
-//        clickSpace rules = new clickSpace(3425, 665, 725, 2785 + 665);
-//        image StartingPage = new image("Sorry-splash.jpg");
-//
-//
-////        grow_test.hide();
-////        grow_test.grow(1);
-//
-//
-//        newGame.button.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-//                System.out.println("clicked");
-//                newGame();
-//                loadGame.disable();
-//                rules.disable();
-//                newGame.disable();
-//            }
-//        });
-//        loadGame.button.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
-////                loadGame();
-//                loadGame.disable();
-//                rules.disable();
-//                newGame.disable();
-//            }
-//        });
-//        rules.button.addMouseListener(new MouseAdapter() {
-//            @Override
-//            public void mouseClicked(MouseEvent e) {
+        image StartingPage = new image("Sorry-splash.png");
+        clickSpace newGame = new clickSpace(1712, 332, 362, 1060);
+        clickSpace loadGame = new clickSpace(1712, 332, 362, 1392);
+        clickSpace rules = new clickSpace(1712, 332, 362, 1725);
+        newGame.button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+//                Thread T = new Thread(()->newGame());
+//                T.start();
+                loadGame.disable();
+                rules.disable();
+                newGame.disable();
+
+
+            }
+        });
+        loadGame.button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                loadGame();
+                loadGame.disable();
+                rules.disable();
+                newGame.disable();
+            }
+        });
+        rules.button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
 //                Rules();
-//                loadGame.disable();
-//                rules.disable();
-//                newGame.disable();
-//            }
-//        });
-        newGame();
+                loadGame.disable();
+                rules.disable();
+                newGame.disable();
+            }
+        });
+        LOADINGSCREEN.hide();
+       newGame();
     }
 
     private void newGame() {

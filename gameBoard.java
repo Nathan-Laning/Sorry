@@ -96,7 +96,7 @@ class gameBoard extends Main {
         }
 
         board.button.addMouseListener(M);
-        LOADINGSCREEN.move(5000,5000);
+        LOADINGSCREEN.hide();
     }
 
 
@@ -167,7 +167,7 @@ class gameBoard extends Main {
                          * 4) y = 0, x += 10
                          *
                          * four cases if choose to move back one:
-                         * 1) x = 16, y-= 1
+                         * 1) x = 16, y -= 1
                          * 2) y = 16, x -= 1
                          * 3) x = 0, y -= 1
                          * 4) y = 0, x -= 1
@@ -187,10 +187,10 @@ class gameBoard extends Main {
                     case 12:
                         /**
                          * four cases :
-                         * 1) x = 16, y+=12
-                         * 2) y = 16, x +=12
-                         * 3) x = 0, y +=12
-                         * 4) y = 0, x +=12
+                         * 1) x = 16, y += 12
+                         * 2) y = 16, x += 12
+                         * 3) x = 0, y += 12
+                         * 4) y = 0, x += 12
                          * Can use method call to move "forward" 12 times, but need to check that it can be performed first...
                          */
                         break;
@@ -294,7 +294,7 @@ class gameBoard extends Main {
 
     public void Clicked(int x, int y) {
 
-        pawns[0].moveForward();
+        pawns[0].moveBackward(4);
     }
 
 }
@@ -387,7 +387,7 @@ class Pawn extends Main {
     private int x, y;
     private int originalX, originalY;
     private image PAWN, PAWN_HIGHLIGHT;
-    private boolean completed=false;
+    private boolean completed=false,backwards=false;
 
 
     /**
@@ -398,6 +398,7 @@ class Pawn extends Main {
      * @param y     (0->15)
      */
     Pawn(int color, int x, int y) {
+
         originalX = x;
         originalY = y;
         this.x = x;
@@ -496,7 +497,6 @@ class Pawn extends Main {
         PAWN_HIGHLIGHT.move(convertFromCooridinate(x), convertFromCooridinate(y));
         PAWN_HIGHLIGHT.hide();
         PAWN.threadedMove(convertFromCooridinate(x), convertFromCooridinate(y), seconds);
-
         this.x = x;
         this.y = y;
     }
@@ -505,6 +505,36 @@ class Pawn extends Main {
         return color;
     }
 
+
+    /**
+     * /- Move Backwards -/
+     * Moves a pawn backwards to a specified amount.
+     * @param distance how many spaces to be moved
+     */
+    public void moveBackward(int distance){
+        if(!completed) {
+            for (int i = 0; i < distance; i++) {
+                if ((x + 1) > 15 && (y - 1) < 0) {
+                    x--;
+                    direction=new int[]{1,0};
+                } else if ((x - 1) < 0 && (y - 1) < 0) {
+                    y++;
+                    direction=new int[]{0,-1};
+                } else if ((x - 1) < 0 && (y + 1) > 15) {
+                    x++;
+                    direction=new int[]{-1,0};
+                } else if ((x + 1) > 15 && (y + 1) > 15) {
+                    y--;
+                    direction=new int[]{0,1};
+                }else{
+                    x+=direction[0]*-1;
+                    y+=direction[1]*-1;
+                }
+            }
+            move(x, y, distance*.15);
+        }
+
+    }
     /**
      * /- MOVE FORWARD -/
      *
@@ -512,33 +542,39 @@ class Pawn extends Main {
      * in, then increments by one in that direction. To be used in conjunction with some type of moving plot.
      *
      */
-    public void moveForward() {
+    public void moveForward(int distance) {
         if(!completed) {
-            if ((x + 1) > 15 && (y - 1) < 0) {
-                direction = new int[]{0, 1};
-            } else if ((x - 1) < 0 && (y - 1) < 0) {
-                direction = new int[]{1, 0};
-            } else if ((x - 1) < 0 && (y + 1) > 15) {
-                direction = new int[]{0, -1};
-            } else if ((x + 1) > 15 && (y + 1) > 15) {
-                direction = new int[]{-1, 0};
-            }
-            if (x == homeEntrance[0] && y == homeEntrance[1]) {
-                if (x - 1 < 0) {
+            for (int i = 0; i < distance; i++) {
+                if ((x + 1) > 15 && (y - 1) < 0) {
+                    direction = new int[]{0, 1};
+                } else if ((x - 1) < 0 && (y - 1) < 0) {
                     direction = new int[]{1, 0};
-                }
-                if (x + 1 > 15) {
+                } else if ((x - 1) < 0 && (y + 1) > 15) {
+                    direction = new int[]{0, -1};
+                } else if ((x + 1) > 15 && (y + 1) > 15) {
                     direction = new int[]{-1, 0};
                 }
-                if (y - 1 < 0) {
-                    direction = new int[]{0, 1};
+                if (x == homeEntrance[0] && y == homeEntrance[1]) {
+                    if (x - 1 < 0) {
+                        direction = new int[]{1, 0};
+                    }
+                    if (x + 1 > 15) {
+                        direction = new int[]{-1, 0};
+                    }
+                    if (y - 1 < 0) {
+                        direction = new int[]{0, 1};
+                    }
+                    if (y + 1 > 15) {
+                        direction = new int[]{0, -1};
+                    }
                 }
-                if (y + 1 > 15) {
-                    direction = new int[]{0, -1};
-                }
+                x+=direction[0];
+                y+=direction[1];
+
             }
-            move(x + direction[0], y + direction[1], .2);
+            move(x, y, distance*.15);
         }
+
     }
 }
 
