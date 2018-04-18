@@ -21,6 +21,7 @@ public class turn{
         TEAM_PAWNS = G.getTeamPawns(color);
         findAllMoves();
         highlightPawns();
+        highlightSpaces();
     }
 
     //checks all pawns that can be moved from start
@@ -181,6 +182,17 @@ public class turn{
         for (Pawn P : TEAM_PAWNS) {
             P.hideHighlight();
         }
+    }
+    void highlightSpaces(){
+        for (Pawn P : TEAM_PAWNS) {
+            for(int[] xy: P.moveablePositons){
+                G.highlightSpace(xy);
+            }
+        }
+    }
+
+    void HidehighlightSpaces(){
+
     }
 
 }

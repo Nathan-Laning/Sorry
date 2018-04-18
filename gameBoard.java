@@ -228,6 +228,18 @@ class gameBoard extends Display{
         }
         return P;
     }
+    void highlightSpace(int x, int y){
+        spaces[y][x].highlight();
+    }
+    void hideHighlightSpace(int x, int y){
+        spaces[y][x].hideHighlight();
+    }
+    void highlightSpace(int[] xy){
+        spaces[xy[1]][xy[0]].highlight();
+    }
+    void hideHighlightSpace(int[] xy){
+        spaces[xy[1]][xy[0]].hideHighlight();
+    }
     int checkSpace(int x, int y){
         try{
             return spaces[y][x].getColor();
