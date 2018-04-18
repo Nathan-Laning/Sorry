@@ -138,8 +138,7 @@ class card {
             case 11://can be used to replace or moved!
                 replace = true;
                 break;
-            case 12:
-                break;
+                //no need for 12
             case 0://sorry!
                 replace = true;
                 break;

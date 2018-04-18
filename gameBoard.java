@@ -28,6 +28,7 @@ class gameBoard extends Display{
             Clicked(e.getX(), e.getY());
         }
     };
+    private static ArrayList<int[]> highlightedSpaces=new ArrayList<>();
 
 
     deck DECK;
@@ -230,15 +231,17 @@ class gameBoard extends Display{
     }
     void highlightSpace(int x, int y){
         spaces[y][x].highlight();
+        highlightedSpaces.add(new int[]{x,y});
     }
-    void hideHighlightSpace(int x, int y){
-        spaces[y][x].hideHighlight();
+    void hideHighlightedSpaces(){
+        for (int[] xy:highlightedSpaces) {
+            spaces[xy[1]][xy[0]].hideHighlight();
+            highlightedSpaces.remove(xy);
+        }
     }
     void highlightSpace(int[] xy){
         spaces[xy[1]][xy[0]].highlight();
-    }
-    void hideHighlightSpace(int[] xy){
-        spaces[xy[1]][xy[0]].hideHighlight();
+        highlightedSpaces.add(xy);
     }
     int checkSpace(int x, int y){
         try{

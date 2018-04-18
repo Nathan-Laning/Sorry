@@ -15,13 +15,21 @@ public class turn{
     gameBoard G;
 
     turn(int color,gameBoard G) {
+
         this.G=G;
         CARD = DECK.draw();
         this.color = color;
         TEAM_PAWNS = G.getTeamPawns(color);
         findAllMoves();
+        clearHighlights();
         highlightPawns();
         highlightSpaces();
+    }
+    void clearHighlights(){
+        for (Pawn P : G.getPawns()) {
+            P.hideHighlight();
+        }
+        G.hideHighlightedSpaces();
     }
 
     //checks all pawns that can be moved from start
@@ -42,7 +50,7 @@ public class turn{
         }
         int newX = P.getX();
         int newY = P.getY();
-        if(containsPawn(newX,newY)!=color&&(G.checkSpace(newX,newY)!=color||G.checkSpace(newX,newY)!=-1)){
+        if(containsPawn(newX,newY)!=color&&(G.checkSpace(newX,newY)==color||G.checkSpace(newX,newY)!=-1)){
             P.moveablePositons.add(new int[]{newX,newY});
         }
             P.setX(originalX);
@@ -56,11 +64,16 @@ public class turn{
         for (Pawn P : TEAM_PAWNS) {
             P.moveablePositons = new ArrayList<>();
             switch (CARD.cardNumber) {
-                case 1://can be used to get out of start
+                case 1:
+                    //can be used to get out of start
                     moveFromStart(P);
+                    //or to go forward one
+                    checkPosition(1,P);
                     break;
                 case 2://can be used to get out of start and draw again
                     moveFromStart(P);
+                    //or go 2 and go again
+                    checkPosition(2,P);
                     break;
                 case 4://goes backwards 4
                     /**
@@ -74,15 +87,7 @@ public class turn{
                      */
                     break;
                 case 5:
-                    /**
-                     * four cases:
-                     * 1) x = 16, y += 5
-                     * 2) y = 16, x += 5
-                     * 3) x = 0, y +=5
-                     * 4) y = 0, x +=5
-                     *
-                     * Can use method call to move "forward" five times, but need to check that it can be performed first...
-                     */
+                    checkPosition(5,P);
                     break;
                 case 7://seven can be split up
                     /**
@@ -96,21 +101,10 @@ public class turn{
                      */
 
                     break;
-                case 10://can also go backwards 1
-                    /**
-                     * four basic cases if choose to move forward:
-                     * 1) x = 16, y += 10
-                     * 2) y = 16, x += 10
-                     * 3) x = 0, y += 10
-                     * 4) y = 0, x += 10
-                     *
-                     * four cases if choose to move back one:
-                     * 1) x = 16, y -= 1
-                     * 2) y = 16, x -= 1
-                     * 3) x = 0, y -= 1
-                     * 4) y = 0, x -= 1
-                     */
-
+                case 10:
+                    //can also go backwards 1
+                    //forwards 10
+                    checkPosition(10,P);
                     break;
                 case 11://can be used to replace or moved!
                     /**
@@ -120,20 +114,14 @@ public class turn{
                      *
                      *  if switch:
                      */
-
-                    break;
-                case 12:
-                    /**
-                     * four cases :
-                     * 1) x = 16, y += 12
-                     * 2) y = 16, x += 12
-                     * 3) x = 0, y += 12
-                     * 4) y = 0, x += 12
-                     * Can use method call to move "forward" 12 times, but need to check that it can be performed first...
-                     */
+                    checkPosition(11,P);
                     break;
                 case 0://sorry!
-
+                    //swap with anyone
+                    break;
+                    // this is 3,8,and 12 all of which can only move forward the distance desired
+                default:
+                    checkPosition(CARD.cardNumber,P);
                     break;
             }
         }
