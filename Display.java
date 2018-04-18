@@ -74,14 +74,6 @@ class Display {
      * @param num -> co-oridinate number(0->15)
      * @return realtime positioning (0->size)
      */
-    public int convertToCooridinate(int num) {
-        for (int i = 0; i < 16; i++) {
-            double lowerBound = i * ((size - (ratio * 61)) / 16) + (ratio * 30);
-            double upperBound = lowerBound + ((size - (ratio * 61)) / 16) + (ratio * 30);
-            if (num <= upperBound && num >= lowerBound) return i;
-        }
-        return 0;
-    }
 
     /**
      * /- Click Space -/

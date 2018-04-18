@@ -55,6 +55,7 @@ class mainMenu extends Main {
        newGame();
     }
 
+
     private void newGame() {
         //just displaying gameboard for fun
         //start new Game, however we want to do that

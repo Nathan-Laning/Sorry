@@ -1,3 +1,4 @@
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 /**
@@ -7,59 +8,35 @@ import java.util.ArrayList;
  * (within reason) The user/AI can then select which they want to do.
  * is passed a card and a color.
  */
-public class turn{
-    ArrayList<Pawn> TEAM_PAWNS = new ArrayList<>();
+public class turn {
+    private ArrayList<Pawn> TEAM_PAWNS = new ArrayList<>();
+    private ArrayList<int[]> SPACES_FOR_MOVE = new ArrayList<>();
+    private Pawn SELECTED_PAWN;
     private static final deck DECK = new deck();
-    int color;
+    private int color;
     card CARD;
     gameBoard G;
+    public java.awt.event.MouseListener SELECT_PAWN = new java.awt.event.MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+            selectPawn(e.getX(), e.getY());
+        }
+    };
+    public java.awt.event.MouseListener SELECT_POSITION= new java.awt.event.MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+            selectSpace(e.getX(), e.getY());
+        }
+    };
 
-    turn(int color,gameBoard G) {
-
+    turn(gameBoard G) {
         this.G=G;
         CARD = DECK.draw();
-        this.color = color;
+        this.color = G.cycleTeams();
         TEAM_PAWNS = G.getTeamPawns(color);
         findAllMoves();
         clearHighlights();
         highlightPawns();
-        highlightSpaces();
+        G.addMouseClick(SELECT_PAWN);
     }
-    void clearHighlights(){
-        for (Pawn P : G.getPawns()) {
-            P.hideHighlight();
-        }
-        G.hideHighlightedSpaces();
-    }
-
-    //checks all pawns that can be moved from start
-    void moveFromStart(Pawn P) {
-        if (color != containsPawn(P.getBoardEntrance())) {
-            if (P.isStart()) P.moveablePositons.add(P.getBoardEntrance());
-        }
-    }
-    //checks the possible position of all cards provided a distance is given
-    void checkPosition(int distance, Pawn P){
-        //saving old values incase it failes
-        int originalX=P.getX();
-        int originalY=P.getY();
-        if(distance>0) {
-            for (int i = 0; i < distance; i++) {
-                P.determinePosition();
-            }
-        }
-        int newX = P.getX();
-        int newY = P.getY();
-        if(containsPawn(newX,newY)!=color&&(G.checkSpace(newX,newY)==color||G.checkSpace(newX,newY)!=-1)){
-            P.moveablePositons.add(new int[]{newX,newY});
-        }
-            P.setX(originalX);
-            P.setY(originalY);
-
-
-
-    }
-
     void findAllMoves() {
         for (Pawn P : TEAM_PAWNS) {
             P.moveablePositons = new ArrayList<>();
@@ -107,19 +84,15 @@ public class turn{
                     checkPosition(10,P);
                     break;
                 case 11://can be used to replace or moved!
-                    /**
-                     *Move 11 spaces forward, or switch the places of one of the player's own pawns and an opponent's pawn.
-                     *  A player that cannot move 11 spaces is not forced to switch and instead can forfeit the turn.
-                     *  An 11 cannot be used to switch a pawn that is in a Safety Zone.
-                     *
-                     *  if switch:
-                     */
+                    getUnsafePawnLoaction(P);
                     checkPosition(11,P);
                     break;
                 case 0://sorry!
-                    //swap with anyone
+                    if(P.isStart()) {
+                        getUnsafePawnLoaction(P);
+                    }
                     break;
-                    // this is 3,8,and 12 all of which can only move forward the distance desired
+                // this is 3,8,and 12 all of which can only move forward the distance desired
                 default:
                     checkPosition(CARD.cardNumber,P);
                     break;
@@ -127,20 +100,93 @@ public class turn{
         }
     }
 
-    //looks at all possible moves for each pawns and determines if it can be moved
-    void DetermineMoveable() {
-//            if(P.isCompleted()) TEAM_PAWNS.remove(P);
-//            else{
-//                if(P.isStart()){
-//                    if(CARD.isLeaveStart()&&(color!=containsPawn(P.getBoardEntrance()))){//need to check that ths works this way
-//                        //need move here for out of start
-//                    }else{
-//
-//                    }
-//                }
-//            }
+    void selectPawn(int x,int y){
+        G.hideHighlightedSpaces();
+        x=convertToCooridinate(x);
+        y=convertToCooridinate(y);
+        SPACES_FOR_MOVE.clear();
+        for (Pawn P:TEAM_PAWNS) {
+            if(P.getX()==x && P.getY()==y){
+                SELECTED_PAWN = P;
+                SPACES_FOR_MOVE.addAll(P.moveablePositons);
+                highlightSpaces();
+                G.addMouseClick(SELECT_POSITION);
+                G.removeMouseClick(SELECT_PAWN);
+                return;
+            }
+        }
+    }
+    void selectSpace(int x,int y){
+        clearPawnHighlights();
+        x=convertToCooridinate(x);
+        y=convertToCooridinate(y);
+        System.out.print(x);
+        System.out.print(",");
+        System.out.println(y);
+        for (int[] xy:SPACES_FOR_MOVE) {
+            if(x==xy[0]&&y==xy[1]) {
+                System.out.println("run");
+                SELECTED_PAWN.move(x, y, 1);
+                G.removeMouseClick(SELECT_POSITION);
+                clearHighlights();
+                return;
+            }
+        }
+        clearHighlights();
+        highlightPawns();
+        G.addMouseClick(SELECT_PAWN);
+        G.removeMouseClick(SELECT_POSITION);
+    }
+
+    private void clearPawnHighlights() {
+        for (Pawn P : G.getPawns()) {
+            P.hideHighlight();
+        }
+    }
+
+    private void clearHighlights(){
+        clearPawnHighlights();
+        G.hideHighlightedSpaces();
+    }
+    //checks all pawns that can be moved from start
+    void moveFromStart(Pawn P) {
+        if (color != containsPawn(P.getBoardEntrance())) {
+            if (P.isStart()) P.moveablePositons.add(P.getBoardEntrance());
+        }
+    }
+    //checks the possible position of all cards provided a distance is given
+    void checkPosition(int distance, Pawn P){
+        //saving old values
+        int originalX=P.getX();
+        int originalY=P.getY();
+        //getting new x and y via recycle pawn movement
+        if(distance>0) {
+            for (int i = 0; i < distance; i++) {
+                P.determinePosition();
+            }
+        }
+        int newX = P.getX();
+        int newY = P.getY();
+        P.setX(originalX);
+        P.setY(originalY);
+        if(containsPawn(newX,newY)!=color&&(G.checkSpace(newX,newY)==color||G.checkSpace(newX,newY)!=-1)){
+            P.moveablePositons.add(new int[]{newX,newY});
+        }
 
     }
+    void getUnsafePawnLoaction(Pawn P){
+        for (Pawn A :G.getPawns()) {
+            //this means its on the ring, and the other team, therefor not safe.
+            //only currently makes sense for free-for-all, but teammate function could be easily added
+            int X=A.getX();
+            int Y=A.getY();
+            if((X==0||X==15||Y==0||Y==15) && A.getColor()!=color){
+                P.moveablePositons.add(new int[]{X,Y});
+            }
+        }
+    }
+
+
 
     //returns the color of any pawns in a space, or -1 if there are none
     int containsPawn(int x, int y) {
@@ -165,22 +211,18 @@ public class turn{
         }
     }
 
-    //un-highlights all previous highlighted pawns.
-    void hideHighlightPawns() {
-        for (Pawn P : TEAM_PAWNS) {
-            P.hideHighlight();
-        }
-    }
     void highlightSpaces(){
-        for (Pawn P : TEAM_PAWNS) {
-            for(int[] xy: P.moveablePositons){
-                G.highlightSpace(xy);
-            }
+        for (int[] xy : SPACES_FOR_MOVE){
+            G.highlightSpace(xy);
         }
     }
-
-    void HidehighlightSpaces(){
-
+    public int convertToCooridinate(int num) {
+        for (int i = 0; i < 16; i++) {
+            double lowerBound = i * ((G.size - (G.ratio * 61)) / 16) + (G.ratio * 30);
+            double upperBound = lowerBound + ((G.size - (G.ratio * 61)) / 16) + (G.ratio * 30);
+            if (num <= upperBound && num >= lowerBound) return i;
+        }
+        return 0;
     }
 
 }

@@ -14,7 +14,7 @@ import java.util.Random;
  * <p>
  * CREATES A NEW DECK OF SORRY CARDS THAT CAN BE DRAWN.
  */
-public class deck extends Main {
+public class deck extends Display {
     private ArrayList<card> DECK = new ArrayList<>();
     private Random R = new Random(System.currentTimeMillis());
     image discardPile = null;

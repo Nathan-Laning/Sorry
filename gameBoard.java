@@ -23,12 +23,9 @@ class gameBoard extends Display{
     private static space[][] spaces;
     private static Pawn[] pawns = new Pawn[16];
     private Thread D, P, S;
-    public java.awt.event.MouseListener M = new java.awt.event.MouseAdapter() {
-        public void mouseClicked(MouseEvent e) {
-            Clicked(e.getX(), e.getY());
-        }
-    };
-    private static ArrayList<int[]> highlightedSpaces=new ArrayList<>();
+    private int player_turn = whosTurn();
+
+    private static final ArrayList<int[]> highlightedSpaces=new ArrayList<>();
 
 
     deck DECK;
@@ -96,7 +93,6 @@ class gameBoard extends Display{
             e.printStackTrace();
         }
 
-        board.button.addMouseListener(M);
         LOADINGSCREEN.hide();
     }
 
@@ -108,12 +104,12 @@ class gameBoard extends Display{
         final gameBoard G = this;
         image drawPile = new image("Sorry-Card-Back-Horizontal.png");
         drawPile.move((int) (1010* ratio), (int) (710 * ratio));
-        int player_turn = whosTurn();
+
         clickSpace c = new clickSpace(drawPile);
         c.button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new turn(0,G);
+                new turn(G);
             }
 
 
@@ -148,21 +144,22 @@ class gameBoard extends Display{
             spaces[9 + i][15] = new space(2);//blue
             spaces[6 - i][0] = new space(0);//red
         }
-        //home/start
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (!((j == 2 || j == 0) && i > 0)) spaces[10 + j][2 + i] = new space(0);//red
-                if (!((j == 2 || j == 0) && i > 0)) spaces[12 + j][6 + i] = new space(0);//red
-                if (!((j == 2 || j == 0) && i > 0)) spaces[2 + i][3 + j] = new space(1);//green
-                if (!((j == 2 || j == 0) && i > 0)) spaces[6 + i][1 + j] = new space(1);//green
-                if (!((j == 2 || j == 0) && i == 0)) spaces[3 + j][12 + i] = new space(2);//blue
-                if (!((j == 2 || j == 0) && i == 0)) spaces[1 + j][8 + i] = new space(2);//blue
-                if (!((j == 2 || j == 0) && i == 0)) spaces[12 + i][10 + j] = new space(3);//yellow
-                if (!((j == 2 || j == 0) && i == 0)) spaces[8 + i][12 + j] = new space(3);//yellow
-            }
-        }
+        //not needed anymore
+//        //home/start
+//        for (int i = 0; i < 2; i++) {
+//            for (int j = 0; j < 3; j++) {
+//                if (!((j == 2 || j == 0) && i > 0)) spaces[10 + j][2 + i] = new space(0);//red
+//                if (!((j == 2 || j == 0) && i > 0)) spaces[12 + j][6 + i] = new space(0);//red
+//                if (!((j == 2 || j == 0) && i > 0)) spaces[2 + i][3 + j] = new space(1);//green
+//                if (!((j == 2 || j == 0) && i > 0)) spaces[6 + i][1 + j] = new space(1);//green
+//                if (!((j == 2 || j == 0) && i == 0)) spaces[3 + j][12 + i] = new space(2);//blue
+//                if (!((j == 2 || j == 0) && i == 0)) spaces[1 + j][8 + i] = new space(2);//blue
+//                if (!((j == 2 || j == 0) && i == 0)) spaces[12 + i][10 + j] = new space(3);//yellow
+//                if (!((j == 2 || j == 0) && i == 0)) spaces[8 + i][12 + j] = new space(3);//yellow
+//            }
+//        }
 //        home walkways
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             spaces[13][1 + i] = new space(0);//red
             spaces[1 + i][2] = new space(1);//green
             spaces[2][10 + i] = new space(2);//blue
@@ -200,7 +197,7 @@ class gameBoard extends Display{
             pawns[j] = new Pawn(k, pos[j][0], pos[j][1]);
             k = (j + 1) / 4;
         }
-        pawns[0].move(2, 13, .9);
+        pawns[0].move(0, 9, .9);
 //        pawns[0].determineDirection();
     }
     private static int whosTurn() {
@@ -209,18 +206,14 @@ class gameBoard extends Display{
         return num;
     }
 
-    public void Clicked(int x, int y) {
-
-        pawns[0].moveBackward(1);
-    }
 
     public Pawn[] getPawns() {
         return pawns;
     }
 
-    public int cycleTeams(int color){
-       if(color+1==4)return 0;
-       return color+1;
+    public int cycleTeams(){
+       if(player_turn+1==4)return 0;
+       return player_turn+1;
     }
     public ArrayList<Pawn> getTeamPawns(int color){
         ArrayList<Pawn> P = new ArrayList<>();
@@ -236,8 +229,8 @@ class gameBoard extends Display{
     void hideHighlightedSpaces(){
         for (int[] xy:highlightedSpaces) {
             spaces[xy[1]][xy[0]].hideHighlight();
-            highlightedSpaces.remove(xy);
         }
+        highlightedSpaces.clear();
     }
     void highlightSpace(int[] xy){
         spaces[xy[1]][xy[0]].highlight();
@@ -273,6 +266,14 @@ class gameBoard extends Display{
         }
         System.out.print(i);
         System.out.print("\u001B[0m");
+    }
+
+    void addMouseClick(MouseListener ML){
+        board.button.addMouseListener(ML);
+    }
+
+    void removeMouseClick(MouseListener ML){
+        board.button.removeMouseListener(ML);
     }
 }
 

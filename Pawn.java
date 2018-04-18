@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 
 /**
@@ -17,13 +18,13 @@ import java.util.ArrayList;
  * -> such as (0,1) is positive y (down on the screen)
  * -> such as (-1,0) is negative x (left on the screen)
  */
-class Pawn extends Main {
+class Pawn extends Display{
     public ArrayList<int[]> moveablePositons=new ArrayList<>();
     private int color;
     private int[] homeEntrance,boardEntrance,homeSpace,finishPosition;
     private int x, y;
     private int originalX, originalY;
-    private image PAWN, PAWN_HIGHLIGHT;
+    private Display.image PAWN, PAWN_HIGHLIGHT;
     private boolean completed=false,isStart=true;
 
 
@@ -72,8 +73,8 @@ class Pawn extends Main {
                 break;
             case 3:
                 individualNumber = 2;
-                boardEntrance = new int[]{13, 15};
-                homeEntrance = new int[]{11, 15};
+                boardEntrance = new int[]{11, 15};
+                homeEntrance = new int[]{13, 15};
                 finishPosition=new int[] {13,9};
                 homeSpace= new int[]{originalX+2,originalY-4};
                 break;
