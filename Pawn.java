@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * /- PAWN -/
  *     _
@@ -16,6 +18,7 @@
  * -> such as (-1,0) is negative x (left on the screen)
  */
 class Pawn extends Main {
+    public ArrayList<int[]> moveablePositons=new ArrayList<>();
     private int color;
     private int[] homeEntrance,boardEntrance,homeSpace,finishPosition;
     private int x, y;
@@ -97,14 +100,6 @@ class Pawn extends Main {
         this.y = y;
     }
 
-    //NEED TO RETURN PAWN'S POSITION IN ARRAY
-    int get_x() {
-        return x;
-    }
-
-    int get_y() {
-        return y;
-    }
 
     public void highlight() {
         PAWN_HIGHLIGHT.show();
@@ -126,6 +121,7 @@ class Pawn extends Main {
     }
     //moves to initial position
     void EnterBoard(){
+        isStart=false;
         move(boardEntrance[0],boardEntrance[1],.2);
     }
 
@@ -173,9 +169,6 @@ class Pawn extends Main {
 
     public void determinePosition() {
         //corners
-        int X=0;
-        int Y=0;
-        if(!completed) {
             if (x == homeEntrance[0] && y == homeEntrance[1]){
                 homeMovement();
             }else{
@@ -204,7 +197,6 @@ class Pawn extends Main {
                     homeMovement();
                 }
             }
-        }
     }
 
     /**
@@ -258,12 +250,6 @@ class Pawn extends Main {
     public void moveForward(int distance) {
         //if its at start, move out then continue move forward
 
-        if (isStart) {
-            isStart=false;
-            EnterBoard();
-            distance--;
-            moveForward(distance);
-        } else {
             for (int i = 0; i < distance; i++) {
                 determinePosition();
             }
@@ -273,6 +259,33 @@ class Pawn extends Main {
             }else{
                 move(x, y, distance * .15);
             }
-        }
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+    public boolean isStart(){
+        return isStart;
+    }
+
+    public int[] getBoardEntrance() {
+        return boardEntrance;
     }
 }

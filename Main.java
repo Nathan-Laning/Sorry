@@ -9,31 +9,6 @@ public class Main extends Display {
 
     }
 
-    static void out(int i) {
-        switch (i) {
-            case 0:
-                System.out.print("\u001B[31m");
-                break;
-            case 1:
-                System.out.print("\u001B[32m");
-                break;
-            case 2:
-                System.out.print("\u001B[34m");
-                break;
-            case 3:
-                System.out.print("\u001B[33m");
-                break;
-            case 4:
-                System.out.print("\u001B[30m");
-                break;
-            default:
-                System.out.print(" ");
-                return;
-        }
-        System.out.print(i);
-        System.out.print("\u001B[0m");
-    }
-
 }
 
 

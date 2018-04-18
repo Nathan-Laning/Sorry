@@ -1,4 +1,5 @@
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -17,11 +18,10 @@ import java.util.Random;
  * the information is saved for each board as its own class below.
  * <p>
  */
-class gameBoard extends Main {
-    private clickSpace board = null;
-    private space[][] spaces;
-    private Pawn[] pawns = new Pawn[16];
-    int x, y;
+class gameBoard extends Display{
+    private static clickSpace board = null;
+    private static space[][] spaces;
+    private static Pawn[] pawns = new Pawn[16];
     private Thread D, P, S;
     public java.awt.event.MouseListener M = new java.awt.event.MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
@@ -104,6 +104,7 @@ class gameBoard extends Main {
         loadAssets();
         //loading background first
         //adding drawing pile
+        final gameBoard G = this;
         image drawPile = new image("Sorry-Card-Back-Horizontal.png");
         drawPile.move((int) (1010* ratio), (int) (710 * ratio));
         int player_turn = whosTurn();
@@ -111,93 +112,7 @@ class gameBoard extends Main {
         c.button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                card CARD = DECK.draw();
-                switch (CARD.cardNumber) {
-                    case 1://can be used to get out of start
-                        /**
-                         * let the pawn move to start position
-                         */
-                        break;
-                    case 2://can be used to get out of start and draw again
-                        /**
-                         * let the pawn move to start position
-                         * call deck.draw() again for a new card
-                         */
-                        break;
-                    case 4://goes backwards 4
-                        /**
-                         * four cases:
-                         * 1) x = 16, y-= 4
-                         * 2) y = 16, x -= 4
-                         * 3) x = 0, y -=4
-                         * 4) y = 0, x -=4
-                         *
-                         * need to check for corners ...
-                         */
-                        break;
-                    case 5:
-                        /**
-                         * four cases:
-                         * 1) x = 16, y += 5
-                         * 2) y = 16, x += 5
-                         * 3) x = 0, y +=5
-                         * 4) y = 0, x +=5
-                         *
-                         * Can use method call to move "forward" five times, but need to check that it can be performed first...
-                         */
-                        break;
-                    case 7://seven can be split up
-                        /**
-                         * Move one pawn seven spaces forward, or split the seven spaces between two pawns (such as four spaces for one pawn and three for another).
-                         * This makes it possible for two pawns to enter Home on the same turn, for example.
-                         * The seven cannot be used to move a pawn out of Start, even if the player splits it into a six and one or a five and two.
-                         * The entire seven spaces must be used or the turn is lost. You may not move backwards with a split.
-                         * oof
-                         * keep counter for number of coordinates/steps taken (?)
-                         * no cases here, just need to give user full reign somehow... and options to choose what they wanna do....
-                         */
-
-                        break;
-                    case 10://can also go backwards 1
-                        /**
-                         * four basic cases if choose to move forward:
-                         * 1) x = 16, y += 10
-                         * 2) y = 16, x += 10
-                         * 3) x = 0, y += 10
-                         * 4) y = 0, x += 10
-                         *
-                         * four cases if choose to move back one:
-                         * 1) x = 16, y -= 1
-                         * 2) y = 16, x -= 1
-                         * 3) x = 0, y -= 1
-                         * 4) y = 0, x -= 1
-                         */
-
-                        break;
-                    case 11://can be used to replace or moved!
-                        /**
-                         *Move 11 spaces forward, or switch the places of one of the player's own pawns and an opponent's pawn.
-                         *  A player that cannot move 11 spaces is not forced to switch and instead can forfeit the turn.
-                         *  An 11 cannot be used to switch a pawn that is in a Safety Zone.
-                         *
-                         *  if switch:
-                         */
-
-                        break;
-                    case 12:
-                        /**
-                         * four cases :
-                         * 1) x = 16, y += 12
-                         * 2) y = 16, x += 12
-                         * 3) x = 0, y += 12
-                         * 4) y = 0, x += 12
-                         * Can use method call to move "forward" 12 times, but need to check that it can be performed first...
-                         */
-                        break;
-                    case 0://sorry!
-
-                        break;
-                }
+                new turn(0,G);
             }
 
 
@@ -298,6 +213,52 @@ class gameBoard extends Main {
         pawns[0].moveBackward(1);
     }
 
+    public Pawn[] getPawns() {
+        return pawns;
+    }
+
+    public int cycleTeams(int color){
+       if(color+1==4)return 0;
+       return color+1;
+    }
+    public ArrayList<Pawn> getTeamPawns(int color){
+        ArrayList<Pawn> P = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            P.add(pawns[(color*4)+i]);
+        }
+        return P;
+    }
+    int checkSpace(int x, int y){
+        try{
+            return spaces[y][x].getColor();
+        } catch (NullPointerException N){
+            return -1;
+        }
+    }
+    static void out(int i) {
+        switch (i) {
+            case 0:
+                System.out.print("\u001B[31m");
+                break;
+            case 1:
+                System.out.print("\u001B[32m");
+                break;
+            case 2:
+                System.out.print("\u001B[34m");
+                break;
+            case 3:
+                System.out.print("\u001B[33m");
+                break;
+            case 4:
+                System.out.print("\u001B[30m");
+                break;
+            default:
+                System.out.print(" ");
+                return;
+        }
+        System.out.print(i);
+        System.out.print("\u001B[0m");
+    }
 }
 
 /**

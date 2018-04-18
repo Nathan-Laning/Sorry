@@ -170,4 +170,8 @@ class card {
         return false;
 
     }
+
+    public boolean isLeaveStart() {
+        return leaveStart;
+    }
 }
