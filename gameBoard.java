@@ -94,10 +94,48 @@ gameBoard() {
         OPTIONS.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("testing here ");
-                //menu here
+                optionsMenu();
             }
         });
+    }
+    private void optionsMenu(){
+        image pauseMenu = new image("Pause-Menu.png");
+
+        clickSpace resume = new clickSpace(1712, 332, 362, 1060);
+        clickSpace saveGame = new clickSpace(1712, 332, 362, 1392);
+        clickSpace quit = new clickSpace(1712, 332, 362, 1725);
+
+        resume.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                pauseMenu.hide();
+                resume.disable();
+                saveGame.disable();
+                quit.disable();
+
+            }
+        });
+        saveGame.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //saves game
+                resume.disable();
+                saveGame.disable();
+                quit.disable();
+
+            }
+        });
+        quit.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                mainMenu menu = new mainMenu();
+                resume.disable();
+                saveGame.disable();
+                quit.disable();
+
+            }
+        });
+
     }
     /**
      * /- Load Assests -/
