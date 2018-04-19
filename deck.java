@@ -23,7 +23,7 @@ public class deck extends Display {
 
     deck() {
         discardPile = new image("Sorry-Card-Back-Horizontal.png");
-        discardPile.move((int) (1010 * ratio), (int) (1490 * ratio));
+        discardPile.move((int) (1010 * ratio), (int) (1480 * ratio));
         shuffle();
         loadDeckImages();
     }

@@ -24,11 +24,8 @@ class gameBoard extends Display{
     private static Pawn[] pawns = new Pawn[16];
     private Thread D, P, S;
     private int player_turn = whosTurn();
-
     private static final ArrayList<int[]> highlightedSpaces=new ArrayList<>();
-
-
-    deck DECK;
+    private static final deck DECK = new deck();
     //String[][] whole_board=new String[16][16];
     //1:road
     //2:home
@@ -58,6 +55,7 @@ class gameBoard extends Display{
             {{0, 5}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {0, 2}, {0, 2}, {0, 2}, {4, 0}, {4, 0}, {2, 3}, {2, 3}, {2, 3}, {2, 6}, {4, 0}, {4, 1}},
             {{4, 1}, {4, 1}, {2, 4}, {2, 4}, {2, 4}, {2, 4}, {2, 4}, {4, 1}, {4, 1}, {4, 1}, {4, 1}, {2, 5}, {2, 5}, {2, 5}, {2, 5}, {4, 1}},};
 
+
 //    int is_home(Pawn pawn) {
 //        for (int i = 0; i < 16; i++) {
 //            for (int j = 0; j < 16; j++) {
@@ -79,16 +77,12 @@ class gameBoard extends Display{
         //starting the spaces load
         S = new Thread(() -> loadSpaces());
         S.start();
-        //starting the deck load
-        D = new Thread(() -> loadDeck());
-        D.start();
         //starting the pawn load
         P = new Thread(() -> loadPawns());
         P.start();
         try {
             P.join();
             S.join();
-            D.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -167,8 +161,8 @@ class gameBoard extends Display{
         }
     }
 
-    private void loadDeck() {
-        DECK = new deck();
+    public card drawCard() {
+        return DECK.draw();
     }
 
     private void loadPawns() {
@@ -198,8 +192,9 @@ class gameBoard extends Display{
     }
 
     public int cycleTeams(){
-       if(player_turn+1==4)return 0;
-       return player_turn+1;
+        player_turn++;
+       if(player_turn==4)player_turn=0;
+       return player_turn;
     }
     public ArrayList<Pawn> getTeamPawns(int color){
         ArrayList<Pawn> P = new ArrayList<>();
