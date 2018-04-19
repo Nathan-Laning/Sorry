@@ -11,10 +11,9 @@ import java.util.ArrayList;
 public class turn {
     private ArrayList<Pawn> TEAM_PAWNS = new ArrayList<>();
     private ArrayList<int[]> SPACES_FOR_MOVE = new ArrayList<>();
-    private Pawn SELECTED_PAWN;
-
-    private int color;
-    card CARD;
+    private Pawn SELECTED_PAWN,occupant;
+    private int color,cardNumber;
+    boolean goAgain=false;
     gameBoard G;
     public java.awt.event.MouseListener SELECT_PAWN = new java.awt.event.MouseAdapter() {
         public void mouseClicked(MouseEvent e) {
@@ -33,7 +32,7 @@ public class turn {
      */
     turn(gameBoard G) {
         this.G=G;
-        CARD = G.drawCard();
+        cardNumber = G.draw();
         this.color = G.cycleTeams();
         TEAM_PAWNS = G.getTeamPawns(color);
         findAllMoves();
@@ -44,7 +43,7 @@ public class turn {
     void findAllMoves() {
         for (Pawn P : TEAM_PAWNS) {
             P.moveablePositons = new ArrayList<>();
-            switch (CARD.cardNumber) {
+            switch ( cardNumber) {
                 case 1:
                     //can be used to get out of start
                     moveFromStart(P);
@@ -53,6 +52,9 @@ public class turn {
                     break;
                 case 2://can be used to get out of start and draw again
                     moveFromStart(P);
+                    //tells it to repeat turn
+                    goAgain=true;
+                    //a second turn
                     //or go 2 and go again
                     checkPosition(2,P);
                     break;
@@ -83,7 +85,9 @@ public class turn {
 
                     break;
                 case 10:
-                    //can also go backwards 1
+                    /**
+                     * can also go backwards 1
+                     */
                     //forwards 10
                     checkPosition(10,P);
                     break;
@@ -98,9 +102,19 @@ public class turn {
                     break;
                 // this is 3,8,and 12 all of which can only move forward the distance desired
                 default:
-                    checkPosition(CARD.cardNumber,P);
+                    checkPosition( cardNumber,P);
                     break;
             }
+        }
+    }
+
+    void bump(int[] xy){
+        for (Pawn P : G.getPawns()) {
+            if (P.getX() == xy[0] && P.getY() == xy[1] && P.getColor()!=color){
+                P.moveToStart();
+                return;
+            }
+
         }
     }
 
@@ -124,15 +138,26 @@ public class turn {
         clearPawnHighlights();
         x=convertToCooridinate(x);
         y=convertToCooridinate(y);
-        System.out.print(x);
-        System.out.print(",");
-        System.out.println(y);
+        if(goAgain) {
+            for (int i = 0; i < 3; i++) {
+                G.cycleTeams();
+            }
+        }
         for (int[] xy:SPACES_FOR_MOVE) {
             if(x==xy[0]&&y==xy[1]) {
-                System.out.println("run");
+                Thread T = new Thread(()->bump(xy));
+                T.start();
+                try {
+                    T.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 SELECTED_PAWN.move(x, y, 1);
                 G.removeMouseClick(SELECT_POSITION);
                 clearHighlights();
+                if(goAgain){
+
+                }
                 return;
             }
         }
@@ -193,10 +218,13 @@ public class turn {
 
 
 
-    //returns the color of any pawns in a space, or -1 if there are none
     int containsPawn(int x, int y) {
         for (Pawn P : G.getPawns()) {
-            if (P.getX() == x && P.getY() == y) return P.getColor();
+            if (P.getX() == x && P.getY() == y){
+                occupant=P;
+                return P.getColor();
+            }
+
         }
         return -1;
     }
@@ -204,7 +232,11 @@ public class turn {
     //returns the color of any pawns in a space, or -1 if there are none
     int containsPawn(int[] xy) {
         for (Pawn P : G.getPawns()) {
-            if (P.getX() == xy[0] && P.getY() == xy[1]) return P.getColor();
+            if (P.getX() == xy[0] && P.getY() == xy[1]){
+                occupant=P;
+                return P.getColor();
+            }
+
         }
         return -1;
     }
