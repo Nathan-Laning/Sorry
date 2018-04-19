@@ -12,7 +12,7 @@ public class turn {
     private ArrayList<Pawn> TEAM_PAWNS = new ArrayList<>();
     private ArrayList<int[]> SPACES_FOR_MOVE = new ArrayList<>();
     private Pawn SELECTED_PAWN;
-    private static final deck DECK = new deck();
+
     private int color;
     card CARD;
     gameBoard G;
@@ -27,9 +27,13 @@ public class turn {
         }
     };
 
+    /**
+     * NEW TURN
+     * @param G Game Board
+     */
     turn(gameBoard G) {
         this.G=G;
-        CARD = DECK.draw();
+        CARD = G.drawCard();
         this.color = G.cycleTeams();
         TEAM_PAWNS = G.getTeamPawns(color);
         findAllMoves();
@@ -169,7 +173,8 @@ public class turn {
         int newY = P.getY();
         P.setX(originalX);
         P.setY(originalY);
-        if(containsPawn(newX,newY)!=color&&(G.checkSpace(newX,newY)==color||G.checkSpace(newX,newY)!=-1)){
+        if((containsPawn(newX,newY)!=color||(P.getFinishPosition()[0]==newX&&P.getFinishPosition()[1]==newY))
+                &&(G.checkSpace(newX,newY)==color||G.checkSpace(newX,newY)!=-1)){
             P.moveablePositons.add(new int[]{newX,newY});
         }
 
