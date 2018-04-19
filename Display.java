@@ -289,7 +289,11 @@ class Display {
             final double TIME = delay;
             T = new Thread(() -> move(X, Y, TIME));
             T.start();
-
+//            try {
+//                T.join();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
 
         /**

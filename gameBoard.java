@@ -144,26 +144,12 @@ class gameBoard extends Display{
             spaces[9 + i][15] = new space(2);//blue
             spaces[6 - i][0] = new space(0);//red
         }
-        //not needed anymore
-//        //home/start
-//        for (int i = 0; i < 2; i++) {
-//            for (int j = 0; j < 3; j++) {
-//                if (!((j == 2 || j == 0) && i > 0)) spaces[10 + j][2 + i] = new space(0);//red
-//                if (!((j == 2 || j == 0) && i > 0)) spaces[12 + j][6 + i] = new space(0);//red
-//                if (!((j == 2 || j == 0) && i > 0)) spaces[2 + i][3 + j] = new space(1);//green
-//                if (!((j == 2 || j == 0) && i > 0)) spaces[6 + i][1 + j] = new space(1);//green
-//                if (!((j == 2 || j == 0) && i == 0)) spaces[3 + j][12 + i] = new space(2);//blue
-//                if (!((j == 2 || j == 0) && i == 0)) spaces[1 + j][8 + i] = new space(2);//blue
-//                if (!((j == 2 || j == 0) && i == 0)) spaces[12 + i][10 + j] = new space(3);//yellow
-//                if (!((j == 2 || j == 0) && i == 0)) spaces[8 + i][12 + j] = new space(3);//yellow
-//            }
-//        }
 //        home walkways
         for (int i = 0; i < 6; i++) {
             spaces[13][1 + i] = new space(0);//red
             spaces[1 + i][2] = new space(1);//green
-            spaces[2][10 + i] = new space(2);//blue
-            spaces[10 + i][13] = new space(3);//yellow
+            spaces[2][9 + i] = new space(2);//blue
+            spaces[9 + i][13] = new space(3);//yellow
         }
 //        spaces[][]
         for (int i = 0; i < 16; i++) {

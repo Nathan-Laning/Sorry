@@ -110,15 +110,11 @@ class Pawn extends Display{
         PAWN_HIGHLIGHT.hide();
     }
 
-    void moveToHome(){
-        completed=true;
-        move(homeSpace[0],homeSpace[1],.2);
-    }
     //moves pawn back to its start position
     void moveToStart() {
         isStart=true;
         PAWN_HIGHLIGHT.move(convertFromCooridinate(originalX), convertFromCooridinate(originalY));
-        PAWN.move(convertFromCooridinate(originalX), convertFromCooridinate(originalY));
+        PAWN.threadedMove(convertFromCooridinate(originalX), convertFromCooridinate(originalY),1.2);
     }
     //moves to initial position
     void EnterBoard(){
@@ -136,12 +132,17 @@ class Pawn extends Display{
      * @param seconds approx. time it will take
      */
     public void move(int x, int y, double seconds) {
-        isStart=false;
-        PAWN_HIGHLIGHT.move(convertFromCooridinate(x), convertFromCooridinate(y));
-        PAWN_HIGHLIGHT.hide();
-        PAWN.threadedMove(convertFromCooridinate(x), convertFromCooridinate(y), seconds);
-        this.x = x;
-        this.y = y;
+        if(x==finishPosition[0]&&y==finishPosition[1]){
+            completed=true;
+            x=homeSpace[0];
+            y=homeSpace[1];
+        }
+            isStart = false;
+            PAWN_HIGHLIGHT.move(convertFromCooridinate(x), convertFromCooridinate(y));
+            PAWN_HIGHLIGHT.hide();
+            PAWN.threadedMove(convertFromCooridinate(x), convertFromCooridinate(y), seconds);
+            this.x = x;
+            this.y = y;
     }
 
     public int getColor() {
@@ -150,16 +151,16 @@ class Pawn extends Display{
     public void homeMovement(){
         switch (color) {
             case 0:
-                x++;
+                if(x!=7) x++;
                 break;
             case 1:
-                y++;
+                if(y!=7) y++;
                 break;
             case 2:
-                x--;
+                if(x!=8) x--;
                 break;
             case 3:
-                y--;
+                if(y!=8) y--;
                 break;
         }
     }
@@ -240,26 +241,6 @@ class Pawn extends Display{
             }
             move(x, y, distance*.15);
 
-    }
-    /**
-     * /- MOVE FORWARD -/
-     *
-     * determines local surroundings and saved personal team data to determine the next location to travel
-     * in, then increments by one in that direction. To be used in conjunction with some type of moving plot.
-     *
-     */
-    public void moveForward(int distance) {
-        //if its at start, move out then continue move forward
-
-            for (int i = 0; i < distance; i++) {
-                determinePosition();
-            }
-
-            if(finishPosition[0]==x&&y==finishPosition[1]){
-                moveToHome();
-            }else{
-                move(x, y, distance * .15);
-            }
     }
 
     public int getX() {

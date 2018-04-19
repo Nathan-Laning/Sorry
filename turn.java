@@ -84,12 +84,12 @@ public class turn {
                     checkPosition(10,P);
                     break;
                 case 11://can be used to replace or moved!
-                    getUnsafePawnLoaction(P);
+                    getUnsafePawnLocation(P);
                     checkPosition(11,P);
                     break;
                 case 0://sorry!
                     if(P.isStart()) {
-                        getUnsafePawnLoaction(P);
+                        getUnsafePawnLocation(P);
                     }
                     break;
                 // this is 3,8,and 12 all of which can only move forward the distance desired
@@ -174,7 +174,7 @@ public class turn {
         }
 
     }
-    void getUnsafePawnLoaction(Pawn P){
+    void getUnsafePawnLocation(Pawn P){
         for (Pawn A :G.getPawns()) {
             //this means its on the ring, and the other team, therefor not safe.
             //only currently makes sense for free-for-all, but teammate function could be easily added
