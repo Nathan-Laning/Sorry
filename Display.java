@@ -25,18 +25,19 @@ import java.io.IOException;
  * window naming
  */
 class Display {
+
     private static int layer = 1;
     public static final JLayeredPane panel = new JLayeredPane();
     private static final JFrame frame = new JFrame("Sorry!");
     private static int heightGap = 22, widthGap = 0;//default for osx and linux
     public static int size = 1000;
     public static double ratio = size / 2500.0;
-    public final image glow;
 
     /**
      * Creates an entirely new display for images to exist in
      */
     Display() {
+
         if (System.getProperty("os.name").startsWith("Windows")) {
             widthGap = 16;
             heightGap = 39;
@@ -47,8 +48,6 @@ class Display {
         frame.add(panel);
         panel.setBounds(0, 0, size, size);
         frame.setResizable(false);
-        glow = new image("glow_colored.png");
-        glow.hide();
     }
 
 
@@ -115,18 +114,7 @@ class Display {
         // default init
         Point pos;
         int height, width;
-        public JButton button;
-        public java.awt.event.MouseListener M = new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                glow.reSize(width, height);
-                glow.move((int) (pos.x / (ratio)), (int) (pos.y / (ratio)));
-                glow.show();
-            }
-
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                glow.hide();
-            }
-        };
+        private JButton button;
 
         /**
          * Constructor
@@ -140,11 +128,12 @@ class Display {
             button = new JButton();
             button.setSize(this.width, this.height);
             button.setLocation(pos);
-            enable();
             button.setOpaque(false);
             button.setBorderPainted(false);
+            button.setContentAreaFilled(false);
             panel.add(button);
             panel.setLayer(button, layer);
+
         }
 
         /**
@@ -162,25 +151,26 @@ class Display {
             button = new JButton();
             button.setSize(this.width, this.height);
             button.setLocation(pos);
-            enable();
             button.setOpaque(false);
+            button.setContentAreaFilled(false);
             button.setBorderPainted(false);
             panel.add(button);
             panel.setLayer(button, layer);
         }
 
         //enables button
-        public void enable() {
+        public void addClick(MouseListener M) {
             button.addMouseListener(M);
         }
-
+        public void removeClick(MouseListener M) {
+            button.removeMouseListener(M);
+        }
         //disables button
         public void disable() {
             MouseListener[] lis = button.getMouseListeners();
             for (MouseListener l : lis) {
                 button.removeMouseListener(l);
             }
-            glow.hide();
         }
     }
 
@@ -239,7 +229,7 @@ class Display {
          * @param x new x
          * @param y new y
          */
-        void move(int x, int y) {
+        synchronized void move(int x, int y) {
             location = new Point(x, y);
             label.setLocation(new Point(x, y));
         }
@@ -283,7 +273,7 @@ class Display {
          * @param y     new y
          * @param delay delay in seconds
          */
-        void threadedMove(int x, int y, double delay) {
+        synchronized void threadedMove(int x, int y, double delay) {
             final int X = x;
             final int Y = y;
             final double TIME = delay;
@@ -300,7 +290,7 @@ class Display {
          * /- RE-SCALE -/
          * rescales image based on window size
          */
-        private void reScale() {
+        synchronized void reScale() {
             height = (int) (ratio * height);
             width = (int) (ratio * width);
             if (width == 0) width = 1;
@@ -313,6 +303,7 @@ class Display {
             label.setBounds(0, 0, width, height);
         }
 
+
         /**
          * /- RE-SIZE -/
          * re-sizes the image based on...
@@ -320,7 +311,7 @@ class Display {
          * @param width  desired width
          * @param height desired height
          */
-        void reSize(int width, int height) {
+        synchronized void reSize(int width, int height) {
             this.height = (int) (height / ratio);
             this.width = (int) (width / ratio);
             reScale();
@@ -332,7 +323,7 @@ class Display {
          *
          * @param imageName the name of the image, check res for resources
          */
-        private void loadImage(String imageName) {
+        synchronized void loadImage(String imageName) {
             try {
                 img = ImageIO.read(new File("res/" + imageName));
                 height = img.getHeight();
@@ -347,8 +338,13 @@ class Display {
          * /- HIDE -/
          * Hides image behind all other images
          */
-        void hide() {
-            panel.setLayer(label, 0);
+        synchronized void hide() {
+            try {
+                panel.setLayer(label, 0);
+            }catch (ArrayIndexOutOfBoundsException A){
+                hide();
+            }
+
         }
 
         /**
@@ -390,13 +386,17 @@ class Display {
          * /- SHOW -/
          * Bring image to the very front
          */
-        void show() {
-            layer++;
-            panel.setLayer(label, layer);
+        synchronized void show() {
+            try {
+                layer++;
+                panel.setLayer(label, layer);
+            }catch (ArrayIndexOutOfBoundsException A){
+                show();
+            }
         }
 
         //sets the layer of an item, only to be used in specific cases
-        void setLayer(int newLayer){
+        synchronized void setLayer(int newLayer){
             panel.setLayer(label,newLayer);
         }
 

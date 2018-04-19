@@ -111,15 +111,12 @@ class Pawn extends Display{
     }
 
     //moves pawn back to its start position
-    void moveToStart() {
+    synchronized void moveToStart() {
         isStart=true;
         PAWN_HIGHLIGHT.move(convertFromCooridinate(originalX), convertFromCooridinate(originalY));
         PAWN.threadedMove(convertFromCooridinate(originalX), convertFromCooridinate(originalY),1.2);
-    }
-    //moves to initial position
-    void EnterBoard(){
-        isStart=false;
-        move(boardEntrance[0],boardEntrance[1],.2);
+        x = originalX;
+        y=originalY;
     }
 
 
@@ -131,18 +128,18 @@ class Pawn extends Display{
      * @param y       (0->15)
      * @param seconds approx. time it will take
      */
-    public void move(int x, int y, double seconds) {
+    synchronized void move(int x, int y, double seconds) {
         if(x==finishPosition[0]&&y==finishPosition[1]){
             completed=true;
             x=homeSpace[0];
             y=homeSpace[1];
         }
-            isStart = false;
-            PAWN_HIGHLIGHT.move(convertFromCooridinate(x), convertFromCooridinate(y));
-            PAWN_HIGHLIGHT.hide();
-            PAWN.threadedMove(convertFromCooridinate(x), convertFromCooridinate(y), seconds);
-            this.x = x;
-            this.y = y;
+        isStart = false;
+        PAWN_HIGHLIGHT.move(convertFromCooridinate(x), convertFromCooridinate(y));
+        PAWN_HIGHLIGHT.hide();
+        PAWN.threadedMove(convertFromCooridinate(x), convertFromCooridinate(y), seconds);
+        this.x = x;
+        this.y = y;
     }
 
     public int getColor() {
