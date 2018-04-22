@@ -1,6 +1,9 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -30,7 +33,7 @@ class Display {
     public static final JLayeredPane panel = new JLayeredPane();
     private static final JFrame frame = new JFrame("Sorry!");
     private static int heightGap = 22, widthGap = 0;//default for osx and linux
-    public static int size = 1000;
+    public static int size = 600;
     public static double ratio = size / 2500.0;
 
     /**
@@ -114,7 +117,7 @@ class Display {
         // default init
         Point pos;
         int height, width;
-        private JButton button;
+        public JButton button;
 
         /**
          * Constructor
@@ -132,6 +135,7 @@ class Display {
             button.setBorderPainted(false);
             button.setContentAreaFilled(false);
             panel.add(button);
+            layer++;
             panel.setLayer(button, layer);
 
         }
@@ -153,11 +157,16 @@ class Display {
             button.setLocation(pos);
             button.setOpaque(false);
             button.setContentAreaFilled(false);
-            button.setBorderPainted(false);
             panel.add(button);
+            layer++;
             panel.setLayer(button, layer);
         }
-
+        public void MouseEntered(MouseListener e){
+            button.addMouseListener(e);
+        }
+        public void MouseExited(MouseListener e){
+            button.addMouseListener(e);
+        }
         //enables button
         public void addClick(MouseListener M) {
             button.addMouseListener(M);

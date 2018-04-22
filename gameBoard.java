@@ -1,3 +1,6 @@
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -50,6 +53,21 @@ gameBoard() {
         image options = new image("Sorry-options.png");
         options.move((int) (1700* ratio), (int) (1000 * ratio));
         clickSpace OPTIONS = new clickSpace(options);
+        OPTIONS.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                OPTIONS.button.setBorderPainted(true);
+                OPTIONS.button.setBorder(new LineBorder(Color.GREEN));
+            }
+
+        });
+        OPTIONS.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                OPTIONS.button.setBorderPainted(false);
+            }
+
+        });
         OPTIONS.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -58,26 +76,79 @@ gameBoard() {
         });
     }
     private void optionsMenu(){
+
         image pauseMenu = new image("Pause-Menu.png");
 
-        clickSpace resume = new clickSpace(1712, 332, 362, 1060);
-        clickSpace saveGame = new clickSpace(1712, 332, 362, 1392);
-        clickSpace quit = new clickSpace(1712, 332, 362, 1725);
+        clickSpace resume = new clickSpace(1747, 343, 366, 677);
+        clickSpace saveGame = new clickSpace(1747, 343, 366, 1020);
+        clickSpace quit = new clickSpace(1747, 343, 366, 1363);
 
-        resume.addClick(new MouseAdapter() {
+        resume.MouseEntered(new MouseAdapter() {
             @Override
+            public void mouseEntered(MouseEvent e) {
+                resume.button.setBorderPainted(true);
+                resume.button.setBorder(new LineBorder(Color.GREEN));
+            }
+
+        });
+        saveGame.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                saveGame.button.setBorderPainted(true);
+                saveGame.button.setBorder(new LineBorder(Color.GREEN));
+            }
+
+        });
+        quit.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                quit.button.setBorderPainted(true);
+                quit.button.setBorder(new LineBorder(Color.GREEN));
+            }
+
+        });
+        resume.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                resume.button.setBorderPainted(false);
+            }
+
+        });
+        saveGame.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                saveGame.button.setBorderPainted(false);
+            }
+
+        });
+        quit.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                quit.button.setBorderPainted(false);
+            }
+
+        });
+        resume.addClick(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                pauseMenu.hide();
+                pauseMenu.move(5000, 5000);
+
+                resume.button.setBorderPainted(false);
+                saveGame.button.setBorderPainted(false);
+                quit.button.setBorderPainted(false);
+
                 resume.disable();
                 saveGame.disable();
                 quit.disable();
-
             }
         });
         saveGame.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                //saves game
+                //save game
+                pauseMenu.move(5000, 5000);
+                resume.button.setBorderPainted(false);
+                saveGame.button.setBorderPainted(false);
+                quit.button.setBorderPainted(false);
                 resume.disable();
                 saveGame.disable();
                 quit.disable();
@@ -88,6 +159,9 @@ gameBoard() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 mainMenu menu = new mainMenu();
+                resume.button.setBorderPainted(false);
+                saveGame.button.setBorderPainted(false);
+                quit.button.setBorderPainted(false);
                 resume.disable();
                 saveGame.disable();
                 quit.disable();
