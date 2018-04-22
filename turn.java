@@ -83,6 +83,7 @@ public class turn {
                      * keep counter for number of coordinates/steps taken (?)
                      * no cases here, just need to give user full reign somehow... and options to choose what they wanna do....
                      */
+                    checkPosition(7,P);
 
                     break;
                 case 10:
@@ -197,8 +198,8 @@ public class turn {
             }
         }
         if(distance<0){
-            for(int i=distance; i<=0;i++){
-                P.determineNagetivePosition();
+            for(int i=distance; i<0;i++){
+                P.determineNegativePosition();
             }
         }
         int newX = P.getX();
