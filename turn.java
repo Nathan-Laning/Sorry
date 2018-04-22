@@ -68,11 +68,7 @@ public class turn {
                      *
                      * need to check for corners ...
                      */
-                    for(int i =0;i<4;i++){
-                        if(checkDown(P)||checkLeft(P)||checkRight(P)||checkUp(P)){
-                            checkPosition(-1,P);
-                        }
-                    }
+                    checkPosition(-4,P);
                     break;
                 case 5:
                     checkPosition(5,P);
@@ -93,9 +89,7 @@ public class turn {
                     /**
                      * can also go backwards 1
                      */
-                    if(checkDown(P)||checkLeft(P)||checkRight(P)||checkUp(P)){
-                        checkPosition(-1,P);
-                    }
+                    checkPosition(-1,P);
                     //forwards 10
                     checkPosition(10,P);
                     break;
@@ -203,8 +197,19 @@ public class turn {
             }
         }
         if(distance<0){
-            for(int i=0; i<distance;i++){
-                P.moveBackward(distance);
+            for(int i=distance; i<=0;i++){
+                if(checkUp(P)){
+                  P.move(-1,0,-distance*0.15);
+                }
+                if(checkDown(P)){
+                    P.move(1,0,-distance*0.15);
+                }
+                if(checkRight(P)){
+                    P.move(0,-1,-distance*0.15);
+                }
+                if(checkLeft(P)){
+                    P.move(0,1,-distance*0.15);
+                }
             }
         }
         int newX = P.getX();
