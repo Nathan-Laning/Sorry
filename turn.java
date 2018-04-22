@@ -198,18 +198,7 @@ public class turn {
         }
         if(distance<0){
             for(int i=distance; i<=0;i++){
-                if(checkUp(P)){
-                  P.move(-1,0,-distance*0.15);
-                }
-                if(checkDown(P)){
-                    P.move(1,0,-distance*0.15);
-                }
-                if(checkRight(P)){
-                    P.move(0,-1,-distance*0.15);
-                }
-                if(checkLeft(P)){
-                    P.move(0,1,-distance*0.15);
-                }
+                P.determineNagetivePosition();
             }
         }
         int newX = P.getX();
@@ -280,31 +269,6 @@ public class turn {
         return 0;
     }
     //y=0;x=1-15
-    boolean checkUp(Pawn p){
-        if(p.getY()==0&&p.getX()>0&&p.getX()<16){
-            return true;
-        }
-        return false;
-    }
-    //y=15,x=0-14
-    boolean checkDown(Pawn p){
-        if(p.getY()==15&&p.getX()>=0&&p.getX()<15){
-            return true;
-        }
-        return false;
-    }
-    //x=15,y=1-15
-    boolean checkRight(Pawn p){
-        if(p.getX()==15&&p.getY()>0&&p.getY()<16){
-            return true;
-        }
-        return false;
-    }//x=0,y=0-14
-    boolean checkLeft(Pawn p){
-        if(p.getX()==0&&p.getY()>=0&&p.getY()<15){
-            return true;
-        }
-        return false;
-    }
+
 
 }

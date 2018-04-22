@@ -197,6 +197,29 @@ class Pawn extends Display{
                 }
             }
     }
+    public void determineNagetivePosition() {
+        //corners
+        if (x == homeEntrance[0] && y == homeEntrance[1]){
+            homeMovement();
+        }else{
+            //corners
+            if (checkDown()){
+                x++;
+            }
+            else if (checkUp()){
+                x--;
+            }
+            else if (checkRight()){
+                y--;
+            }
+            else if (checkLeft()){
+                y++;
+            }
+            else {
+                homeMovement();
+            }
+        }
+    }
 
     /**
      * /- Move Backwards -/
@@ -266,5 +289,31 @@ class Pawn extends Display{
 
     public int[] getBoardEntrance() {
         return boardEntrance;
+    }
+    boolean checkUp(){
+        if(y==0&&x>0&&x<16){
+            return true;
+        }
+        return false;
+    }
+    //y=15,x=0-14
+    boolean checkDown(){
+        if(y==15&&x>=0&&x<15){
+            return true;
+        }
+        return false;
+    }
+    //x=15,y=1-15
+    boolean checkRight(){
+        if(x==15&&y>0&&y<16){
+            return true;
+        }
+        return false;
+    }//x=0,y=0-14
+    boolean checkLeft(){
+        if(x==0&&y>=0&&y<15){
+            return true;
+        }
+        return false;
     }
 }
