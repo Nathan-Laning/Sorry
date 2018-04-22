@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * testing for yongyi
  * /- GAME BOARD -/
  *      _________________
  *     /                /
@@ -57,7 +56,7 @@ gameBoard() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 OPTIONS.button.setBorderPainted(true);
-                OPTIONS.button.setBorder(new LineBorder(Color.GREEN));
+                OPTIONS.button.setBorder(new LineBorder(Color.WHITE));
             }
 
         });
@@ -87,7 +86,7 @@ gameBoard() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 resume.button.setBorderPainted(true);
-                resume.button.setBorder(new LineBorder(Color.GREEN));
+                resume.button.setBorder(new LineBorder(Color.WHITE));
             }
 
         });
@@ -95,7 +94,7 @@ gameBoard() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 saveGame.button.setBorderPainted(true);
-                saveGame.button.setBorder(new LineBorder(Color.GREEN));
+                saveGame.button.setBorder(new LineBorder(Color.WHITE));
             }
 
         });
@@ -103,7 +102,7 @@ gameBoard() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 quit.button.setBorderPainted(true);
-                quit.button.setBorder(new LineBorder(Color.GREEN));
+                quit.button.setBorder(new LineBorder(Color.WHITE));
             }
 
         });
