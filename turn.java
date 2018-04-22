@@ -68,6 +68,11 @@ public class turn {
                      *
                      * need to check for corners ...
                      */
+                    for(int i =0;i<4;i++){
+                        if(checkDown(P)||checkLeft(P)||checkRight(P)||checkUp(P)){
+                            checkPosition(-1,P);
+                        }
+                    }
                     break;
                 case 5:
                     checkPosition(5,P);
@@ -88,6 +93,9 @@ public class turn {
                     /**
                      * can also go backwards 1
                      */
+                    if(checkDown(P)||checkLeft(P)||checkRight(P)||checkUp(P)){
+                        checkPosition(-1,P);
+                    }
                     //forwards 10
                     checkPosition(10,P);
                     break;
@@ -194,6 +202,11 @@ public class turn {
                 P.determinePosition();
             }
         }
+        if(distance<0){
+            for(int i=0; i<distance;i++){
+                P.moveBackward(distance);
+            }
+        }
         int newX = P.getX();
         int newY = P.getY();
         P.setX(originalX);
@@ -260,6 +273,33 @@ public class turn {
             if (num <= upperBound && num >= lowerBound) return i;
         }
         return 0;
+    }
+    //y=0;x=1-15
+    boolean checkUp(Pawn p){
+        if(p.getY()==0&&p.getX()>0&&p.getX()<16){
+            return true;
+        }
+        return false;
+    }
+    //y=15,x=0-14
+    boolean checkDown(Pawn p){
+        if(p.getY()==15&&p.getX()>=0&&p.getX()<15){
+            return true;
+        }
+        return false;
+    }
+    //x=15,y=1-15
+    boolean checkRight(Pawn p){
+        if(p.getX()==15&&p.getY()>0&&p.getY()<16){
+            return true;
+        }
+        return false;
+    }//x=0,y=0-14
+    boolean checkLeft(Pawn p){
+        if(p.getX()==0&&p.getY()>=0&&p.getY()<15){
+            return true;
+        }
+        return false;
     }
 
 }
