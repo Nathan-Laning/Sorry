@@ -109,8 +109,7 @@ class mainMenu extends Display{
         clickSpace smart = new clickSpace(700, 320, 1510, 1940);
 
         //start new game button
-        clickSpace startGame = new clickSpace(940, 330, 1560, 2300);
-
+        clickSpace startGame = new clickSpace(950, 400, 1560, 2300);
         //actions performed concerning mouse + buttons
         //back button
         back.MouseEntered((new MouseAdapter() {
@@ -136,29 +135,105 @@ class mainMenu extends Display{
         red.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                red.button.setBorderPainted(true);
+                red.button.setBorder(new LineBorder(Color.RED));
+                green.button.setBorderPainted(false);
+                blue.button.setBorderPainted(false);
+                yellow.button.setBorderPainted(false);
+            }
+        });
+        red.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                red.button.setBorderPainted(true);
                 red.button.setBorder(new LineBorder(Color.RED));
             }
+
+        });
+        red.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                red.button.setBorderPainted(false);
+            }
+
         });
         //green button
         green.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                green.button.setBorderPainted(true);
+                green.button.setBorder(new LineBorder(Color.GREEN));
+                red.button.setBorderPainted(false);
+                blue.button.setBorderPainted(false);
+                yellow.button.setBorderPainted(false);
+            }
+        });
+        green.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                green.button.setBorderPainted(true);
                 green.button.setBorder(new LineBorder(Color.GREEN));
             }
+
+        });
+        green.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                green.button.setBorderPainted(false);
+            }
+
         });
         //blue button
         blue.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                blue.button.setBorderPainted(true);
+                blue.button.setBorder(new LineBorder(Color.BLUE));
+                green.button.setBorderPainted(false);
+                red.button.setBorderPainted(false);
+                yellow.button.setBorderPainted(false);
+            }
+        });
+        blue.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                blue.button.setBorderPainted(true);
                 blue.button.setBorder(new LineBorder(Color.BLUE));
             }
+
+        });
+        blue.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                blue.button.setBorderPainted(false);
+            }
+
         });
         //yellow button
         yellow.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                yellow.button.setBorderPainted(true);
+                yellow.button.setBorder(new LineBorder(Color.YELLOW));
+                green.button.setBorderPainted(false);
+                blue.button.setBorderPainted(false);
+                red.button.setBorderPainted(false);
+            }
+        });
+        yellow.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                yellow.button.setBorderPainted(true);
                 yellow.button.setBorder(new LineBorder(Color.YELLOW));
             }
+
+        });
+        yellow.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                yellow.button.setBorderPainted(false);
+            }
+
         });
         //start game button
         startGame.MouseEntered((new MouseAdapter() {
@@ -174,12 +249,46 @@ class mainMenu extends Display{
                 startGame.button.setBorderPainted(false);
             }
         });
+        smart.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                smart.button.setBorderPainted(true);
+                smart.button.setBorder(new LineBorder(Color.CYAN));
+                dumb.button.setBorderPainted(false);
+            }
+        });
+        dumb.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                dumb.button.setBorderPainted(true);
+                dumb.button.setBorder(new LineBorder(Color.MAGENTA));
+                smart.button.setBorderPainted(false);
+            }
+        });
+        easy.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                easy.button.setBorderPainted(true);
+                easy.button.setBorder(new LineBorder(Color.ORANGE));
+                hard.button.setBorderPainted(false);
+            }
+        });
+        hard.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                hard.button.setBorderPainted(true);
+                hard.button.setBorder(new LineBorder(Color.PINK));
+                easy.button.setBorderPainted(false);
+            }
+        });
+        //START GAME HERE
         startGame.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                gameBoard G = new gameBoard(0,false,false);
+                gameBoard G = new gameBoard(0, false, false);
             }
         });
+
 
     }
 
