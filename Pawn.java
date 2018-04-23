@@ -267,4 +267,6 @@ class Pawn extends Display{
     public int[] getBoardEntrance() {
         return boardEntrance;
     }
+
+
 }
