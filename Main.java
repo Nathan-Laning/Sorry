@@ -67,7 +67,7 @@ class mainMenu extends Display{
             public void mouseClicked(MouseEvent e) {
                 loadGame.disable();
                 rules.disable();
-                newGame();
+                chooseCPU();
                 newGame.disable();
             }
         });
@@ -91,15 +91,95 @@ class mainMenu extends Display{
         });
 //       newGame();
     }
+    private void chooseCPU() {
+        image chooseMenu = new image("Sorry-Difficulty-menu.png");
+        //back button
+        clickSpace back = new clickSpace(500, 250, 0, 1);
 
+        // color buttons
+        clickSpace red = new clickSpace(450, 290, 150, 620);
+        clickSpace green = new clickSpace(660, 290, 535, 865);
+        clickSpace blue = new clickSpace(570, 290, 1130, 620);
+        clickSpace yellow = new clickSpace(760, 290, 1613, 865);
 
-    private void newGame() {
-        //ask how many human players/cpu players
-        //ask difficulty levels
-        //new image for num players
-        //go to difficulty levels page
-        //start game
-        gameBoard G = new gameBoard(0,false,false);
+        //difficulty buttons
+        clickSpace easy = new clickSpace(700, 320, 370, 1565);
+        clickSpace hard = new clickSpace(700, 320, 370, 1940);
+        clickSpace dumb = new clickSpace(700, 320, 1510, 1565);
+        clickSpace smart = new clickSpace(700, 320, 1510, 1940);
+
+        //start new game button
+        clickSpace startGame = new clickSpace(940, 330, 1560, 2300);
+
+        //actions performed concerning mouse + buttons
+        //back button
+        back.MouseEntered((new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                back.button.setBorderPainted(true);
+                back.button.setBorder(new LineBorder(Color.WHITE));
+            }
+        }));
+        back.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                back.button.setBorderPainted(false);
+            }
+        });
+        back.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                new mainMenu();
+            }
+        });
+        //red button
+        red.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                red.button.setBorder(new LineBorder(Color.RED));
+            }
+        });
+        //green button
+        green.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                green.button.setBorder(new LineBorder(Color.GREEN));
+            }
+        });
+        //blue button
+        blue.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                blue.button.setBorder(new LineBorder(Color.BLUE));
+            }
+        });
+        //yellow button
+        yellow.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                yellow.button.setBorder(new LineBorder(Color.YELLOW));
+            }
+        });
+        //start game button
+        startGame.MouseEntered((new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                startGame.button.setBorderPainted(true);
+                startGame.button.setBorder(new LineBorder(Color.WHITE));
+            }
+        }));
+        startGame.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                startGame.button.setBorderPainted(false);
+            }
+        });
+        startGame.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                gameBoard G = new gameBoard(0,false,false);
+            }
+        });
 
     }
 
