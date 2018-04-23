@@ -169,6 +169,13 @@ class Display {
                 button.removeMouseListener(l);
             }
         }
+        public void hide(){
+            panel.setLayer(button, 0);
+        }
+        public void show(){
+            layer++;
+            panel.setLayer(button, layer);
+        }
     }
 
     /**
