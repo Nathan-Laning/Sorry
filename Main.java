@@ -12,6 +12,10 @@ public class Main{
 }
 class mainMenu extends Display{
     image StartingPage = new image("Sorry-splash.png");
+    private int color;
+    private boolean smartness;
+    private boolean meanness;
+
     mainMenu() {
         clickSpace newGame = new clickSpace(1712, 332, 362, 1060);
         clickSpace loadGame = new clickSpace(1712, 332, 362, 1392);
@@ -136,6 +140,7 @@ class mainMenu extends Display{
         red.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                color = 0;
                 red.button.setBorderPainted(true);
                 red.button.setBorder(new LineBorder(Color.RED));
                 green.button.setBorderPainted(false);
@@ -147,6 +152,7 @@ class mainMenu extends Display{
         green.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                color = 1;
                 green.button.setBorderPainted(true);
                 green.button.setBorder(new LineBorder(Color.GREEN));
                 red.button.setBorderPainted(false);
@@ -158,6 +164,7 @@ class mainMenu extends Display{
         blue.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                color = 2;
                 blue.button.setBorderPainted(true);
                 blue.button.setBorder(new LineBorder(Color.BLUE));
                 green.button.setBorderPainted(false);
@@ -169,6 +176,7 @@ class mainMenu extends Display{
         yellow.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                color = 3;
                 yellow.button.setBorderPainted(true);
                 yellow.button.setBorder(new LineBorder(Color.YELLOW));
                 green.button.setBorderPainted(false);
@@ -194,6 +202,7 @@ class mainMenu extends Display{
         smart.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                smartness = true;
                 smart.button.setBorderPainted(true);
                 smart.button.setBorder(new LineBorder(Color.CYAN));
                 dumb.button.setBorderPainted(false);
@@ -202,6 +211,7 @@ class mainMenu extends Display{
         dumb.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                smartness = false;
                 dumb.button.setBorderPainted(true);
                 dumb.button.setBorder(new LineBorder(Color.MAGENTA));
                 smart.button.setBorderPainted(false);
@@ -210,6 +220,7 @@ class mainMenu extends Display{
         nice.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                meanness = false;
                 nice.button.setBorderPainted(true);
                 nice.button.setBorder(new LineBorder(Color.ORANGE));
                 mean.button.setBorderPainted(false);
@@ -218,6 +229,7 @@ class mainMenu extends Display{
         mean.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                meanness = true;
                 mean.button.setBorderPainted(true);
                 mean.button.setBorder(new LineBorder(Color.PINK));
                 nice.button.setBorderPainted(false);
@@ -228,11 +240,14 @@ class mainMenu extends Display{
         startGame.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                gameBoard G = new gameBoard(0, false, false);
+                StartGame(color, smartness, meanness);
             }
         });
 
 
+    }
+    private void StartGame(int color, boolean smartness, boolean meanness){
+        gameBoard G = new gameBoard(color, smartness, meanness);
     }
 
     private void Rules() {
