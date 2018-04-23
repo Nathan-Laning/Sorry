@@ -1,9 +1,11 @@
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * testing for yongyi
  * /- GAME BOARD -/
  *      _________________
  *     /                /
@@ -29,45 +31,12 @@ class gameBoard extends Display {
     private static final ArrayList<int[]> highlightedSpaces = new ArrayList<>();
     private static image[] deckImages = new image[13];
     private static image[] turnImages = new image[4];
+gameBoard() {
+    loadAssets();
+    optionsAndDrawingLoad();
+}
 
-    private image StartingPage = new image("Sorry-splash.png");
-
-
-    //String[][] whole_board=new String[16][16];
-    //1:road
-    //2:home
-    //3:start
-    //4:slider
-    //5:junction
-    //6:safe
-    //0:null
-    //basic layout for gameboard
-
-
-    protected int[][][] whole_board = {
-            {{4, 1}, {3, 5}, {3, 5}, {3, 5}, {3, 5}, {4, 1}, {4, 1}, {4, 1}, {4, 1}, {3, 4}, {3, 4}, {3, 4}, {3, 4}, {3, 4}, {4, 1}, {4, 1}},
-            {{4, 1}, {4, 0}, {3, 6}, {3, 3}, {3, 3}, {3, 3}, {4, 0}, {4, 0}, {1, 2}, {1, 2}, {1, 2}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {1, 5}},
-            {{0, 4}, {4, 0}, {3, 6}, {3, 3}, {3, 3}, {3, 3}, {4, 0}, {4, 0}, {1, 2}, {1, 2}, {1, 2}, {1, 6}, {1, 6}, {1, 6}, {1, 6}, {1, 5}},
-            {{0, 4}, {4, 0}, {3, 6}, {3, 3}, {3, 3}, {3, 3}, {4, 0}, {4, 0}, {1, 2}, {1, 2}, {1, 2}, {4, 0}, {1, 3}, {1, 3}, {1, 3}, {1, 5}},
-            {{0, 4}, {4, 0}, {3, 6}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {1, 3}, {1, 3}, {1, 3}, {1, 5}},
-            {{0, 4}, {3, 2}, {3, 2}, {3, 2}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {1, 3}, {1, 3}, {1, 3}, {4, 1}},
-            {{0, 4}, {3, 2}, {3, 2}, {3, 2}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 1}},
-            {{4, 1}, {3, 2}, {3, 2}, {3, 2}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 1}},
-            {{4, 1}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {2, 2}, {2, 2}, {2, 2}, {4, 1}},
-            {{4, 1}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {2, 2}, {2, 2}, {2, 2}, {1, 4}},
-            {{4, 1}, {0, 3}, {0, 3}, {0, 3}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {2, 2}, {2, 2}, {2, 2}, {1, 4}},
-            {{0, 5}, {0, 3}, {0, 3}, {0, 3}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {2, 6}, {4, 0}, {1, 4}},
-            {{0, 5}, {0, 3}, {0, 3}, {0, 3}, {4, 0}, {0, 2}, {0, 2}, {0, 2}, {4, 0}, {4, 0}, {2, 3}, {2, 3}, {2, 3}, {2, 6}, {4, 0}, {1, 4}},
-            {{0, 5}, {0, 6}, {0, 6}, {0, 6}, {0, 6}, {0, 2}, {0, 2}, {0, 2}, {4, 0}, {4, 0}, {2, 3}, {2, 3}, {2, 3}, {2, 6}, {4, 0}, {1, 4}},
-            {{0, 5}, {4, 0}, {4, 0}, {4, 0}, {4, 0}, {0, 2}, {0, 2}, {0, 2}, {4, 0}, {4, 0}, {2, 3}, {2, 3}, {2, 3}, {2, 6}, {4, 0}, {4, 1}},
-            {{4, 1}, {4, 1}, {2, 4}, {2, 4}, {2, 4}, {2, 4}, {2, 4}, {4, 1}, {4, 1}, {4, 1}, {4, 1}, {2, 5}, {2, 5}, {2, 5}, {2, 5}, {4, 1}},};
-
-    gameBoard() {
-        loadAssets();
-        optionsAndDrawingLoad();
-    }
-
-    private void optionsAndDrawingLoad() {
+    private void optionsAndDrawingLoad(){
         final gameBoard G = this;
         //drawpile loading
         image drawPile = new image("Sorry-Card-Back-Horizontal.png");
@@ -84,13 +53,122 @@ class gameBoard extends Display {
         image options = new image("Sorry-options.png");
         options.move((int) (1700 * ratio), (int) (1000 * ratio));
         clickSpace OPTIONS = new clickSpace(options);
+        OPTIONS.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                OPTIONS.button.setBorderPainted(true);
+                OPTIONS.button.setBorder(new LineBorder(Color.WHITE));
+            }
+
+        });
+        OPTIONS.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                OPTIONS.button.setBorderPainted(false);
+            }
+
+        });
         OPTIONS.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("testing here ");
-                //menu here
+                optionsMenu();
             }
         });
+    }
+    private void optionsMenu(){
+
+        image pauseMenu = new image("Pause-Menu.png");
+
+        clickSpace resume = new clickSpace(1747, 343, 366, 677);
+        clickSpace saveGame = new clickSpace(1747, 343, 366, 1020);
+        clickSpace quit = new clickSpace(1747, 343, 366, 1363);
+
+        resume.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                resume.button.setBorderPainted(true);
+                resume.button.setBorder(new LineBorder(Color.WHITE));
+            }
+
+        });
+        saveGame.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                saveGame.button.setBorderPainted(true);
+                saveGame.button.setBorder(new LineBorder(Color.WHITE));
+            }
+
+        });
+        quit.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                quit.button.setBorderPainted(true);
+                quit.button.setBorder(new LineBorder(Color.WHITE));
+            }
+
+        });
+        resume.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                resume.button.setBorderPainted(false);
+            }
+
+        });
+        saveGame.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                saveGame.button.setBorderPainted(false);
+            }
+
+        });
+        quit.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                quit.button.setBorderPainted(false);
+            }
+
+        });
+        resume.addClick(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                pauseMenu.move(5000, 5000);
+
+                resume.button.setBorderPainted(false);
+                saveGame.button.setBorderPainted(false);
+                quit.button.setBorderPainted(false);
+
+                resume.disable();
+                saveGame.disable();
+                quit.disable();
+            }
+        });
+        saveGame.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                //save game
+                pauseMenu.move(5000, 5000);
+                resume.button.setBorderPainted(false);
+                saveGame.button.setBorderPainted(false);
+                quit.button.setBorderPainted(false);
+                resume.disable();
+                saveGame.disable();
+                quit.disable();
+
+            }
+        });
+        quit.addClick(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                mainMenu menu = new mainMenu();
+                resume.button.setBorderPainted(false);
+                saveGame.button.setBorderPainted(false);
+                quit.button.setBorderPainted(false);
+                resume.disable();
+                saveGame.disable();
+                quit.disable();
+
+            }
+        });
+
     }
 
     /**

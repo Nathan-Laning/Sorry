@@ -49,6 +49,7 @@ class turn {
                      *
                      * need to check for corners ...
                      */
+                    checkPosition(-4,P);
                     break;
                 case 5:
                     checkPosition(5,P);
@@ -63,12 +64,14 @@ class turn {
                      * keep counter for number of coordinates/steps taken (?)
                      * no cases here, just need to give user full reign somehow... and options to choose what they wanna do....
                      */
+                    checkPosition(7,P);
 
                     break;
                 case 10:
                     /**
                      * can also go backwards 1
                      */
+                    checkPosition(-1,P);
                     //forwards 10
                     checkPosition(10,P);
                     break;
@@ -160,6 +163,11 @@ class turn {
             }
         }
         checkSlide(P);
+        if(distance<0){
+            for(int i=distance; i<0;i++){
+                P.determineNegativePosition();
+            }
+        }
         int newX = P.getX();
         int newY = P.getY();
         P.setX(originalX);
@@ -257,6 +265,8 @@ class turn {
         }
         return 0;
     }
+    //y=0;x=1-15
+
 
 
 }
