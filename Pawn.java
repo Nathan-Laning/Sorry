@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * -> such as (-1,0) is negative x (left on the screen)
  */
 class Pawn extends Display{
-    public ArrayList<int[]> moveablePositons=new ArrayList<>();
+
     private int color;
     private int[] homeEntrance,boardEntrance,homeSpace,finishPosition;
     private int x, y;
