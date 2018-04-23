@@ -16,7 +16,7 @@ class mainMenu extends Display{
         clickSpace newGame = new clickSpace(1712, 332, 362, 1060);
         clickSpace loadGame = new clickSpace(1712, 332, 362, 1392);
         clickSpace rules = new clickSpace(1712, 332, 362, 1725);
-        newGame();
+//        newGame();
         newGame.MouseEntered(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -99,7 +99,7 @@ class mainMenu extends Display{
         //new image for num players
         //go to difficulty levels page
         //start game
-        gameBoard G = new gameBoard();
+        gameBoard G = new gameBoard(0,false,false);
 
     }
 

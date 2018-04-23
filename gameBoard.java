@@ -28,27 +28,76 @@ class gameBoard extends Display {
     private static space[][] spaces;
     private static Pawn[] pawns = new Pawn[16];
     private static int player_turn = whosTurn();
+    clickSpace DRAW;
+    private int playerColor=0;
     private static final ArrayList<int[]> highlightedSpaces = new ArrayList<>();
     private static image[] deckImages = new image[13];
     private static image[] turnImages = new image[4];
-gameBoard() {
+    private java.awt.event.MouseListener DrawDeck;
+gameBoard(int playerColor, boolean smart,boolean mean) {
+    this.playerColor=playerColor;
     loadAssets();
     optionsAndDrawingLoad();
+    determineAI(smart,mean);
 }
 
+
+    void determineAI(boolean smart,boolean mean){
+    if(!smart) {
+        if(mean) {
+            DrawDeck = new java.awt.event.MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if(player_turn!=playerColor) {
+                        new DumbMeanAITurn(gameBoard.this);
+                    }else{
+                        new UserTurn(gameBoard.this);
+                    }
+                }
+            };
+        }else {
+            DrawDeck = new java.awt.event.MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if(player_turn!=playerColor) {
+                        new DumbNiceAITurn(gameBoard.this);
+                    }else{
+                        new UserTurn(gameBoard.this);
+                    }
+                }
+            };
+        }
+    }
+    if(smart) {
+        if(mean) {
+            DrawDeck = new java.awt.event.MouseAdapter() {
+
+                public void mouseClicked(MouseEvent e) {
+                    if(player_turn!=playerColor) {
+//new SmartMeanAITurn(gameBoard.this);
+                    }else{
+                        new UserTurn(gameBoard.this);
+                    }
+                }
+            };
+        }else {
+            DrawDeck = new java.awt.event.MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if(player_turn!=playerColor) {
+//new SmartNiceAITurn(gameBoard.this);
+                    }else{
+                        new UserTurn(gameBoard.this);
+                    }
+                }
+            };
+        }
+    }
+}
     private void optionsAndDrawingLoad(){
         final gameBoard G = this;
-        //drawpile loading
+        // draw pile loading
         image drawPile = new image("Sorry-Card-Back-Horizontal.png");
         drawPile.move((int) (1010 * ratio), (int) (710 * ratio));
-        clickSpace DRAW = new clickSpace(drawPile);
-        DRAW.addClick(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                new DumbMeanAITurn(G);
-
-            }
-        });
+        DRAW = new clickSpace(drawPile);
+        DRAW.addClick(DrawDeck);
         //options loading
         image options = new image("Sorry-options.png");
         options.move((int) (1700 * ratio), (int) (1000 * ratio));
@@ -71,7 +120,8 @@ gameBoard() {
         OPTIONS.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                optionsMenu();
+                Thread T = new Thread(()->optionsMenu());
+                T.start();
             }
         });
     }
@@ -88,6 +138,7 @@ gameBoard() {
             public void mouseEntered(MouseEvent e) {
                 resume.button.setBorderPainted(true);
                 resume.button.setBorder(new LineBorder(Color.WHITE));
+
             }
 
         });
@@ -131,14 +182,14 @@ gameBoard() {
         resume.addClick(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 pauseMenu.move(5000, 5000);
-
                 resume.button.setBorderPainted(false);
                 saveGame.button.setBorderPainted(false);
                 quit.button.setBorderPainted(false);
 
-                resume.disable();
-                saveGame.disable();
-                quit.disable();
+                resume.hide();
+                saveGame.hide();
+                quit.hide();
+
             }
         });
         saveGame.addClick(new MouseAdapter() {
@@ -165,6 +216,7 @@ gameBoard() {
                 resume.disable();
                 saveGame.disable();
                 quit.disable();
+
 
             }
         });
