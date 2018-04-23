@@ -1,3 +1,5 @@
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -6,34 +8,67 @@ public class Main{
     //    static Display DISPLAY = new Display();
     public static void main(String[] args) {
         new mainMenu();
-
     }
-
 }
-
-
 class mainMenu extends Display{
-
+    image StartingPage = new image("Sorry-splash.png");
     mainMenu() {
-
-
-        image StartingPage = new image("Sorry-splash.png");
         clickSpace newGame = new clickSpace(1712, 332, 362, 1060);
         clickSpace loadGame = new clickSpace(1712, 332, 362, 1392);
         clickSpace rules = new clickSpace(1712, 332, 362, 1725);
         newGame();
+        newGame.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                newGame.button.setBorderPainted(true);
+                newGame.button.setBorder(new LineBorder(Color.WHITE));
+            }
+
+        });
+        newGame.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                newGame.button.setBorderPainted(false);
+            }
+
+        });
+        loadGame.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                loadGame.button.setBorderPainted(true);
+                loadGame.button.setBorder(new LineBorder(Color.WHITE));
+            }
+
+        });
+        loadGame.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                loadGame.button.setBorderPainted(false);
+            }
+
+        });
+        rules.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                rules.button.setBorderPainted(true);
+                rules.button.setBorder(new LineBorder(Color.WHITE));
+            }
+
+        });
+        rules.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                rules.button.setBorderPainted(false);
+            }
+
+        });
         newGame.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-//                Thread T = new Thread(()->newGame());
-//                T.start();
-//                LOADINGSCREEN.show();
-                newGame();
                 loadGame.disable();
                 rules.disable();
+                newGame();
                 newGame.disable();
-
-
             }
         });
         loadGame.addClick(new MouseAdapter() {
@@ -59,8 +94,11 @@ class mainMenu extends Display{
 
 
     private void newGame() {
-        //just displaying gameboard for fun
-        //start new Game, however we want to do that
+        //ask how many human players/cpu players
+        //ask difficulty levels
+        //new image for num players
+        //go to difficulty levels page
+        //start game
         gameBoard G = new gameBoard();
 
     }
@@ -68,8 +106,6 @@ class mainMenu extends Display{
     private void Rules() {
         //open rules page
         //allow exit
-        //re-instantiate game if started
-        //*****TESTING: Still need to work on re sizing instructions image
 
         image back = new image("back.png");
         image infoPage = new image("Sorry-rules.png");

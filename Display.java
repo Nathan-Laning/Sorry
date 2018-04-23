@@ -1,6 +1,9 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -25,12 +28,11 @@ import java.io.IOException;
  * window naming
  */
 class Display {
-
     private static int layer = 1;
-    public static final JLayeredPane panel = new JLayeredPane();
+    private static final JLayeredPane panel = new JLayeredPane();
     private static final JFrame frame = new JFrame("Sorry!");
     private static int heightGap = 22, widthGap = 0;//default for osx and linux
-    public static int size = 1000;
+    public static int size = 700;
     public static double ratio = size / 2500.0;
 
     /**
@@ -42,7 +44,7 @@ class Display {
             widthGap = 16;
             heightGap = 39;
         }
-        setSize(size);
+        frame.setSize(size + widthGap, size + heightGap);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
@@ -51,11 +53,7 @@ class Display {
     }
 
 
-    void setSize(int size) {
-        //need to add loading from file instead of call so desired resolution is saved
-        this.size = size;
-        frame.setSize(size + widthGap, size + heightGap);
-    }
+
 
     /**
      * Converts basic x,y co-oridinates to numeric conterparts
@@ -67,12 +65,6 @@ class Display {
         return (int) (num * ((size - (ratio * 66)) / 16) + (ratio * 30));
     }
 
-    /**
-     * Converts numeric values to basic x,y co-oridinates
-     *
-     * @param num -> co-oridinate number(0->15)
-     * @return realtime positioning (0->size)
-     */
 
     /**
      * /- Click Space -/
@@ -114,7 +106,7 @@ class Display {
         // default init
         Point pos;
         int height, width;
-        private JButton button;
+        public JButton button;
 
         /**
          * Constructor
@@ -132,8 +124,8 @@ class Display {
             button.setBorderPainted(false);
             button.setContentAreaFilled(false);
             panel.add(button);
+            layer++;
             panel.setLayer(button, layer);
-
         }
 
         /**
@@ -153,11 +145,16 @@ class Display {
             button.setLocation(pos);
             button.setOpaque(false);
             button.setContentAreaFilled(false);
-            button.setBorderPainted(false);
             panel.add(button);
+            layer++;
             panel.setLayer(button, layer);
         }
-
+        public void MouseEntered(MouseListener e){
+            button.addMouseListener(e);
+        }
+        public void MouseExited(MouseListener e){
+            button.addMouseListener(e);
+        }
         //enables button
         public void addClick(MouseListener M) {
             button.addMouseListener(M);
@@ -279,11 +276,6 @@ class Display {
             final double TIME = delay;
             T = new Thread(() -> move(X, Y, TIME));
             T.start();
-//            try {
-//                T.join();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
         }
 
         /**
