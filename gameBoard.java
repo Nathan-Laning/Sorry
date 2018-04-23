@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
-
+import java.io.*;
 /**
  * /- GAME BOARD -/
  *      _________________
@@ -34,6 +34,10 @@ class gameBoard extends Display {
     private static image[] deckImages = new image[13];
     private static image[] turnImages = new image[4];
     private java.awt.event.MouseListener DrawDeck;
+    int x,y;
+    saveGame object = new saveGame(x,y,player_turn);
+    String fileName = "saved.txt";
+
 gameBoard(int playerColor, boolean smart,boolean mean) {
     this.playerColor=playerColor;
     loadAssets();
@@ -147,6 +151,7 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
             public void mouseEntered(MouseEvent e) {
                 saveGame.button.setBorderPainted(true);
                 saveGame.button.setBorder(new LineBorder(Color.WHITE));
+                
             }
 
         });
@@ -196,6 +201,24 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
             @Override
             public void mouseClicked(MouseEvent e) {
                 //save game
+            	//save game
+                try {
+            		FileOutputStream file = new FileOutputStream(fileName);
+            		ObjectOutputStream out = new ObjectOutputStream(file);
+            		out.writeObject(object);
+            		out.close();
+            		file.close();
+            	}
+            	catch (IOException ex) {
+            		System.out.println("IOException found");
+            	}
+            	object = null;
+            	System.out.println("x: "+x);
+        		System.out.println("y: "+y);
+        		System.out.println("player_turn: "+player_turn);
+
+            
+
                 pauseMenu.move(5000, 5000);
                 resume.button.setBorderPainted(false);
                 saveGame.button.setBorderPainted(false);
@@ -203,6 +226,8 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
                 resume.disable();
                 saveGame.disable();
                 quit.disable();
+                
+                
 
             }
         });

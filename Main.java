@@ -2,9 +2,8 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+import java.io.*;
 public class Main{
-
     //    static Display DISPLAY = new Display();
     public static void main(String[] args) {
         new mainMenu();
@@ -12,6 +11,13 @@ public class Main{
 }
 class mainMenu extends Display{
     image StartingPage = new image("Sorry-splash.png");
+    int x,y;
+	public static int player_turn;
+	
+	gameBoard game;
+	saveGame object = new saveGame(x,y,player_turn);
+    String fileName = "saved.txt";
+
     mainMenu() {
         clickSpace newGame = new clickSpace(1712, 332, 362, 1060);
         clickSpace loadGame = new clickSpace(1712, 332, 362, 1392);
@@ -124,6 +130,25 @@ class mainMenu extends Display{
 
     private void loadGame() {
         //figure out load game dialogue
+    	try {
+    		FileInputStream file = new FileInputStream(fileName);
+    		ObjectInputStream in = new ObjectInputStream(file);
+    		object = (saveGame)in.readObject();
+    		in.close();
+    		file.close();
+    	} catch(IOException ex) {
+    		System.out.println("IOException found");
+    	}catch(ClassNotFoundException ex) {
+    		System.out.println("ClassNotFoundException found");
+    	}
+    	
+    	
+    	System.out.println("x =: "+x);
+		System.out.println("y =: "+y);
+		System.out.println("player_turn =: "+player_turn);
+
+    
+
 
     }
 }
