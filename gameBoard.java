@@ -27,6 +27,11 @@ class gameBoard extends Display {
     private static clickSpace board;
     private static space[][] spaces;
     private static Pawn[] pawns = new Pawn[16];
+
+    int getPlayer_turn() {
+        return player_turn;
+    }
+
     private static int player_turn = whosTurn();
     clickSpace DRAW;
     private int playerColor=0;
@@ -36,17 +41,20 @@ class gameBoard extends Display {
     private java.awt.event.MouseListener DrawDeck;
 gameBoard(int playerColor, boolean smart,boolean mean) {
     this.playerColor=playerColor;
+    determineAI(smart,mean);
     loadAssets();
     optionsAndDrawingLoad();
-    determineAI(smart,mean);
+
 }
 
 
     void determineAI(boolean smart,boolean mean){
+
     if(!smart) {
         if(mean) {
             DrawDeck = new java.awt.event.MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
+                    cycleTeams();
                     if(player_turn!=playerColor) {
                         new DumbMeanAITurn(gameBoard.this);
                     }else{
@@ -57,6 +65,7 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
         }else {
             DrawDeck = new java.awt.event.MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
+                    cycleTeams();
                     if(player_turn!=playerColor) {
                         new DumbNiceAITurn(gameBoard.this);
                     }else{
@@ -71,6 +80,7 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
             DrawDeck = new java.awt.event.MouseAdapter() {
 
                 public void mouseClicked(MouseEvent e) {
+                    cycleTeams();
                     if(player_turn!=playerColor) {
 //new SmartMeanAITurn(gameBoard.this);
                     }else{
@@ -81,7 +91,8 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
         }else {
             DrawDeck = new java.awt.event.MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
-                    if(player_turn!=playerColor) {
+                    cycleTeams();
+                    if(player_turn-1!=playerColor) {
 //new SmartNiceAITurn(gameBoard.this);
                     }else{
                         new UserTurn(gameBoard.this);
