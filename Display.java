@@ -32,7 +32,7 @@ class Display {
     private static final JLayeredPane panel = new JLayeredPane();
     private static final JFrame frame = new JFrame("Sorry!");
     private static int heightGap = 22, widthGap = 0;//default for osx and linux
-    public static int size = 700;
+    public static int size = 600;
     public static double ratio = size / 2500.0;
 
     /**
@@ -145,6 +145,7 @@ class Display {
             button.setLocation(pos);
             button.setOpaque(false);
             button.setContentAreaFilled(false);
+            button.setBorderPainted(false);
             panel.add(button);
             layer++;
             panel.setLayer(button, layer);
