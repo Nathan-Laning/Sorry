@@ -8,38 +8,19 @@ import java.util.ArrayList;
  * (within reason) The user/AI can then select which they want to do.
  * is passed a card and a color.
  */
-public class turn {
-    private ArrayList<Pawn> TEAM_PAWNS = new ArrayList<>();
-    private ArrayList<int[]> SPACES_FOR_MOVE = new ArrayList<>();
-    private Pawn SELECTED_PAWN,occupant;
-    private int color,cardNumber;
-    boolean goAgain=false;
+class turn {
+    ArrayList<Pawn> TEAM_PAWNS = new ArrayList<>();
+    ArrayList<int[]> SPACES_FOR_MOVE = new ArrayList<>();
+    Pawn SELECTED_PAWN;
+    int color;
+    int cardNumber;
+    boolean goAgain = false;
+    ArrayList<ArrayList<Pawn>> bumpedPawns = new ArrayList<>();
+    ArrayList<int[]> bumpedLocations = new ArrayList<>();
     gameBoard G;
-    public java.awt.event.MouseListener SELECT_PAWN = new java.awt.event.MouseAdapter() {
-        public void mouseClicked(MouseEvent e) {
-            selectPawn(e.getX(), e.getY());
-        }
-    };
-    public java.awt.event.MouseListener SELECT_POSITION= new java.awt.event.MouseAdapter() {
-        public void mouseClicked(MouseEvent e) {
-            selectSpace(e.getX(), e.getY());
-        }
-    };
 
-    /**
-     * NEW TURN
-     * @param G Game Board
-     */
-    turn(gameBoard G) {
-        this.G=G;
-        cardNumber = G.draw();
-        this.color = G.cycleTeams();
-        TEAM_PAWNS = G.getTeamPawns(color);
-        findAllMoves();
-        clearHighlights();
-        highlightPawns();
-        G.addMouseClick(SELECT_PAWN);
-    }
+
+
     void findAllMoves() {
         for (Pawn P : TEAM_PAWNS) {
             P.moveablePositons = new ArrayList<>();
@@ -110,73 +91,57 @@ public class turn {
             }
         }
     }
-
+    void AI(gameBoard g){
+        G=g;
+        cardNumber = G.draw();
+        this.color = G.cycleTeams();
+        TEAM_PAWNS = G.getTeamPawns(color);
+        findAllMoves();
+        clearHighlights();
+        highlightPawns();
+        determineMove();
+    }
+    void determineMove(){
+        //empty to be replaced further on
+    }
+    void dumbMove(){
+        for (Pawn P : TEAM_PAWNS) {
+            if (!P.moveablePositons.isEmpty()) {
+                for (int[] xy : P.moveablePositons) {
+                    Thread B = new Thread(()->bump(xy));
+                    B.start();
+                    P.move(xy[0], xy[1], .4);
+                    return;
+                }
+            }
+        }
+    }
     void bump(int[] xy){
+        for(int i = 0; i< bumpedLocations.size();i++){
+            if (bumpedLocations.get(i)[0]==xy[0]&&bumpedLocations.get(i)[1]==xy[1]){
+                for (Pawn PAWNS: bumpedPawns.get(i)) {
+                    PAWNS.moveToStart();
+                }
+
+            }
+        }
         for (Pawn P : G.getPawns()) {
             if (P.getX() == xy[0] && P.getY() == xy[1] && P.getColor()!=color){
                 P.moveToStart();
                 return;
             }
-
         }
     }
 
-    void selectPawn(int x,int y){
-        G.hideHighlightedSpaces();
-        x=convertToCooridinate(x);
-        y=convertToCooridinate(y);
-        SPACES_FOR_MOVE.clear();
-        for (Pawn P:TEAM_PAWNS) {
-            if(P.getX()==x && P.getY()==y){
-                SELECTED_PAWN = P;
-                SPACES_FOR_MOVE.addAll(P.moveablePositons);
-                highlightSpaces();
-                G.addMouseClick(SELECT_POSITION);
-                G.removeMouseClick(SELECT_PAWN);
-                return;
-            }
-        }
-    }
-    void selectSpace(int x,int y){
-        clearPawnHighlights();
-        x=convertToCooridinate(x);
-        y=convertToCooridinate(y);
-        if(goAgain) {
-            for (int i = 0; i < 3; i++) {
-                G.cycleTeams();
-            }
-        }
-        for (int[] xy:SPACES_FOR_MOVE) {
-            if(x==xy[0]&&y==xy[1]) {
-                Thread T = new Thread(()->bump(xy));
-                T.start();
-                try {
-                    T.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                SELECTED_PAWN.move(x, y, 1);
-                G.removeMouseClick(SELECT_POSITION);
-                clearHighlights();
-                if(goAgain){
 
-                }
-                return;
-            }
-        }
-        clearHighlights();
-        highlightPawns();
-        G.addMouseClick(SELECT_PAWN);
-        G.removeMouseClick(SELECT_POSITION);
-    }
-
-    private void clearPawnHighlights() {
+    void clearPawnHighlights() {
         for (Pawn P : G.getPawns()) {
             P.hideHighlight();
         }
     }
 
-    private void clearHighlights(){
+
+    void clearHighlights(){
         clearPawnHighlights();
         G.hideHighlightedSpaces();
     }
@@ -197,6 +162,7 @@ public class turn {
                 P.determinePosition();
             }
         }
+        checkSlide(P);
         if(distance<0){
             for(int i=distance; i<0;i++){
                 P.determineNegativePosition();
@@ -207,11 +173,14 @@ public class turn {
         P.setX(originalX);
         P.setY(originalY);
         if((containsPawn(newX,newY)!=color||(P.getFinishPosition()[0]==newX&&P.getFinishPosition()[1]==newY))
-                &&(G.checkSpace(newX,newY)==color||G.checkSpace(newX,newY)!=-1)){
-            P.moveablePositons.add(new int[]{newX,newY});
-        }
+                &&(G.checkSpace(newX,newY)==color||G.checkSpace(newX,newY)!=-1)) {
 
-    }
+            P.moveablePositons.add(new int[]{newX, newY});
+        }else{
+            P.setX(originalX);
+            P.setY(originalY);
+        }
+        }
     void getUnsafePawnLocation(Pawn P){
         for (Pawn A :G.getPawns()) {
             //this means its on the ring, and the other team, therefor not safe.
@@ -224,12 +193,40 @@ public class turn {
         }
     }
 
+    void checkSlide(Pawn P){
+        int Y=P.getY();
+        int X=P.getX();
+        try {
+            int slide = G.getSpace(X, Y).getSlide();
+            if (G.getSpace(X, Y).getColor() != this.color) {
+                ArrayList<Pawn> pawns = new ArrayList<>();
+                for (int i = 0; i < slide; i++) {
+                    P.determinePosition();
+                        pawns.add(bumpablePawns(P.getX(),P.getY()));
+                }
+                if(!pawns.isEmpty()) {
+                    bumpedPawns.add(pawns);
+                    bumpedLocations.add(new int[]{X,Y});
+                }
+            }
+        }catch (NullPointerException N){
 
+        }
+    }
+
+
+    Pawn bumpablePawns(int x, int y) {
+        for (Pawn P : G.getPawns()) {
+            if (P.getX() == x && P.getY() == y){
+                return P;
+            }
+        }
+        return null;
+    }
 
     int containsPawn(int x, int y) {
         for (Pawn P : G.getPawns()) {
             if (P.getX() == x && P.getY() == y){
-                occupant=P;
                 return P.getColor();
             }
 
@@ -241,7 +238,6 @@ public class turn {
     int containsPawn(int[] xy) {
         for (Pawn P : G.getPawns()) {
             if (P.getX() == xy[0] && P.getY() == xy[1]){
-                occupant=P;
                 return P.getColor();
             }
 
@@ -271,5 +267,121 @@ public class turn {
     }
     //y=0;x=1-15
 
+
+
+}
+class UserTurn extends turn{
+    private java.awt.event.MouseListener SELECT_PAWN = new java.awt.event.MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+            selectPawn(e.getX(), e.getY());
+        }
+    };
+    private java.awt.event.MouseListener SELECT_POSITION= new java.awt.event.MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+            selectSpace(e.getX(), e.getY());
+        }
+    };
+
+    UserTurn(gameBoard g) {
+        G=g;
+        cardNumber = G.draw();
+        this.color = G.cycleTeams();
+        TEAM_PAWNS = G.getTeamPawns(color);
+        findAllMoves();
+        clearHighlights();
+        highlightPawns();
+        G.addMouseClick(SELECT_PAWN);
+    }
+    private void selectPawn(int x,int y){
+        G.hideHighlightedSpaces();
+        x=convertToCooridinate(x);
+        y=convertToCooridinate(y);
+        SPACES_FOR_MOVE.clear();
+        for (Pawn P:TEAM_PAWNS) {
+            if(P.getX()==x && P.getY()==y){
+                SELECTED_PAWN = P;
+                SPACES_FOR_MOVE.addAll(P.moveablePositons);
+                highlightSpaces();
+                G.addMouseClick(SELECT_POSITION);
+                G.removeMouseClick(SELECT_PAWN);
+                return;
+            }
+        }
+    }
+
+    private void selectSpace(int x,int y){
+        clearPawnHighlights();
+        x=convertToCooridinate(x);
+        y=convertToCooridinate(y);
+        if(goAgain) {
+            for (int i = 0; i < 3; i++) {
+                G.cycleTeams();
+            }
+        }
+        for (int[] xy:SPACES_FOR_MOVE) {
+            if(x==xy[0]&&y==xy[1]) {
+                Thread B = new Thread(()->bump(xy));
+                B.start();
+                SELECTED_PAWN.move(x, y, 1);
+                G.removeMouseClick(SELECT_POSITION);
+                clearHighlights();
+                return;
+            }
+        }
+        clearHighlights();
+        highlightPawns();
+        G.addMouseClick(SELECT_PAWN);
+        G.removeMouseClick(SELECT_POSITION);
+    }
+}
+
+/**
+ * Dumb & Nice AI
+ */
+class  DumbNiceAITurn extends turn {
+    DumbNiceAITurn(gameBoard G) {
+        AI(G);
+    }
+
+    @Override
+    void determineMove() {
+        for (Pawn P : TEAM_PAWNS) {
+            if (!P.moveablePositons.isEmpty()) {
+                for (int[] xy : P.moveablePositons) {
+                    if (containsPawn(xy) == -1) {
+                        P.move(P.moveablePositons.get(0)[0], P.moveablePositons.get(0)[1], .4);
+                        return;
+                    }
+                }
+            }
+        }
+        dumbMove();
+    }
+}
+
+/**
+ * Dumb & Nice AI
+ */
+class  DumbMeanAITurn extends turn {
+    DumbMeanAITurn(gameBoard G) {
+        AI(G);
+    }
+
+    @Override
+    void determineMove() {
+        for (Pawn P : TEAM_PAWNS) {
+            if (!P.moveablePositons.isEmpty()) {
+                for (int[] xy : P.moveablePositons) {
+                    if (containsPawn(xy) != -1&& containsPawn(xy)!=color) {
+                        Thread B = new Thread(()->bump(xy));
+                        B.start();
+                        P.move(P.moveablePositons.get(0)[0], P.moveablePositons.get(0)[1], .4);
+                        return;
+                    }
+                }
+            }
+        }
+        dumbMove();
+    }
 
 }

@@ -20,15 +20,15 @@ import java.util.Random;
  * the information is saved for each board as its own class below.
  * <p>
  */
-class gameBoard extends Display{
+class gameBoard extends Display {
     private ArrayList<Integer> DECK = new ArrayList<>();
     private Random R = new Random(System.currentTimeMillis());
-    image discardPile = null;
-    private static clickSpace board = null;
+    private static image discardPile;
+    private static clickSpace board;
     private static space[][] spaces;
     private static Pawn[] pawns = new Pawn[16];
     private static int player_turn = whosTurn();
-    private static final ArrayList<int[]> highlightedSpaces=new ArrayList<>();
+    private static final ArrayList<int[]> highlightedSpaces = new ArrayList<>();
     private static image[] deckImages = new image[13];
     private static image[] turnImages = new image[4];
 gameBoard() {
@@ -40,17 +40,18 @@ gameBoard() {
         final gameBoard G = this;
         //drawpile loading
         image drawPile = new image("Sorry-Card-Back-Horizontal.png");
-        drawPile.move((int) (1010* ratio), (int) (710 * ratio));
+        drawPile.move((int) (1010 * ratio), (int) (710 * ratio));
         clickSpace DRAW = new clickSpace(drawPile);
         DRAW.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new turn(G);
+                new DumbMeanAITurn(G);
+
             }
         });
         //options loading
         image options = new image("Sorry-options.png");
-        options.move((int) (1700* ratio), (int) (1000 * ratio));
+        options.move((int) (1700 * ratio), (int) (1000 * ratio));
         clickSpace OPTIONS = new clickSpace(options);
         OPTIONS.MouseEntered(new MouseAdapter() {
             @Override
@@ -169,11 +170,12 @@ gameBoard() {
         });
 
     }
+
     /**
      * /- Load Assests -/
      * loads all assets to be used
      */
-    private void loadAssets(){
+    private void loadAssets() {
         image GAMEBOARD = new image("Sorry-board.png");
         board = new clickSpace(GAMEBOARD);
         board.disable();
@@ -186,13 +188,14 @@ gameBoard() {
         //starting the pawn load
         loadPawns();
     }
+
     /**
      * /- Threaded Load Assests -/
      * loads all assets to be used using threads
      * much faster, more unstable
      * optimally we would get this working always! or at least have it restart if it fails
      */
-    private void threadedLoadAssets(){
+    private void threadedLoadAssets() {
 
         image GAMEBOARD = new image("Sorry-board.png");
         board = new clickSpace(GAMEBOARD);
@@ -200,7 +203,7 @@ gameBoard() {
         GAMEBOARD.show();
         loadTurnImages();
         //starting the deck load
-        Thread D=new Thread(()-> loadDeck());
+        Thread D = new Thread(() -> loadDeck());
         D.start();
         //starting the spaces load
         Thread S = new Thread(() -> loadSpaces());
@@ -218,14 +221,16 @@ gameBoard() {
 
 
     }
-    private void loadTurnImages(){
+
+    private void loadTurnImages() {
         for (int i = 0; i < 4; i++) {
-            turnImages[i]=new image("Sorry-turn.png",4,i+1);
-            turnImages[i].move((int)(290*ratio),(int)(1240*ratio));
+            turnImages[i] = new image("Sorry-turn.png", 4, i + 1);
+            turnImages[i].move((int) (290 * ratio), (int) (1240 * ratio));
             turnImages[i].hide();
         }
 
     }
+
     /**
      * /- LOAD SPACES -/
      * Loading all of the spaces to be interacted with.
@@ -240,19 +245,15 @@ gameBoard() {
             spaces[i][15] = new space();
         }
         //first slide
-        for (int i = 0; i < 4; i++) {
-            spaces[0][1 + i] = new space(1);//green
-            spaces[15][14 - i] = new space(3);//yellow
-            spaces[1 + i][15] = new space(2);//blue
-            spaces[14 - i][0] = new space(0);//red
-        }
+            spaces[0][1] = new space(1,3);//green
+            spaces[15][14] = new space(3,3);//yellow
+            spaces[1][15] = new space(2,4);//blue
+            spaces[14][0] = new space(0,3);//red
         //second slide
-        for (int i = 0; i < 5; i++) {
-            spaces[0][9 + i] = new space(1);//green
-            spaces[15][6 - i] = new space(3);//yellow
-            spaces[9 + i][15] = new space(2);//blue
-            spaces[6 - i][0] = new space(0);//red
-        }
+            spaces[0][9] = new space(1,4);//green
+            spaces[15][6] = new space(3,4);//yellow
+            spaces[9][15] = new space(2,4);//blue
+            spaces[6][0] = new space(0,4);//red
 //        home walkways
         for (int i = 0; i < 6; i++) {
             spaces[13][1 + i] = new space(0);//red
@@ -275,11 +276,12 @@ gameBoard() {
             System.out.println();
         }
     }
+
     /**
      * /- Load Deck -/
      * primes the deck to be used, and pre-loads all images to be used
      */
-    private void loadDeck(){
+    private void loadDeck() {
         discardPile = new image("Sorry-Card-Back-Horizontal.png");
         discardPile.move((int) (1010 * ratio), (int) (1460 * ratio));
         shuffleDeck();
@@ -302,6 +304,7 @@ gameBoard() {
             }
         }
     }
+
     // shuffles a "new" deck
     private void loadPawns() {
         int[][] pos = {
@@ -315,9 +318,13 @@ gameBoard() {
             pawns[j] = new Pawn(k, pos[j][0], pos[j][1]);
             k = (j + 1) / 4;
         }
+        pawns[0].placePawn(0,0);
+        pawns[7].placePawn(4,0);
     }
+
     /**
      * Draws a new card, to be used by the turn module
+     *
      * @return int card number
      */
     public int draw() {
@@ -332,6 +339,7 @@ gameBoard() {
         deckImages[cardNumber].show();
         return cardNumber;
     }
+
     //picks a random player to go first
     void shuffleDeck() {
         discardPile.hide();
@@ -349,58 +357,67 @@ gameBoard() {
 
         }
     }
+
     //loads all pawns in home position and images
     private static int whosTurn() {
         Random rand = new Random();
         int num = rand.nextInt(4);
         return num;
     }
+
     //returns all pawns, to be used by turn
     public Pawn[] getPawns() {
         return pawns;
     }
+
     //cycles to the next team
-    public int cycleTeams(){
+    public int cycleTeams() {
         turnImages[player_turn].hide();
         player_turn++;
-        if(player_turn==4)player_turn=0;
+        if (player_turn == 4) player_turn = 0;
         turnImages[player_turn].show();
         System.out.println(player_turn);
         return player_turn;
     }
+
     //gets your "teammate" pawns
-    public ArrayList<Pawn> getTeamPawns(int color){
+    public ArrayList<Pawn> getTeamPawns(int color) {
         ArrayList<Pawn> P = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
-            P.add(pawns[(color*4)+i]);
+            P.add(pawns[(color * 4) + i]);
         }
         return P;
     }
+
     //hides all previously highlighted spaces
-    void hideHighlightedSpaces(){
-        for (int[] xy:highlightedSpaces) {
+    void hideHighlightedSpaces() {
+        for (int[] xy : highlightedSpaces) {
             spaces[xy[1]][xy[0]].hideHighlight();
         }
         highlightedSpaces.clear();
     }
+
     //highlights specific spaces using co-ordinate system (int[])
-    void highlightSpace(int[] xy){
+    void highlightSpace(int[] xy) {
         spaces[xy[1]][xy[0]].highlight();
         highlightedSpaces.add(xy);
     }
+
     //highlights specific spaces using co-ordinate system (int x, int y)
-    void highlightSpace(int x, int y){
+    void highlightSpace(int x, int y) {
         spaces[y][x].highlight();
-        highlightedSpaces.add(new int[]{x,y});
+        highlightedSpaces.add(new int[]{x, y});
     }
+
     //returns the color of a space
-    int checkSpace(int x, int y){
-        try{
+    int checkSpace(int x, int y) {
+        try {
             return spaces[y][x].getColor();
-        } catch (NullPointerException N){
+        } catch (NullPointerException N) {
             return -1;
         }
     }
+
     //displays board for checking of construction, to be removed
     static void out(int i) {
         switch (i) {
@@ -426,76 +443,87 @@ gameBoard() {
         System.out.print(i);
         System.out.print("\u001B[0m");
     }
+
     //adds a mouse click to the board (entire board) to be used by turn
-    void addMouseClick(MouseListener ML){
+    void addMouseClick(MouseListener ML) {
         board.addClick(ML);
     }
+
+    space getSpace(int x, int y){
+        return spaces[y][x];
+    }
     //removes a mouse click to the board (entire board) to be used by turn
-    void removeMouseClick(MouseListener ML){
+    void removeMouseClick(MouseListener ML) {
         board.removeClick(ML);
     }
 
-
     /**
- * /- SPACE -/
- * ________
- * |      |
- * |(type)|
- * |______|
- * <p>
- * Space class represents the individual spaces that can be populated by a peg
- * there are four types, normal (default call), "slide", "start", and "home".
- * creating these is as simple as passing the strings seen above ^
- * and passing which team it will be associated with 0,1,2, or 3 where
- * 0 -> red
- * 3 -> green
- * 1 -> blue
- * 2 -> yellow
- * 4 -> white/no team
- * And empty call will default to a regular space unless told otherwise
- * <p>
- * these spaces can also be populated with pawns utilizing the add and remove pawn method calls
- * as before, an add call takes an int as the team (see above) a remove call needs no input
- * and there will be the test call "isFilled"to see if a space is filled
- * <p>
- */
-class space{
+     * /- SPACE -/
+     * ________
+     * |      |
+     * |(type)|
+     * |______|
+     * <p>
+     * Space class represents the individual spaces that can be populated by a peg
+     * there are four types, normal (default call), "slide", "start", and "home".
+     * creating these is as simple as passing the strings seen above ^
+     * and passing which team it will be associated with 0,1,2, or 3 where
+     * 0 -> red
+     * 3 -> green
+     * 1 -> blue
+     * 2 -> yellow
+     * 4 -> white/no team
+     * And empty call will default to a regular space unless told otherwise
+     * <p>
+     * these spaces can also be populated with pawns utilizing the add and remove pawn method calls
+     * as before, an add call takes an int as the team (see above) a remove call needs no input
+     * and there will be the test call "isFilled"to see if a space is filled
+     * <p>
+     */
+    class space {
+        private int color = 4,slideLength=0;
+        private image img;
+        space() {
+            img = new image("space-highlight.png");
+            img.hide();
+        }
 
-    private boolean slide = false;
-    private int color = 4;
-    private image img;
+        space(int color) {
+            this.color = color;
+            img = new image("space-highlight.png");
+            img.hide();
+        }
+        space(int color, int slideLength){
+            this.slideLength=slideLength;
+            this.color = color;
+            img = new image("space-highlight.png");
+            img.hide();
+        }
 
-    space() {
-        img = new image("space-highlight.png");
-        img.hide();
-    }
+        //displays highlight for tile
+        public void highlight() {
+            img.show();
+        }
 
-    space(int color) {
-        this.color = color;
-        img = new image("space-highlight.png");
-        img.hide();
-    }
+        //hides highlight for tile
+        public void hideHighlight() {
+            img.hide();
+        }
 
-    //displays highlight for tile
-    public void highlight() {
-        img.show();
+        //moving the highlight images (hidden)
+        void moveImage(int x, int y) {
+            img.move(convertFromCooridinate(x), convertFromCooridinate(y));
+        }
+        //returns whether or not it is a sliding block
+
+        //returns the color, see above for reference
+        public int getColor() {
+            return color;
+        }
+
+        public int getSlide(){
+        return slideLength;
+        }
     }
-    //hides highlight for tile
-    public void hideHighlight() {
-        img.hide();
-    }
-    //moving the highlight images (hidden)
-    void moveImage(int x, int y) {
-        img.move(convertFromCooridinate(x), convertFromCooridinate(y));
-    }
-    //returns whether or not it is a sliding block
-    public boolean isSlide() {
-        return slide;
-    }
-    //returns the color, see above for reference
-    public int getColor() {
-        return color;
-    }
-}
 }
 

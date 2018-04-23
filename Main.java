@@ -11,11 +11,8 @@ public class Main{
     }
 }
 class mainMenu extends Display{
-
+    image StartingPage = new image("Sorry-splash.png");
     mainMenu() {
-
-
-        image StartingPage = new image("Sorry-splash.png");
         clickSpace newGame = new clickSpace(1712, 332, 362, 1060);
         clickSpace loadGame = new clickSpace(1712, 332, 362, 1392);
         clickSpace rules = new clickSpace(1712, 332, 362, 1725);
@@ -68,15 +65,10 @@ class mainMenu extends Display{
         newGame.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-//                Thread T = new Thread(()->newGame());
-//                T.start();
-//                LOADINGSCREEN.show();
-                newGame();
                 loadGame.disable();
                 rules.disable();
+                newGame();
                 newGame.disable();
-
-
             }
         });
         loadGame.addClick(new MouseAdapter() {
