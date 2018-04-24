@@ -26,13 +26,14 @@ class gameBoard extends Display {
     private static image discardPile;
     private static clickSpace board;
     private static space[][] spaces;
-    private static Pawn[] pawns = new Pawn[16];
+    private Pawn[] pawns = new Pawn[16];
+    private boolean mean,smart,PAWNS_LOADED=false;
 
     int getPlayer_turn() {
         return player_turn;
     }
 
-    private static int player_turn = whosTurn();
+    private  int player_turn = whosTurn();
     clickSpace DRAW;
     private int playerColor=0;
     private static final ArrayList<int[]> highlightedSpaces = new ArrayList<>();
@@ -40,7 +41,7 @@ class gameBoard extends Display {
     private static image[] turnImages = new image[4];
     private java.awt.event.MouseListener DrawDeck;
     int x,y;
-    saveGame object = new saveGame(x,y,player_turn);
+    saveGame object;
     String fileName = "saved.txt";
 
 gameBoard(int playerColor, boolean smart,boolean mean) {
@@ -48,8 +49,24 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
     determineAI(smart,mean);
     loadAssets();
     optionsAndDrawingLoad();
+    this.mean=mean;
+    this.smart=smart;
 
 }
+
+    gameBoard(int playerColor, boolean smart,boolean mean,Pawn[] pawns,int currentTurn) {
+        determineAI(smart,mean);
+        loadAssets();
+        optionsAndDrawingLoad();
+        for (int i = 0; i < 16; i++) {
+            this.pawns[i].placePawn(pawns[i].getX(),pawns[i].getY());
+        }
+        this.playerColor=playerColor;
+        this.player_turn=currentTurn;
+        this.mean=mean;
+        this.smart=smart;
+
+    }
 
 
     void determineAI(boolean smart,boolean mean){
@@ -201,7 +218,6 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
                 resume.button.setBorderPainted(false);
                 saveGame.button.setBorderPainted(false);
                 quit.button.setBorderPainted(false);
-
                 resume.hide();
                 saveGame.hide();
                 quit.hide();
@@ -213,6 +229,7 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
             public void mouseClicked(MouseEvent e) {
                 //save game
             	//save game
+                object = new saveGame(pawns,player_turn,playerColor,mean,smart);
                 try {
             		FileOutputStream file = new FileOutputStream(fileName);
             		ObjectOutputStream out = new ObjectOutputStream(file);
@@ -227,16 +244,13 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
             	System.out.println("x: "+x);
         		System.out.println("y: "+y);
         		System.out.println("player_turn: "+player_turn);
-
-            
-
                 pauseMenu.move(5000, 5000);
                 resume.button.setBorderPainted(false);
                 saveGame.button.setBorderPainted(false);
                 quit.button.setBorderPainted(false);
-                resume.disable();
-                saveGame.disable();
-                quit.disable();
+                resume.hide();
+                saveGame.hide();
+                quit.hide();
                 
                 
 
@@ -406,8 +420,6 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
             pawns[j] = new Pawn(k, pos[j][0], pos[j][1]);
             k = (j + 1) / 4;
         }
-        pawns[0].placePawn(0,0);
-        pawns[1].placePawn(4,0);
     }
 
     /**
@@ -445,7 +457,8 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
 
         }
         for (int i = 0; i < 100; i++) {
-            DECK.add(7);
+         DECK.add(11);
+         DECK.add(1);
         }
     }
 
