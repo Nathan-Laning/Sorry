@@ -24,7 +24,7 @@ class mainMenu extends Display{
         clickSpace newGame = new clickSpace(1712, 332, 362, 1060);
         clickSpace loadGame = new clickSpace(1712, 332, 362, 1392);
         clickSpace rules = new clickSpace(1712, 332, 362, 1725);
-//        newGame();
+        newGame();
         newGame.MouseEntered(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -252,6 +252,10 @@ class mainMenu extends Display{
     }
     private void StartGame(int color, boolean smartness, boolean meanness){
         gameBoard G = new gameBoard(color, smartness, meanness);
+    }
+
+    private void newGame(){
+                gameBoard G = new gameBoard(0, false, false);
     }
 
     private void Rules() {

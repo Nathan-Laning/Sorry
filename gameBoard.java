@@ -335,7 +335,7 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
         //first slide
             spaces[0][1] = new space(1,3);//green
             spaces[15][14] = new space(3,3);//yellow
-            spaces[1][15] = new space(2,4);//blue
+            spaces[1][15] = new space(2,3);//blue
             spaces[14][0] = new space(0,3);//red
         //second slide
             spaces[0][9] = new space(1,4);//green
@@ -407,7 +407,7 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
             k = (j + 1) / 4;
         }
         pawns[0].placePawn(0,0);
-        pawns[7].placePawn(4,0);
+        pawns[1].placePawn(4,0);
     }
 
     /**
@@ -443,6 +443,9 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
                 }
             }
 
+        }
+        for (int i = 0; i < 100; i++) {
+            DECK.add(7);
         }
     }
 
