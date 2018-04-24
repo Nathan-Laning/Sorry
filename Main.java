@@ -3,21 +3,27 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
-public class Main{
+
+public class Main {
     //    static Display DISPLAY = new Display();
     public static void main(String[] args) {
         new mainMenu();
     }
 }
-class mainMenu extends Display{
-    image StartingPage = new image("Sorry-splash.png");
+
+/**
+ * /- Main Menu -/
+ * Used to navigate the starting menu to either new game, load game, or rules
+ */
+class mainMenu extends Display {
     private int color;
     private boolean smartness;
     private boolean meanness;
-    saveGame O;
-    String fileName = "saved.txt";
+    private saveGame GAME;
+    private String fileName = "saved.txt";
 
     mainMenu() {
+        new image("Sorry-splash.png");
         clickSpace newGame = new clickSpace(1712, 332, 362, 1060);
         clickSpace loadGame = new clickSpace(1712, 332, 362, 1392);
         clickSpace rules = new clickSpace(1712, 332, 362, 1725);
@@ -88,7 +94,7 @@ class mainMenu extends Display{
         rules.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-//                Rules();
+                Rules();
                 loadGame.disable();
                 rules.disable();
                 newGame.disable();
@@ -96,6 +102,14 @@ class mainMenu extends Display{
         });
 //       newGame();
     }
+
+    /**
+     * /- ChooseCPU -/
+     * creates prompts to instigate a new game with the given parameters
+     * -> smart or dumb
+     * -> mean or nice
+     * -> players desired color
+     */
     private void chooseCPU() {
         image chooseMenu = new image("Sorry-Difficulty-menu.png");
         //back button
@@ -247,18 +261,16 @@ class mainMenu extends Display{
 
 
     }
-    private void StartGame(int color, boolean smartness, boolean meanness){
-        gameBoard G = new gameBoard(color, smartness, meanness);
+
+    private void StartGame(int color, boolean smartness, boolean meanness) {
+        new gameBoard(color, smartness, meanness);
     }
 
-    private void newGame(){
-                gameBoard G = new gameBoard(0, false, false);
-    }
-
+    /**
+     * /- Rules -/
+     * Shows the rules with a small back button in the upper left
+     */
     private void Rules() {
-        //open rules page
-        //allow exit
-
         image back = new image("back.png");
         image infoPage = new image("Sorry-rules.png");
         back.reSize(70, 20);
@@ -274,21 +286,25 @@ class mainMenu extends Display{
 
     }
 
+    /**
+     * /- Load Game -/
+     * Loads a previous instance of a game
+     * Would add maybe multiple save slots in the future time permitting
+     */
     private void loadGame() {
         //figure out load game dialogue
-    	try {
-    		FileInputStream file = new FileInputStream(fileName);
-    		ObjectInputStream in = new ObjectInputStream(file);
-    		O = (saveGame)in.readObject();
-    		in.close();
-    		file.close();
-    	} catch(IOException ex) {
-    		System.out.println("IOException found");
-    	}catch(ClassNotFoundException ex) {
-    		System.out.println("ClassNotFoundException found");
-    	}
-    	O.getUserColor();
-    	new gameBoard(O.getUserColor(),O.isSmart(),O.isMean(),O.getPawn(),O.getPlayer_turn());
+        try {
+            FileInputStream file = new FileInputStream(fileName);
+            ObjectInputStream in = new ObjectInputStream(file);
+            GAME = (saveGame) in.readObject();
+            in.close();
+            file.close();
+        } catch (IOException ex) {
+            System.out.println("IOException found");
+        } catch (ClassNotFoundException ex) {
+            System.out.println("ClassNotFoundException found");
+        }
+        new gameBoard(GAME.getUserColor(), GAME.isSmart(), GAME.isMean(), GAME.getPawn(), GAME.getPlayer_turn());
 
 
     }
