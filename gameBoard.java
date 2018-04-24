@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.io.*;
+
 /**
  * /- GAME BOARD -/
  *      _________________
@@ -27,108 +28,118 @@ class gameBoard extends Display {
     private static clickSpace board;
     private static space[][] spaces;
     private Pawn[] pawns = new Pawn[16];
-    private boolean mean,smart,PAWNS_LOADED=false;
+    private boolean mean, smart;
+    private int player_turn = whosTurn(),playerColor = 0;
+    private static final ArrayList<int[]> highlightedSpaces = new ArrayList<>();
+    private static image[] deckImages = new image[13], turnImages = new image[4];
+    private java.awt.event.MouseListener DrawDeck;
+    private saveGame GAME;
+    private String fileName = "saved.txt";
 
-    int getPlayer_turn() {
-        return player_turn;
+    /**
+     * new game instance,newly determined items
+     *
+     * @param playerColor desired player color
+     * @param smart       whether or not the ai is smart
+     * @param mean        whether or not the ai is mean
+     */
+    gameBoard(int playerColor, boolean smart, boolean mean) {
+        this.playerColor = playerColor;
+        determineAI();
+        loadAssets();
+        optionsAndDrawingLoad();
+        this.mean = mean;
+        this.smart = smart;
     }
 
-    private  int player_turn = whosTurn();
-    clickSpace DRAW;
-    private int playerColor=0;
-    private static final ArrayList<int[]> highlightedSpaces = new ArrayList<>();
-    private static image[] deckImages = new image[13];
-    private static image[] turnImages = new image[4];
-    private java.awt.event.MouseListener DrawDeck;
-    int x,y;
-    saveGame object;
-    String fileName = "saved.txt";
-
-gameBoard(int playerColor, boolean smart,boolean mean) {
-    this.playerColor=playerColor;
-    determineAI(smart,mean);
-    loadAssets();
-    optionsAndDrawingLoad();
-    this.mean=mean;
-    this.smart=smart;
-
-}
-
-    gameBoard(int playerColor, boolean smart,boolean mean,Pawn[] pawns,int currentTurn) {
-        determineAI(smart,mean);
+    /**
+     * load game instance, where pawns and current turn is also passed
+     *
+     * @param playerColor desired player color
+     * @param smart       whether or not the ai is smart
+     * @param mean        whether or not the ai is mean
+     * @param pawns       the Pawns, for relocating all pawns
+     * @param currentTurn the current turn
+     */
+    gameBoard(int playerColor, boolean smart, boolean mean, Pawn[] pawns, int currentTurn) {
+        determineAI();
         loadAssets();
         optionsAndDrawingLoad();
         for (int i = 0; i < 16; i++) {
-            this.pawns[i].placePawn(pawns[i].getX(),pawns[i].getY());
+            this.pawns[i].placePawn(pawns[i].getX(), pawns[i].getY());
         }
-        this.playerColor=playerColor;
-        this.player_turn=currentTurn;
-        this.mean=mean;
-        this.smart=smart;
-
+        this.playerColor = playerColor;
+        this.player_turn = currentTurn;
+        this.mean = mean;
+        this.smart = smart;
     }
 
 
-    void determineAI(boolean smart,boolean mean){
+    /**
+     * Determines which AI will be loaded using previously loaded values
+     */
+    private void determineAI() {
+        if (!smart) {
+            if (mean) {
+                DrawDeck = new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(MouseEvent e) {
+                        cycleTeams();
+                        if (player_turn != playerColor) {
+                            new DumbMeanAITurn(gameBoard.this);
+                        } else {
+                            new UserTurn(gameBoard.this);
+                        }
+                    }
+                };
+            } else {
+                DrawDeck = new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(MouseEvent e) {
+                        cycleTeams();
+                        if (player_turn != playerColor) {
+                            new DumbNiceAITurn(gameBoard.this);
+                        } else {
+                            new UserTurn(gameBoard.this);
+                        }
+                    }
+                };
+            }
+        }
+        if (smart) {
+            if (mean) {
+                DrawDeck = new java.awt.event.MouseAdapter() {
 
-    if(!smart) {
-        if(mean) {
-            DrawDeck = new java.awt.event.MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    cycleTeams();
-                    if(player_turn!=playerColor) {
-                        new DumbMeanAITurn(gameBoard.this);
-                    }else{
-                        new UserTurn(gameBoard.this);
+                    public void mouseClicked(MouseEvent e) {
+                        cycleTeams();
+                        if (player_turn != playerColor) {
+                            //new SmartMeanAITurn(gameBoard.this);
+                        } else {
+                            new UserTurn(gameBoard.this);
+                        }
                     }
-                }
-            };
-        }else {
-            DrawDeck = new java.awt.event.MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    cycleTeams();
-                    if(player_turn!=playerColor) {
-                        new DumbNiceAITurn(gameBoard.this);
-                    }else{
-                        new UserTurn(gameBoard.this);
+                };
+            } else {
+                DrawDeck = new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(MouseEvent e) {
+                        cycleTeams();
+                        if (player_turn - 1 != playerColor) {
+                            //new SmartNiceAITurn(gameBoard.this);
+                        } else {
+                            new UserTurn(gameBoard.this);
+                        }
                     }
-                }
-            };
+                };
+            }
         }
     }
-    if(smart) {
-        if(mean) {
-            DrawDeck = new java.awt.event.MouseAdapter() {
 
-                public void mouseClicked(MouseEvent e) {
-                    cycleTeams();
-                    if(player_turn!=playerColor) {
-//new SmartMeanAITurn(gameBoard.this);
-                    }else{
-                        new UserTurn(gameBoard.this);
-                    }
-                }
-            };
-        }else {
-            DrawDeck = new java.awt.event.MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    cycleTeams();
-                    if(player_turn-1!=playerColor) {
-//new SmartNiceAITurn(gameBoard.this);
-                    }else{
-                        new UserTurn(gameBoard.this);
-                    }
-                }
-            };
-        }
-    }
-}
-    private void optionsAndDrawingLoad(){
-        final gameBoard G = this;
+    /**
+     * Pre-loading all buttons on screen including options and draw card
+     */
+    private void optionsAndDrawingLoad() {
         // draw pile loading
         image drawPile = new image("Sorry-Card-Back-Horizontal.png");
         drawPile.move((int) (1010 * ratio), (int) (710 * ratio));
-        DRAW = new clickSpace(drawPile);
+        clickSpace DRAW = new clickSpace(drawPile);
         DRAW.addClick(DrawDeck);
         //options loading
         image options = new image("Sorry-options.png");
@@ -152,19 +163,24 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
         OPTIONS.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Thread T = new Thread(()->optionsMenu());
+                Thread T = new Thread(() -> optionsMenu());
                 T.start();
             }
         });
     }
-    private void optionsMenu(){
 
+    /**
+     * /- Options Menu -/
+     * Ingame option menu where the user can:
+     * -> resume
+     * -> save game
+     * -> quit to main menu
+     */
+    private void optionsMenu() {
         image pauseMenu = new image("Pause-Menu.png");
-
         clickSpace resume = new clickSpace(1747, 343, 366, 677);
         clickSpace saveGame = new clickSpace(1747, 343, 366, 1020);
         clickSpace quit = new clickSpace(1747, 343, 366, 1363);
-
         resume.MouseEntered(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -179,7 +195,7 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
             public void mouseEntered(MouseEvent e) {
                 saveGame.button.setBorderPainted(true);
                 saveGame.button.setBorder(new LineBorder(Color.WHITE));
-                
+
             }
 
         });
@@ -228,22 +244,17 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
             @Override
             public void mouseClicked(MouseEvent e) {
                 //save game
-            	//save game
-                object = new saveGame(pawns,player_turn,playerColor,mean,smart);
+                //save game
+                GAME = new saveGame(pawns, player_turn, playerColor, mean, smart);
                 try {
-            		FileOutputStream file = new FileOutputStream(fileName);
-            		ObjectOutputStream out = new ObjectOutputStream(file);
-            		out.writeObject(object);
-            		out.close();
-            		file.close();
-            	}
-            	catch (IOException ex) {
-            		System.out.println("IOException found");
-            	}
-            	object = null;
-            	System.out.println("x: "+x);
-        		System.out.println("y: "+y);
-        		System.out.println("player_turn: "+player_turn);
+                    FileOutputStream file = new FileOutputStream(fileName);
+                    ObjectOutputStream out = new ObjectOutputStream(file);
+                    out.writeObject(GAME);
+                    out.close();
+                    file.close();
+                } catch (IOException ex) {
+                    System.out.println("IOException found");
+                }
                 pauseMenu.move(5000, 5000);
                 resume.button.setBorderPainted(false);
                 saveGame.button.setBorderPainted(false);
@@ -251,8 +262,7 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
                 resume.hide();
                 saveGame.hide();
                 quit.hide();
-                
-                
+
 
             }
         });
@@ -291,11 +301,15 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
         loadPawns();
     }
 
+    int getPlayer_turn() {
+        return player_turn;
+    }
+
     /**
      * /- Threaded Load Assests -/
      * loads all assets to be used using threads
-     * much faster, more unstable
-     * optimally we would get this working always! or at least have it restart if it fails
+     * much faster, much more unstable
+     * optimally we would get this working always! But its fast enough for now to not bother
      */
     private void threadedLoadAssets() {
 
@@ -324,6 +338,7 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
 
     }
 
+    //simple loading of images for turn changing
     private void loadTurnImages() {
         for (int i = 0; i < 4; i++) {
             turnImages[i] = new image("Sorry-turn.png", 4, i + 1);
@@ -347,15 +362,15 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
             spaces[i][15] = new space();
         }
         //first slide
-            spaces[0][1] = new space(1,3);//green
-            spaces[15][14] = new space(3,3);//yellow
-            spaces[1][15] = new space(2,3);//blue
-            spaces[14][0] = new space(0,3);//red
+        spaces[0][1] = new space(1, 3);//green
+        spaces[15][14] = new space(3, 3);//yellow
+        spaces[1][15] = new space(2, 3);//blue
+        spaces[14][0] = new space(0, 3);//red
         //second slide
-            spaces[0][9] = new space(1,4);//green
-            spaces[15][6] = new space(3,4);//yellow
-            spaces[9][15] = new space(2,4);//blue
-            spaces[6][0] = new space(0,4);//red
+        spaces[0][9] = new space(1, 4);//green
+        spaces[15][6] = new space(3, 4);//yellow
+        spaces[9][15] = new space(2, 4);//blue
+        spaces[6][0] = new space(0, 4);//red
 //        home walkways
         for (int i = 0; i < 6; i++) {
             spaces[13][1 + i] = new space(0);//red
@@ -363,19 +378,18 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
             spaces[2][9 + i] = new space(2);//blue
             spaces[9 + i][13] = new space(3);//yellow
         }
-//        spaces[][]
+//        moving all images to spaces and outputting small ascii version for checking
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 16; j++) {
                 try {
-                    out(spaces[i][j].getColor());
+                    out(spaces[i][j].getColor());//to be removed
                     spaces[i][j].moveImage(j, i);
                 } catch (NullPointerException N) {
-                    out(9);
+                    out(9);//to be removed
                 }
-                System.out.print(" ");
-
+                System.out.print(" ");//to be removed
             }
-            System.out.println();
+            System.out.println();//to be removed
         }
     }
 
@@ -407,7 +421,7 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
         }
     }
 
-    // shuffles a "new" deck
+    // Loads pawns into default location (starting spot)
     private void loadPawns() {
         int[][] pos = {
                 {2, 10}, {2, 11}, {2, 12}, {3, 11},
@@ -455,10 +469,6 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
                 }
             }
 
-        }
-        for (int i = 0; i < 100; i++) {
-         DECK.add(11);
-         DECK.add(1);
         }
     }
 
@@ -553,9 +563,10 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
         board.addClick(ML);
     }
 
-    space getSpace(int x, int y){
+    space getSpace(int x, int y) {
         return spaces[y][x];
     }
+
     //removes a mouse click to the board (entire board) to be used by turn
     void removeMouseClick(MouseListener ML) {
         board.removeClick(ML);
@@ -585,8 +596,9 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
      * <p>
      */
     class space {
-        private int color = 4,slideLength=0;
+        private int color = 4, slideLength = 0;
         private image img;
+
         space() {
             img = new image("space-highlight.png");
             img.hide();
@@ -597,8 +609,9 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
             img = new image("space-highlight.png");
             img.hide();
         }
-        space(int color, int slideLength){
-            this.slideLength=slideLength;
+
+        space(int color, int slideLength) {
+            this.slideLength = slideLength;
             this.color = color;
             img = new image("space-highlight.png");
             img.hide();
@@ -625,8 +638,8 @@ gameBoard(int playerColor, boolean smart,boolean mean) {
             return color;
         }
 
-        public int getSlide(){
-        return slideLength;
+        public int getSlide() {
+            return slideLength;
         }
     }
 }

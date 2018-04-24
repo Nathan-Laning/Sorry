@@ -1,40 +1,46 @@
-
-
 import java.io.Serializable;
 
-public class saveGame implements Serializable{
-	private static int player_turn;
-	private static int userColor;
-	private static Pawn[] pawn;
+/**
+ * /-SaveGame-/
+ * Used to save and load games utilizing Serializable
+ */
+class saveGame implements Serializable {
+    //variables
+    private int player_turn;
+    private int userColor;
+    private Pawn[] pawn;
+    private boolean mean;
+    private boolean smart;
 
+    //saving the variables
+    saveGame(Pawn[] PAWNS, int player_turn, int userColor, boolean mean, boolean smart) {
+        this.mean = mean;
+        this.smart = smart;
+        this.player_turn = player_turn;
+        this.pawn = PAWNS;
+        this.userColor = userColor;
+    }
 
-	private static boolean mean;
+    //getters for each saved variable
+    int getUserColor() {
+        return userColor;
+    }
 
+    boolean isSmart() {
+        return smart;
+    }
 
+    int getPlayer_turn() {
+        return player_turn;
+    }
 
-	private static boolean smart;
-	saveGame(Pawn[] PAWNS, int player_turn, int userColor,boolean mean, boolean smart) {
-		this.mean=mean;
-		this.smart=smart;
-		saveGame.player_turn = player_turn;
-		this.pawn = PAWNS;
-		this.userColor=userColor;
-	}
-	public static int getUserColor() {
-		return userColor;
-	}
-	public static boolean isSmart() {
-		return smart;
-	}
-	public static int getPlayer_turn() {
-		return player_turn;
-	}
-	public static Pawn[] getPawn() {
-		return pawn;
-	}
-	public static boolean isMean() {
-		return mean;
-	}
+    Pawn[] getPawn() {
+        return pawn;
+    }
+
+    boolean isMean() {
+        return mean;
+    }
 
 
 }

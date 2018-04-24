@@ -13,13 +13,14 @@ class turn {
     Pawn SELECTED_PAWN;
     int color;
     int cardNumber;
-    boolean goAgain = false,eleven=false;
-    boolean Seven = false;
-    boolean AI=false;
-    ArrayList<ArrayList<Pawn>> bumpedPawns = new ArrayList<>();
-    ArrayList<int[]> bumpedLocations = new ArrayList<>();
+    boolean goAgain = false;
+
+    private boolean Seven = false, AI = false,eleven = false;
+    private ArrayList<ArrayList<Pawn>> bumpedPawns = new ArrayList<>();
+    private ArrayList<int[]> bumpedLocations = new ArrayList<>();
     ArrayList<Move> moveablePositons = new ArrayList<>();
     gameBoard G;
+
     void findAllMoves() {
         for (Pawn P : TEAM_PAWNS) {
             switch (cardNumber) {
@@ -38,31 +39,13 @@ class turn {
                     checkPosition(2, P);
                     break;
                 case 4://goes backwards 4
-                    /**
-                     * four cases:
-                     * 1) x = 16, y-= 4
-                     * 2) y = 16, x -= 4
-                     * 3) x = 0, y -=4
-                     * 4) y = 0, x -=4
-                     *
-                     * need to check for corners ...
-                     */
                     checkPosition(-4, P);
                     break;
                 case 5:
                     checkPosition(5, P);
                     break;
                 case 7://seven can be split up
-                    /**
-                     * Move one pawn seven spaces forward, or split the seven spaces between two pawns (such as four spaces for one pawn and three for another).
-                     * This makes it possible for two pawns to enter Home on the same turn, for example.
-                     * The seven cannot be used to move a pawn out of Start, even if the player splits it into a six and one or a five and two.
-                     * The entire seven spaces must be used or the turn is lost. You may not move backwards with a split.
-                     * oof
-                     * keep counter for number of coordinates/steps taken (?)
-                     * no cases here, just need to give user full reign somehow... and options to choose what they wanna do....
-                     */
-                    Seven=true;
+                    Seven = true;
                     checkPosition(7, P);
                     checkPosition(6, P);
                     checkPosition(5, P);
@@ -72,9 +55,6 @@ class turn {
                     checkPosition(1, P);
                     break;
                 case 10:
-                    /**
-                     * can also go backwards 1
-                     */
                     checkPosition(-1, P);
                     //forwards 10
                     checkPosition(10, P);
@@ -82,7 +62,7 @@ class turn {
                 case 11://can be used to replace or moved!
                     getUnsafePawnLocation(P);
                     checkPosition(11, P);
-                    eleven=true;
+                    eleven = true;
                     break;
                 case 0://sorry!
                     if (P.isStart()) {
@@ -97,14 +77,15 @@ class turn {
         }
     }
 
+    //Default AI Run, determine will be overwritten by each difficulty
     void AI(gameBoard g) {
-        AI=true;
+        AI = true;
         G = g;
-        if(!goAgain) {
+        if (!goAgain) {
             this.color = G.getPlayer_turn();
             TEAM_PAWNS = G.getTeamPawns(color);
         }
-        if(!Seven) {
+        if (!Seven) {
             cardNumber = G.draw();
             findAllMoves();
         }
@@ -114,30 +95,37 @@ class turn {
         determineMove();
     }
 
-    void AI(gameBoard g,int distance){
-            G=g;
-            if (distance > 0) {
-                for (Pawn PAWN : TEAM_PAWNS) {
-                    checkPosition(distance, PAWN);
-                }
+    //same as default, but is used for the special case 7
+    private void AI(gameBoard g, int distance) {
+        G = g;
+        if (distance > 0) {
+            for (Pawn PAWN : TEAM_PAWNS) {
+                checkPosition(distance, PAWN);
             }
+        }
         clearHighlights();
         highlightPawns();
         determineMove();
     }
 
     void determineMove() {
-        //empty to be replaced further on
+        //empty to be replaced further on by various iterations
     }
 
+    /**
+     * /- Dumb Move -/
+     * commits first move without thought
+     */
     void dumbMove() {
-        for (Move M : moveablePositons) {
-            M.start();
-            return;
+        if (!moveablePositons.isEmpty()) {
+            moveablePositons.get(0).start();
         }
-
     }
 
+    /**
+     * /- Mean Move -/
+     * prioritizes moves that will harm other players
+     */
     void meanMove() {
         for (Move M : moveablePositons) {
             if (containsPawn(M.getFinalPosition()) != -1 && containsPawn(M.getFinalPosition()) != color) {
@@ -147,6 +135,10 @@ class turn {
         }
     }
 
+    /**
+     * /- Nice Move -/
+     * prioritizes moves that will not harm moves that will not harm
+     */
     void niceMove() {
         for (Move M : moveablePositons) {
             if (containsPawn(M.getFinalPosition()) == -1) {
@@ -157,11 +149,17 @@ class turn {
         }
     }
 
+    /**
+     * /- Bump -/
+     * checks the newly moved pawns location for current residents to move home
+     *
+     * @param xy position
+     */
     void bump(int[] xy) {
         for (int i = 0; i < bumpedLocations.size(); i++) {
             if (bumpedLocations.get(i)[0] == xy[0] && bumpedLocations.get(i)[1] == xy[1]) {
                 for (Pawn PAWNS : bumpedPawns.get(i)) {
-                    PAWNS.moveToStart();
+                    if(PAWNS!=SELECTED_PAWN) PAWNS.moveToStart();
                 }
 
             }
@@ -205,8 +203,10 @@ class turn {
         }
         checkSlide(P);
         if (distance < 0) {
-            for (int i = distance; i < 0; i++) {
-                P.determineNegativePosition();
+            if(!P.isStart()){
+                for (int i = distance; i < 0; i++) {
+                    P.determineNegativePosition();
+                }
             }
         }
         int newX = P.getX();
@@ -224,6 +224,11 @@ class turn {
         }
     }
 
+    /**
+     * Gets all unsafe pawns for sorry and 11
+     *
+     * @param P Pawn to be moved
+     */
     void getUnsafePawnLocation(Pawn P) {
         for (Pawn A : G.getPawns()) {
             //this means its on the ring, and the other team, therefor not safe.
@@ -236,6 +241,11 @@ class turn {
         }
     }
 
+    /**
+     * checks if pawns are in the sliding pawn
+     *
+     * @param P Pawn being moved across slide
+     */
     void checkSlide(Pawn P) {
         int Y = P.getY();
         int X = P.getX();
@@ -258,6 +268,13 @@ class turn {
     }
 
 
+    /**
+     * checks pawns
+     *
+     * @param x x
+     * @param y y
+     * @return Pawn being bumped
+     */
     Pawn bumpablePawns(int x, int y) {
         for (Pawn P : G.getPawns()) {
             if (P.getX() == x && P.getY() == y) {
@@ -267,6 +284,7 @@ class turn {
         return null;
     }
 
+    //returns the color of any pawns in a space, or -1 if there are none
     int containsPawn(int x, int y) {
         for (Pawn P : G.getPawns()) {
             if (P.getX() == x && P.getY() == y) {
@@ -297,19 +315,19 @@ class turn {
 
     void highlightSpaces() {
         for (Move m : moveablePositons) {
-            if(m.getPawn()==SELECTED_PAWN) m.highlightSpace();
+            if (m.getPawn() == SELECTED_PAWN) m.highlightSpace();
         }
     }
 
+    //converts to co-ordinates
     public int convertToCooridinate(int num) {
         for (int i = 0; i < 16; i++) {
-            double lowerBound = i * ((G.size - (G.ratio * 61)) / 16) + (G.ratio * 30);
-            double upperBound = lowerBound + ((G.size - (G.ratio * 61)) / 16) + (G.ratio * 30);
+            double lowerBound = i * ((Display.size - (Display.ratio * 61)) / 16) + (Display.ratio * 30);
+            double upperBound = lowerBound + ((Display.size - (Display.ratio * 61)) / 16) + (Display.ratio * 30);
             if (num <= upperBound && num >= lowerBound) return i;
         }
         return 0;
     }
-    //y=0;x=1-15
 
     /**
      * /- Move -/
@@ -354,42 +372,45 @@ class turn {
         }
 
 
-        void swap(int[] originalXY, int[] newXY){
-                for (Pawn P:G.getPawns()) {
-                    if(P.getX()==newXY[0]&&P.getY()==newXY[1]){
-                        int X = originalXY[0];
-                        int Y = originalXY[1];
-                        if(!(X==0||Y==0||X==15||Y==15)){
-                            P.moveToStart();
-                        }else {
-                            P.move(originalXY[0], originalXY[1], .5);
-                        }
+        void swap(Pawn PAWN, int[] newXY) {
+            for (Pawn P : G.getPawns()) {
+                if (P.getX() == newXY[0] && P.getY() == newXY[1]) {
+                    int X = PAWN.getX();
+                    int Y = PAWN.getY();
+                    if (!(X == 0 || Y == 0 || X == 15 || Y == 15)) {
+                        P.moveToStart();
+                    } else {
+                        P.move(X, Y, .5);
                     }
+                    Thread T = new Thread(()->PAWN.move(newXY[0],newXY[1],.4));
+                    T.start();
+                    try {
+                        T.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                 }
+            }
+
         }
 
         public void start() {
-            System.out.print(" ");
-            System.out.println(sevenDistance);
-            if(eleven){
-                Thread E = new Thread(()->swap(new int[] {PAWN.getX(),PAWN.getY()},FinalXY));
-                E.start();
+            if (eleven) {
+                checkSlide(PAWN);
+                swap(PAWN, FinalXY);
 
-            }else{
-                Thread B = new Thread(() -> bump(FinalXY));
-                B.start();
-            }
-            checkSlide(PAWN);
-            PAWN.move(FinalXY[0], FinalXY[1], .4);
-            if(sevenDistance>0){
-                if(eleven){
-
-                }
-                if(AI) {
-                    AI(G,sevenDistance);
-                }
-                else{
-                    new UserTurn(G,sevenDistance);
+            } else {
+                Thread BUMP = new Thread(() -> bump(FinalXY));
+                BUMP.start();
+                checkSlide(PAWN);
+                PAWN.move(FinalXY[0], FinalXY[1], .4);
+                if (sevenDistance > 0) {
+                    if (AI) {
+                        AI(G, sevenDistance);
+                    } else {
+                        new UserTurn(G, sevenDistance);
+                    }
                 }
             }
         }
@@ -405,111 +426,112 @@ class turn {
     }
 }
 
-    /**
-     * /- User Turn -/
-     * Allows user full control of selected options using various click events
-     * can be called from game board when necessary
-     */
-    class UserTurn extends turn {
-        private java.awt.event.MouseListener SELECT_PAWN = new java.awt.event.MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                selectPawn(e.getX(), e.getY());
-            }
-        };
-        private java.awt.event.MouseListener SELECT_POSITION = new java.awt.event.MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                selectSpace(e.getX(), e.getY());
-            }
-        };
-
-        UserTurn(gameBoard g) {
-            if(!goAgain) {
-                G = g;
-                G.getPlayer_turn();
-                TEAM_PAWNS = G.getTeamPawns(color);
-            }
-            cardNumber = G.draw();
-            findAllMoves();
-            clearHighlights();
-            highlightPawns();
-            G.addMouseClick(SELECT_PAWN);
+/**
+ * /- User Turn -/
+ * Allows user full control of selected options using various click events
+ * can be called from game board when necessary
+ */
+class UserTurn extends turn {
+    private java.awt.event.MouseListener SELECT_PAWN = new java.awt.event.MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+            selectPawn(e.getX(), e.getY());
         }
-        UserTurn(gameBoard g, int distance){
-            G=g;
+    };
+    private java.awt.event.MouseListener SELECT_POSITION = new java.awt.event.MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+            selectSpace(e.getX(), e.getY());
+        }
+    };
+
+    UserTurn(gameBoard g) {
+        if (!goAgain) {
+            G = g;
+            this.color= G.getPlayer_turn();
             TEAM_PAWNS = G.getTeamPawns(color);
-            for (Pawn PAWN : TEAM_PAWNS) {
-                checkPosition(distance, PAWN);
+        }
+        cardNumber = G.draw();
+        findAllMoves();
+        clearHighlights();
+        highlightPawns();
+        G.addMouseClick(SELECT_PAWN);
+    }
+
+    UserTurn(gameBoard g, int distance) {
+        G = g;
+        TEAM_PAWNS = G.getTeamPawns(color);
+        for (Pawn PAWN : TEAM_PAWNS) {
+            checkPosition(distance, PAWN);
+        }
+        clearHighlights();
+        highlightPawns();
+        G.addMouseClick(SELECT_PAWN);
+    }
+
+    private void selectPawn(int x, int y) {
+        G.hideHighlightedSpaces();
+        x = convertToCooridinate(x);
+        y = convertToCooridinate(y);
+        for (Pawn P : TEAM_PAWNS) {
+            if (P.getX() == x && P.getY() == y) {
+                SELECTED_PAWN = P;
+                highlightSpaces();
+                G.addMouseClick(SELECT_POSITION);
+                G.removeMouseClick(SELECT_PAWN);
+                return;
             }
+        }
+    }
+
+    private void selectSpace(int x, int y) {
+        clearPawnHighlights();
+        x = convertToCooridinate(x);
+        y = convertToCooridinate(y);
+        for (Move M : moveablePositons) {
+            int[] xy = M.getFinalPosition();
+            if (x == xy[0] && y == xy[1]) {
+                Thread B = new Thread(() -> bump(xy));
+                B.start();
+                M.start();
+                G.removeMouseClick(SELECT_POSITION);
                 clearHighlights();
-                highlightPawns();
-                G.addMouseClick(SELECT_PAWN);
-        }
-
-        private void selectPawn(int x, int y) {
-            G.hideHighlightedSpaces();
-            x = convertToCooridinate(x);
-            y = convertToCooridinate(y);
-            for (Pawn P : TEAM_PAWNS) {
-                if (P.getX() == x && P.getY() == y) {
-                    SELECTED_PAWN = P;
-                    highlightSpaces();
-                    G.addMouseClick(SELECT_POSITION);
-                    G.removeMouseClick(SELECT_PAWN);
-                    return;
-                }
+                return;
             }
         }
+        clearHighlights();
+        highlightPawns();
+        G.addMouseClick(SELECT_PAWN);
+        G.removeMouseClick(SELECT_POSITION);
+    }
+}
 
-        private void selectSpace(int x, int y) {
-            clearPawnHighlights();
-            x = convertToCooridinate(x);
-            y = convertToCooridinate(y);
-            for (Move M : moveablePositons) {
-                int[] xy = M.getFinalPosition();
-                if (x == xy[0] && y == xy[1]) {
-                    Thread B = new Thread(() -> bump(xy));
-                    B.start();
-                    M.start();
-                    G.removeMouseClick(SELECT_POSITION);
-                    clearHighlights();
-                    return;
-                }
-            }
-            clearHighlights();
-            highlightPawns();
-            G.addMouseClick(SELECT_PAWN);
-            G.removeMouseClick(SELECT_POSITION);
-        }
+/**
+ * Dumb & Nice AI
+ */
+class DumbNiceAITurn extends turn {
+    DumbNiceAITurn(gameBoard G) {
+        AI(G);
     }
 
-    /**
-     * Dumb & Nice AI
-     */
-    class DumbNiceAITurn extends turn {
-        DumbNiceAITurn(gameBoard G) {
-            AI(G);
-        }
+    @Override
+    void determineMove() {
+        niceMove();
+        dumbMove();
+    }
+}
 
-        @Override
-        void determineMove() {
-            niceMove();
-            dumbMove();
-        }
+/**
+ * Dumb & Mean AI
+ */
+class DumbMeanAITurn extends turn {
+    DumbMeanAITurn(gameBoard G) {
+        AI(G);
     }
 
-    /**
-     * Dumb & Mean AI
-     */
-    class DumbMeanAITurn extends turn {
-        DumbMeanAITurn(gameBoard G) {
-            AI(G);
-        }
-
-        @Override
-        void determineMove() {
-            meanMove();
-            dumbMove();
-        }
-
-
+    @Override
+    void determineMove() {
+        meanMove();
+        dumbMove();
     }
+
+
+}
