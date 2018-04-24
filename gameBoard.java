@@ -28,17 +28,10 @@ class gameBoard extends Display {
     private static clickSpace board;
     private static space[][] spaces;
     private Pawn[] pawns = new Pawn[16];
-    private boolean mean, smart, PAWNS_LOADED = false;
-
-    int getPlayer_turn() {
-        return player_turn;
-    }
-
-    private int player_turn = whosTurn();
-    private int playerColor = 0;
+    private boolean mean, smart;
+    private int player_turn = whosTurn(),playerColor = 0;
     private static final ArrayList<int[]> highlightedSpaces = new ArrayList<>();
-    private static image[] deckImages = new image[13];
-    private static image[] turnImages = new image[4];
+    private static image[] deckImages = new image[13], turnImages = new image[4];
     private java.awt.event.MouseListener DrawDeck;
     private saveGame GAME;
     private String fileName = "saved.txt";
@@ -57,7 +50,6 @@ class gameBoard extends Display {
         optionsAndDrawingLoad();
         this.mean = mean;
         this.smart = smart;
-
     }
 
     /**
@@ -80,7 +72,6 @@ class gameBoard extends Display {
         this.player_turn = currentTurn;
         this.mean = mean;
         this.smart = smart;
-
     }
 
 
@@ -142,7 +133,7 @@ class gameBoard extends Display {
     }
 
     /**
-     * Preloading all buttons on screen including options and drawcard
+     * Pre-loading all buttons on screen including options and draw card
      */
     private void optionsAndDrawingLoad() {
         // draw pile loading
@@ -310,6 +301,10 @@ class gameBoard extends Display {
         loadPawns();
     }
 
+    int getPlayer_turn() {
+        return player_turn;
+    }
+
     /**
      * /- Threaded Load Assests -/
      * loads all assets to be used using threads
@@ -474,10 +469,6 @@ class gameBoard extends Display {
                 }
             }
 
-        }
-        for (int i = 0; i < 100; i++) {
-            DECK.add(11);
-            DECK.add(1);
         }
     }
 

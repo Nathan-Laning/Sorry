@@ -14,7 +14,8 @@ class turn {
     int color;
     int cardNumber;
     boolean goAgain = false;
-    private boolean Seven = false, AI = false, eleven = false;
+
+    private boolean Seven = false, AI = false,eleven = false;
     private ArrayList<ArrayList<Pawn>> bumpedPawns = new ArrayList<>();
     private ArrayList<int[]> bumpedLocations = new ArrayList<>();
     ArrayList<Move> moveablePositons = new ArrayList<>();
@@ -158,7 +159,7 @@ class turn {
         for (int i = 0; i < bumpedLocations.size(); i++) {
             if (bumpedLocations.get(i)[0] == xy[0] && bumpedLocations.get(i)[1] == xy[1]) {
                 for (Pawn PAWNS : bumpedPawns.get(i)) {
-                    PAWNS.moveToStart();
+                    if(PAWNS!=SELECTED_PAWN) PAWNS.moveToStart();
                 }
 
             }
@@ -371,41 +372,45 @@ class turn {
         }
 
 
-        void swap(int[] originalXY, int[] newXY) {
+        void swap(Pawn PAWN, int[] newXY) {
             for (Pawn P : G.getPawns()) {
                 if (P.getX() == newXY[0] && P.getY() == newXY[1]) {
-                    int X = originalXY[0];
-                    int Y = originalXY[1];
+                    int X = PAWN.getX();
+                    int Y = PAWN.getY();
                     if (!(X == 0 || Y == 0 || X == 15 || Y == 15)) {
                         P.moveToStart();
                     } else {
-                        P.move(originalXY[0], originalXY[1], .5);
+                        P.move(X, Y, .5);
                     }
+                    Thread T = new Thread(()->PAWN.move(newXY[0],newXY[1],.4));
+                    T.start();
+                    try {
+                        T.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
+
         }
 
         public void start() {
-            System.out.print(" ");
-            System.out.println(sevenDistance);
             if (eleven) {
-                Thread E = new Thread(() -> swap(new int[]{PAWN.getX(), PAWN.getY()}, FinalXY));
-                E.start();
+                checkSlide(PAWN);
+                swap(PAWN, FinalXY);
 
             } else {
-                Thread B = new Thread(() -> bump(FinalXY));
-                B.start();
-            }
-            checkSlide(PAWN);
-            PAWN.move(FinalXY[0], FinalXY[1], .4);
-            if (sevenDistance > 0) {
-                if (eleven) {
-
-                }
-                if (AI) {
-                    AI(G, sevenDistance);
-                } else {
-                    new UserTurn(G, sevenDistance);
+                Thread BUMP = new Thread(() -> bump(FinalXY));
+                BUMP.start();
+                checkSlide(PAWN);
+                PAWN.move(FinalXY[0], FinalXY[1], .4);
+                if (sevenDistance > 0) {
+                    if (AI) {
+                        AI(G, sevenDistance);
+                    } else {
+                        new UserTurn(G, sevenDistance);
+                    }
                 }
             }
         }
@@ -441,7 +446,7 @@ class UserTurn extends turn {
     UserTurn(gameBoard g) {
         if (!goAgain) {
             G = g;
-            G.getPlayer_turn();
+            this.color= G.getPlayer_turn();
             TEAM_PAWNS = G.getTeamPawns(color);
         }
         cardNumber = G.draw();
