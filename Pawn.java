@@ -325,4 +325,12 @@ class Pawn extends Display{
         }
         return false;
     }
+
+    public void hide() {
+        PAWN.hide();
+    }
+
+    public void show() {
+        PAWN.show();
+    }
 }

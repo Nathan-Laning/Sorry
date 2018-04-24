@@ -14,17 +14,14 @@ class mainMenu extends Display{
     private int color;
     private boolean smartness;
     private boolean meanness;
-    int x,y;
-	  public static int player_turn;
-	  gameBoard game;
-	  saveGame object = new saveGame(x,y,player_turn);
+    saveGame O;
     String fileName = "saved.txt";
 
     mainMenu() {
         clickSpace newGame = new clickSpace(1712, 332, 362, 1060);
         clickSpace loadGame = new clickSpace(1712, 332, 362, 1392);
         clickSpace rules = new clickSpace(1712, 332, 362, 1725);
-        newGame();
+//        newGame();
         newGame.MouseEntered(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -282,7 +279,7 @@ class mainMenu extends Display{
     	try {
     		FileInputStream file = new FileInputStream(fileName);
     		ObjectInputStream in = new ObjectInputStream(file);
-    		object = (saveGame)in.readObject();
+    		O = (saveGame)in.readObject();
     		in.close();
     		file.close();
     	} catch(IOException ex) {
@@ -290,13 +287,8 @@ class mainMenu extends Display{
     	}catch(ClassNotFoundException ex) {
     		System.out.println("ClassNotFoundException found");
     	}
-    	
-    	
-    	System.out.println("x =: "+x);
-		System.out.println("y =: "+y);
-		System.out.println("player_turn =: "+player_turn);
-
-    
+    	O.getUserColor();
+    	new gameBoard(O.getUserColor(),O.isSmart(),O.isMean(),O.getPawn(),O.getPlayer_turn());
 
 
     }

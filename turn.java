@@ -13,7 +13,7 @@ class turn {
     Pawn SELECTED_PAWN;
     int color;
     int cardNumber;
-    boolean goAgain = false;
+    boolean goAgain = false,eleven=false;
     boolean Seven = false;
     boolean AI=false;
     ArrayList<ArrayList<Pawn>> bumpedPawns = new ArrayList<>();
@@ -82,6 +82,7 @@ class turn {
                 case 11://can be used to replace or moved!
                     getUnsafePawnLocation(P);
                     checkPosition(11, P);
+                    eleven=true;
                     break;
                 case 0://sorry!
                     if (P.isStart()) {
@@ -99,7 +100,6 @@ class turn {
     void AI(gameBoard g) {
         AI=true;
         G = g;
-
         if(!goAgain) {
             this.color = G.getPlayer_turn();
             TEAM_PAWNS = G.getTeamPawns(color);
@@ -108,6 +108,7 @@ class turn {
             cardNumber = G.draw();
             findAllMoves();
         }
+
         clearHighlights();
         highlightPawns();
         determineMove();
@@ -352,15 +353,38 @@ class turn {
             return FinalXY;
         }
 
+
+        void swap(int[] originalXY, int[] newXY){
+                for (Pawn P:G.getPawns()) {
+                    if(P.getX()==newXY[0]&&P.getY()==newXY[1]){
+                        int X = originalXY[0];
+                        int Y = originalXY[1];
+                        if(!(X==0||Y==0||X==15||Y==15)){
+                            P.moveToStart();
+                        }else {
+                            P.move(originalXY[0], originalXY[1], .5);
+                        }
+                    }
+                }
+        }
+
         public void start() {
             System.out.print(" ");
             System.out.println(sevenDistance);
-            Thread B = new Thread(() -> bump(FinalXY));
-            B.start();
+            if(eleven){
+                Thread E = new Thread(()->swap(new int[] {PAWN.getX(),PAWN.getY()},FinalXY));
+                E.start();
+
+            }else{
+                Thread B = new Thread(() -> bump(FinalXY));
+                B.start();
+            }
             checkSlide(PAWN);
             PAWN.move(FinalXY[0], FinalXY[1], .4);
             if(sevenDistance>0){
+                if(eleven){
 
+                }
                 if(AI) {
                     AI(G,sevenDistance);
                 }
