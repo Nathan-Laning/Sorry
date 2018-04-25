@@ -121,6 +121,15 @@ class turn {
             moveablePositons.get(0).start();
         }
     }
+    /**
+     * /-Smart Move-/
+     * prioritizes:
+     * 1. getting all pawns out on the board
+     * 2. getting all pawns ultimately closest to home
+     */
+    void smartMove(){
+        
+    }
 
     /**
      * /- Mean Move -/
@@ -502,6 +511,31 @@ class UserTurn extends turn {
         G.addMouseClick(SELECT_PAWN);
         G.removeMouseClick(SELECT_POSITION);
     }
+}
+/**
+ * Smart & Nice AI
+ */
+class SmartNiceAITurn extends turn{
+    SmartNiceAITurn(gameBoard G){
+        AI(G);
+    }
+    void determineMove(){
+        niceMove();
+        smartMove();
+    }
+}
+/**
+ * Smart & Mean aI
+ */
+class SmartMeanAITurn extends turn{
+    SmartMeanAITurn(gameBoard G){
+        AI(G);
+    }
+    void determineMove(){
+        meanMove();
+        smartMove();
+    }
+
 }
 
 /**
