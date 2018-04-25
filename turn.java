@@ -19,6 +19,7 @@ class turn {
     private ArrayList<ArrayList<Pawn>> bumpedPawns = new ArrayList<>();
     private ArrayList<int[]> bumpedLocations = new ArrayList<>();
     ArrayList<Move> moveablePositions = new ArrayList<>();
+    private int [][] distDiff;
     gameBoard G;
 
     void findAllMoves() {
@@ -128,19 +129,41 @@ class turn {
      * 2. getting all pawns ultimately closest to home
      */
     void smartMove() {
+        boolean move = false;
+        int count = 0;
+        int [] furthestPawn = new int [2];
         for (Move m : moveablePositions) {
             for (Pawn p : TEAM_PAWNS) {
-                if (p.getX() == p.getStartPosition()[0] && p.getY() == p.getStartPosition()[1]) {
-                    m.start();
-                }
-                else{
-                    //check all pawn positions in relation to home -- .getHomeEntrance()
-                    //calculate positions and move the pawn furthest from home IF it gets it closer
+                while (move == false) {
+                    if (p.getX() == p.getStartPosition()[0] && p.getY() == p.getStartPosition()[1]) {
+                        m.start();
+                        move = true;
+                    } else {
+                        //check all pawn positions in relation to home -- .getHomeEntrance()
+                        //calculate positions and move the pawn furthest from home IF it gets it closer
+                        distDiff[count][0] = p.getHomeEntrance()[0] - p.getX();
+                        distDiff[count][1] = p.getHomeEntrance()[1] - p.getY();
+                        count++;
+                    }
 
                 }
 
             }
+            if (move == false) {
+                int pawnNum;
+                for(int i = 0; i < distDiff.length; i++){
+                    for ( int j = 0; j < distDiff[i].length; j++ ){
+                        if(distDiff[i][j] >= furthestPawn[0] || distDiff[i][j+1]>= furthestPawn[1]){
+                            furthestPawn[0] = distDiff[i][j];
+                            furthestPawn[1] = distDiff[i][j+1];
+                            pawnNum = i;
+                        }
 
+                    }
+
+                }
+            }
+            m.start();
         }
     }
 
