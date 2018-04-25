@@ -19,7 +19,7 @@
 class Pawn extends Display {
 
     private int color;
-    private int[] homeEntrance, boardEntrance, homeSpace, finishPosition;
+    private int[] homeEntrance, boardEntrance, homeSpace, finishPosition, startPosition;
     private int x, y;
     private int originalX, originalY;
     private Display.image PAWN, PAWN_HIGHLIGHT;
@@ -55,6 +55,7 @@ class Pawn extends Display {
                 homeEntrance = new int[]{0, 13};
                 finishPosition = new int[]{6, 13};
                 homeSpace = new int[]{originalX + 4, originalY + 2};
+                startPosition = new int[]{originalX, originalY};
                 break;
             case 1:
                 individualNumber = 4;
@@ -62,12 +63,14 @@ class Pawn extends Display {
                 homeEntrance = new int[]{2, 0};
                 finishPosition = new int[]{2, 6};
                 homeSpace = new int[]{originalX - 2, originalY + 4};
+                startPosition = new int[]{originalX, originalY};
                 break;
             case 2:
                 boardEntrance = new int[]{15, 4};
                 homeEntrance = new int[]{15, 2};
                 finishPosition = new int[]{9, 2};
                 homeSpace = new int[]{originalX - 4, originalY - 2};
+                startPosition = new int[]{originalX, originalY};
                 break;
             case 3:
                 individualNumber = 2;
@@ -75,6 +78,7 @@ class Pawn extends Display {
                 homeEntrance = new int[]{13, 15};
                 finishPosition = new int[]{13, 9};
                 homeSpace = new int[]{originalX + 2, originalY - 4};
+                startPosition = new int[]{originalX, originalY};
                 break;
         }
         PAWN = new image("Sorry-pawns.png", 4, individualNumber);
@@ -257,6 +261,10 @@ class Pawn extends Display {
     int[] getBoardEntrance() {
         return boardEntrance;
     }
+
+    int[] getHomeEntrance(){ return homeEntrance;}
+
+    int[] getStartPosition(){ return startPosition;}
 
     boolean checkUp() {
         if (y == 0 && x > 0 && x < 16) {

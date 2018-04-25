@@ -111,7 +111,7 @@ class gameBoard extends Display {
                     public void mouseClicked(MouseEvent e) {
                         cycleTeams();
                         if (player_turn != playerColor) {
-                            //new SmartMeanAITurn(gameBoard.this);
+                            new SmartMeanAITurn(gameBoard.this);
                         } else {
                             new UserTurn(gameBoard.this);
                         }
@@ -122,7 +122,7 @@ class gameBoard extends Display {
                     public void mouseClicked(MouseEvent e) {
                         cycleTeams();
                         if (player_turn - 1 != playerColor) {
-                            //new SmartNiceAITurn(gameBoard.this);
+                            new SmartNiceAITurn(gameBoard.this);
                         } else {
                             new UserTurn(gameBoard.this);
                         }

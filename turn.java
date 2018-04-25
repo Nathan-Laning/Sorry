@@ -18,7 +18,7 @@ class turn {
     private boolean Seven = false, AI = false,eleven = false;
     private ArrayList<ArrayList<Pawn>> bumpedPawns = new ArrayList<>();
     private ArrayList<int[]> bumpedLocations = new ArrayList<>();
-    ArrayList<Move> moveablePositons = new ArrayList<>();
+    ArrayList<Move> moveablePositions = new ArrayList<>();
     gameBoard G;
 
     void findAllMoves() {
@@ -117,8 +117,8 @@ class turn {
      * commits first move without thought
      */
     void dumbMove() {
-        if (!moveablePositons.isEmpty()) {
-            moveablePositons.get(0).start();
+        if (!moveablePositions.isEmpty()) {
+            moveablePositions.get(0).start();
         }
     }
     /**
@@ -127,8 +127,21 @@ class turn {
      * 1. getting all pawns out on the board
      * 2. getting all pawns ultimately closest to home
      */
-    void smartMove(){
-        
+    void smartMove() {
+        for (Move m : moveablePositions) {
+            for (Pawn p : TEAM_PAWNS) {
+                if (p.getX() == p.getStartPosition()[0] && p.getY() == p.getStartPosition()[1]) {
+                    m.start();
+                }
+                else{
+                    //check all pawn positions in relation to home -- .getHomeEntrance()
+                    //calculate positions and move the pawn furthest from home IF it gets it closer
+
+                }
+
+            }
+
+        }
     }
 
     /**
@@ -136,7 +149,7 @@ class turn {
      * prioritizes moves that will harm other players
      */
     void meanMove() {
-        for (Move M : moveablePositons) {
+        for (Move M : moveablePositions) {
             if (containsPawn(M.getFinalPosition()) != -1 && containsPawn(M.getFinalPosition()) != color) {
                 M.start();
                 return;
@@ -149,7 +162,7 @@ class turn {
      * prioritizes moves that will not harm moves that will not harm
      */
     void niceMove() {
-        for (Move M : moveablePositons) {
+        for (Move M : moveablePositions) {
             if (containsPawn(M.getFinalPosition()) == -1) {
                 M.start();
                 return;
@@ -195,7 +208,7 @@ class turn {
     //checks all pawns that can be moved from start
     void moveFromStart(Pawn P) {
         if (color != containsPawn(P.getBoardEntrance())) {
-            if (P.isStart()) moveablePositons.add(new Move(P, P.getBoardEntrance()));
+            if (P.isStart()) moveablePositions.add(new Move(P, P.getBoardEntrance()));
         }
     }
 
@@ -226,7 +239,7 @@ class turn {
                 && (G.checkSpace(newX, newY) == color || G.checkSpace(newX, newY) != -1)) {
             Move M = new Move(P, newX, newY);
             if (Seven) M.setSeven(distance);
-            moveablePositons.add(M);
+            moveablePositions.add(M);
         } else {
             P.setX(originalX);
             P.setY(originalY);
@@ -245,7 +258,7 @@ class turn {
             int X = A.getX();
             int Y = A.getY();
             if ((X == 0 || X == 15 || Y == 0 || Y == 15) && A.getColor() != color) {
-                moveablePositons.add(new Move(P, X, Y));
+                moveablePositions.add(new Move(P, X, Y));
             }
         }
     }
@@ -317,13 +330,13 @@ class turn {
 
     //highlights all available pawns to be moved
     void highlightPawns() {
-        for (Move m : moveablePositons) {
+        for (Move m : moveablePositions) {
             m.highlightPawn();
         }
     }
 
     void highlightSpaces() {
-        for (Move m : moveablePositons) {
+        for (Move m : moveablePositions) {
             if (m.getPawn() == SELECTED_PAWN) m.highlightSpace();
         }
     }
@@ -495,7 +508,7 @@ class UserTurn extends turn {
         clearPawnHighlights();
         x = convertToCooridinate(x);
         y = convertToCooridinate(y);
-        for (Move M : moveablePositons) {
+        for (Move M : moveablePositions) {
             int[] xy = M.getFinalPosition();
             if (x == xy[0] && y == xy[1]) {
                 Thread B = new Thread(() -> bump(xy));
