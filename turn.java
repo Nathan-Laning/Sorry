@@ -18,7 +18,8 @@ class turn {
     private boolean Seven = false, AI = false,eleven = false;
     private ArrayList<ArrayList<Pawn>> bumpedPawns = new ArrayList<>();
     private ArrayList<int[]> bumpedLocations = new ArrayList<>();
-    ArrayList<Move> moveablePositons = new ArrayList<>();
+    ArrayList<Move> moveablePositions = new ArrayList<>();
+    private int [][] distDiff;
     gameBoard G;
 
     void findAllMoves() {
@@ -117,8 +118,52 @@ class turn {
      * commits first move without thought
      */
     void dumbMove() {
-        if (!moveablePositons.isEmpty()) {
-            moveablePositons.get(0).start();
+        if (!moveablePositions.isEmpty()) {
+            moveablePositions.get(0).start();
+        }
+    }
+    /**
+     * /-Smart Move-/
+     * prioritizes:
+     * 1. getting all pawns out on the board
+     * 2. getting all pawns ultimately closest to home
+     */
+    void smartMove() {
+        boolean move = false;
+        int count = 0;
+        int [] furthestPawn = new int [2];
+        for (Move m : moveablePositions) {
+            for (Pawn p : TEAM_PAWNS) {
+                while (move == false) {
+                    if (p.getX() == p.getStartPosition()[0] && p.getY() == p.getStartPosition()[1]) {
+                        m.start();
+                        move = true;
+                    } else {
+                        //check all pawn positions in relation to home -- .getHomeEntrance()
+                        //calculate positions and move the pawn furthest from home IF it gets it closer
+                        distDiff[count][0] = p.getHomeEntrance()[0] - p.getX();
+                        distDiff[count][1] = p.getHomeEntrance()[1] - p.getY();
+                        count++;
+                    }
+
+                }
+
+            }
+            if (move == false) {
+                int pawnNum;
+                for(int i = 0; i < distDiff.length; i++){
+                    for ( int j = 0; j < distDiff[i].length; j++ ){
+                        if(distDiff[i][j] >= furthestPawn[0] || distDiff[i][j+1]>= furthestPawn[1]){
+                            furthestPawn[0] = distDiff[i][j];
+                            furthestPawn[1] = distDiff[i][j+1];
+                            pawnNum = i;
+                        }
+
+                    }
+
+                }
+            }
+            m.start();
         }
     }
 
@@ -127,7 +172,7 @@ class turn {
      * prioritizes moves that will harm other players
      */
     void meanMove() {
-        for (Move M : moveablePositons) {
+        for (Move M : moveablePositions) {
             if (containsPawn(M.getFinalPosition()) != -1 && containsPawn(M.getFinalPosition()) != color) {
                 M.start();
                 return;
@@ -140,7 +185,7 @@ class turn {
      * prioritizes moves that will not harm moves that will not harm
      */
     void niceMove() {
-        for (Move M : moveablePositons) {
+        for (Move M : moveablePositions) {
             if (containsPawn(M.getFinalPosition()) == -1) {
                 M.start();
                 return;
@@ -186,7 +231,7 @@ class turn {
     //checks all pawns that can be moved from start
     void moveFromStart(Pawn P) {
         if (color != containsPawn(P.getBoardEntrance())) {
-            if (P.isStart()) moveablePositons.add(new Move(P, P.getBoardEntrance()));
+            if (P.isStart()) moveablePositions.add(new Move(P, P.getBoardEntrance()));
         }
     }
 
@@ -217,7 +262,7 @@ class turn {
                 && (G.checkSpace(newX, newY) == color || G.checkSpace(newX, newY) != -1)) {
             Move M = new Move(P, newX, newY);
             if (Seven) M.setSeven(distance);
-            moveablePositons.add(M);
+            moveablePositions.add(M);
         } else {
             P.setX(originalX);
             P.setY(originalY);
@@ -236,7 +281,7 @@ class turn {
             int X = A.getX();
             int Y = A.getY();
             if ((X == 0 || X == 15 || Y == 0 || Y == 15) && A.getColor() != color) {
-                moveablePositons.add(new Move(P, X, Y));
+                moveablePositions.add(new Move(P, X, Y));
             }
         }
     }
@@ -308,13 +353,13 @@ class turn {
 
     //highlights all available pawns to be moved
     void highlightPawns() {
-        for (Move m : moveablePositons) {
+        for (Move m : moveablePositions) {
             m.highlightPawn();
         }
     }
 
     void highlightSpaces() {
-        for (Move m : moveablePositons) {
+        for (Move m : moveablePositions) {
             if (m.getPawn() == SELECTED_PAWN) m.highlightSpace();
         }
     }
@@ -486,7 +531,7 @@ class UserTurn extends turn {
         clearPawnHighlights();
         x = convertToCooridinate(x);
         y = convertToCooridinate(y);
-        for (Move M : moveablePositons) {
+        for (Move M : moveablePositions) {
             int[] xy = M.getFinalPosition();
             if (x == xy[0] && y == xy[1]) {
                 Thread B = new Thread(() -> bump(xy));
@@ -502,6 +547,31 @@ class UserTurn extends turn {
         G.addMouseClick(SELECT_PAWN);
         G.removeMouseClick(SELECT_POSITION);
     }
+}
+/**
+ * Smart & Nice AI
+ */
+class SmartNiceAITurn extends turn{
+    SmartNiceAITurn(gameBoard G){
+        AI(G);
+    }
+    void determineMove(){
+        niceMove();
+        smartMove();
+    }
+}
+/**
+ * Smart & Mean aI
+ */
+class SmartMeanAITurn extends turn{
+    SmartMeanAITurn(gameBoard G){
+        AI(G);
+    }
+    void determineMove(){
+        meanMove();
+        smartMove();
+    }
+
 }
 
 /**
