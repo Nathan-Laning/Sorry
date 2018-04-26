@@ -103,9 +103,9 @@ class gameBoard extends Display {
 
     	    }
     	  }
-    }
+    
     	
-    }
+    
 
     /**
      * load game instance, where pawns and current turn is also passed
