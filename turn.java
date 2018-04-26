@@ -214,7 +214,22 @@ class turn {
         for (int i = 0; i < bumpedLocations.size(); i++) {
             if (bumpedLocations.get(i)[0] == xy[0] && bumpedLocations.get(i)[1] == xy[1]) {
                 for (Pawn PAWNS : bumpedPawns.get(i)) {
-                    if(PAWNS!=SELECTED_PAWN) PAWNS.moveToStart();
+                    if(PAWNS!=SELECTED_PAWN) {
+                        PAWNS.moveToStart();
+//                        if(PAWNS.getColor()==0){
+//                            PAWNS.setScoreR(PAWNS.getScoreR()-100);
+//                            System.out.println("score for RED is: "+PAWNS.getScoreR());
+//                        }else if(PAWNS.getColor()==1){
+//                            PAWNS.setScoreB(PAWNS.getScoreB()-100);
+//                            System.out.println("score for BLUE is: "+PAWNS.getScoreB());
+//                        }else if(PAWNS.getColor()==2){
+//                            PAWNS.setScoreY(PAWNS.getScoreY()-100);
+//                            System.out.println("score for YELLOW is: "+PAWNS.getScoreY());
+//                        }else if(PAWNS.getColor()==3){
+//                            PAWNS.setScoreG(PAWNS.getScoreG()-100);
+//                            System.out.println("score for GREEN is: "+PAWNS.getScoreG());
+//                        }
+                    }
                 }
 
             }
@@ -222,6 +237,19 @@ class turn {
         for (Pawn P : G.getPawns()) {
             if (P.getX() == xy[0] && P.getY() == xy[1] && P.getColor() != color) {
                 P.moveToStart();
+                if(P.getColor()==0){
+                    P.setScoreR(P.getScoreR()-100);
+                    System.out.println("score for RED is: "+P.getScoreR());
+                }else if(P.getColor()==1){
+                    P.setScoreB(P.getScoreB()-100);
+                    System.out.println("score for green is: "+P.getScoreB());
+                }else if(P.getColor()==2){
+                    P.setScoreY(P.getScoreY()-100);
+                    System.out.println("score for YELLOW is: "+P.getScoreY());
+                }else if(P.getColor()==3){
+                    P.setScoreG(P.getScoreG()-100);
+                    System.out.println("score for blue is: "+P.getScoreG());
+                }
                 return;
             }
         }
@@ -436,6 +464,20 @@ class turn {
                         P.moveToStart();
                     } else {
                         P.move(X, Y, .5);
+                        if(P.getColor()==0){
+                            P.setScoreR(P.getScoreR()-100);
+                            System.out.println("score for RED is: "+P.getScoreR());
+                        }else if(P.getColor()==1){
+                            P.setScoreB(P.getScoreB()-100);
+                            System.out.println("score for Green is: "+P.getScoreB());
+                        }else if(P.getColor()==2){
+                            P.setScoreY(P.getScoreY()-100);
+                            System.out.println("score for YELLOW is: "+P.getScoreY());
+                        }else if(P.getColor()==3){
+                            P.setScoreG(P.getScoreG()-100);
+                            System.out.println("score for Blue is: "+P.getScoreG());
+                        }
+
                     }
                     Thread T = new Thread(()->PAWN.move(newXY[0],newXY[1],.4));
                     T.start();
