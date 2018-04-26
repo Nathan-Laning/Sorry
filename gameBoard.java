@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.io.*;
-
+import java.sql.*;
 /**
  * /- GAME BOARD -/
  *      _________________
@@ -35,7 +35,17 @@ class gameBoard extends Display {
     private java.awt.event.MouseListener DrawDeck;
     private saveGame GAME;
     private String fileName = "saved.txt";
-
+    //Database setup
+    private Connection connect = null;
+    private Statement statement = null;
+    private PreparedStatement prepStatement = null;
+    private ResultSet result = null;
+    //final private String host = "xxxxx";
+    //inal private String write_user = "anoor_writer";
+    //final private String write_passwd = "7DQPtMC4xALd8ZCx";
+    //final private String read_user = "anoor_reader";
+    //final private String read_passwd = "NdwVwrXC4Cm3w99J";
+    
     /**
      * new game instance,newly determined items
      *
@@ -50,7 +60,52 @@ class gameBoard extends Display {
         optionsAndDrawingLoad();
         this.mean = mean;
         this.smart = smart;
+      
+         }
+
+    //reads Database
+    public void readDB() throws Exception{
+    	try {
+    		Class.forName("com.mysql.jdbc.Driver");
+    		connect = DriverManager.getConnection("jdbc:mysql://localhost/test","root","" );
+    		System.out.println("connected");
+    		statement = connect.createStatement();
+    		result = statement.executeQuery("SELECT stement");
+    		writeResult(result);
+    		
+    		//prepStatement = connect.prepareStatement("INSERT statement");
+    		
+    	}catch(Exception e) {
+    		System.err.println(e);
+    	}finally {
+    		close();
+    	}
     }
+    public void writeResult(ResultSet result) throws SQLException {
+    	while(result.next()) {
+    		
+    	}
+    }
+    	private void close() {
+    	    try {
+    	      if (result != null) {
+    	        result.close();
+    	      }
+
+    	      if (statement != null) {
+    	        statement.close();
+    	      }
+
+    	      if (connect != null) {
+    	        connect.close();
+    	      }
+    	    } catch (Exception e) {
+
+    	    }
+    	  }
+    
+    	
+    
 
     /**
      * load game instance, where pawns and current turn is also passed
@@ -571,6 +626,8 @@ class gameBoard extends Display {
     void removeMouseClick(MouseListener ML) {
         board.removeClick(ML);
     }
+    
+   
 
     /**
      * /- SPACE -/
