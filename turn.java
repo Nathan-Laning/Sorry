@@ -19,7 +19,7 @@ class turn {
     private ArrayList<ArrayList<Pawn>> bumpedPawns = new ArrayList<>();
     private ArrayList<int[]> bumpedLocations = new ArrayList<>();
     ArrayList<Move> moveablePositions = new ArrayList<>();
-    private int [][] distDiff;
+
     gameBoard G;
 
     void findAllMoves() {
@@ -129,42 +129,52 @@ class turn {
      * 2. getting all pawns ultimately closest to home
      */
     void smartMove() {
-        boolean move = false;
         int count = 0;
-        int [] furthestPawn = new int [2];
+        // 16*16 = 256, so 257 is technically impossibly far
+        double minDiff=257;
+        Move finalMove = null;
         for (Move m : moveablePositions) {
-            for (Pawn p : TEAM_PAWNS) {
-                while (move == false) {
-                    if (p.getX() == p.getStartPosition()[0] && p.getY() == p.getStartPosition()[1]) {
-                        m.start();
-                        move = true;
-                    } else {
-                        //check all pawn positions in relation to home -- .getHomeEntrance()
-                        //calculate positions and move the pawn furthest from home IF it gets it closer
-                        distDiff[count][0] = p.getHomeEntrance()[0] - p.getX();
-                        distDiff[count][1] = p.getHomeEntrance()[1] - p.getY();
-                        count++;
-                    }
-
-                }
-
+            //getting all pawns leaving home and prioritizing them
+            if (m.getPawn().getX() == m.getPawn().getStartPosition()[0] && m.getPawn().getY() == m.getPawn().getStartPosition()[1]) {
+                m.start();
+                return;
             }
-            if (move == false) {
-                int pawnNum;
-                for(int i = 0; i < distDiff.length; i++){
-                    for ( int j = 0; j < distDiff[i].length; j++ ){
-                        if(distDiff[i][j] >= furthestPawn[0] || distDiff[i][j+1]>= furthestPawn[1]){
-                            furthestPawn[0] = distDiff[i][j];
-                            furthestPawn[1] = distDiff[i][j+1];
-                            pawnNum = i;
-                        }
-
-                    }
-
-                }
+            if (m.getPawn().getX() == m.getPawn().getBoardEntrance()[0] && m.getPawn().getX() == m.getPawn().getBoardEntrance()[1]) {
+                m.start();
+                return;
             }
-            m.start();
+
+            //check all pawn positions in relation to home -- .getHomeEntrance()
+            //calculate positions and move the pawn furthest from home IF it gets it closer
+
+            //getting the distance of each using
+            // sqrt((x1-x2)^2+(y1-y2)^2)
+            // current position of the pawn in reference to the board entrance
+            int pawnX = m.getPawn().getX();
+            int pawnY = m.getPawn().getY();
+            //if its in the ring
+            if(pawnX==15||pawnX==0||pawnY==0||pawnY==15) {
+                int current_pawnX = (m.getPawn().getHomeEntrance()[0] - pawnX);
+                int current_pawnY = (m.getPawn().getHomeEntrance()[1] - pawnY);
+                double current_pawnD = Math.sqrt((current_pawnX * current_pawnX) + (current_pawnY * current_pawnY));
+                // final distance after hypothetical move is made
+                int final_pawnX = (m.getPawn().getHomeEntrance()[0] - m.FinalXY[0]);
+                int final_pawnY = (m.getPawn().getHomeEntrance()[0] - m.FinalXY[0]);
+                double final_pawnD = Math.sqrt((final_pawnX * final_pawnX) + (final_pawnY * final_pawnY));
+                //the difference of the two
+                double distance = current_pawnD - final_pawnD;
+                //if its the best move, prioritize it
+                if (distance < minDiff) {
+                    minDiff = distance;
+                    finalMove = m;
+                }
+            }else{
+                m.start();
+            }
         }
+        try {
+            finalMove.start();
+        }catch (NullPointerException N){}
     }
 
     /**
