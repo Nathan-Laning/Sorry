@@ -27,7 +27,6 @@ class mainMenu extends Display {
         clickSpace newGame = new clickSpace(1712, 332, 362, 1060);
         clickSpace loadGame = new clickSpace(1712, 332, 362, 1392);
         clickSpace rules = new clickSpace(1712, 332, 362, 1725);
-//        newGame();
         newGame.MouseEntered(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
