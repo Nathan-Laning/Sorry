@@ -35,6 +35,9 @@ class gameBoard extends Display {
     private java.awt.event.MouseListener DrawDeck;
     private saveGame GAME;
     private String fileName = "saved.txt";
+    private int[] backHome = new int[4];
+    private int[] teamScore = new int[4];
+
     //Database setup
     private Connection connect = null;
     private Statement statement = null;
@@ -60,6 +63,7 @@ class gameBoard extends Display {
         optionsAndDrawingLoad();
         this.mean = mean;
         this.smart = smart;
+        finishGame();
       
          }
 
@@ -129,6 +133,50 @@ class gameBoard extends Display {
         this.smart = smart;
     }
 
+    void checkHomes(){
+        backHome=new int[4];
+        for (Pawn P:pawns) {
+            if(P.isCompleted()) {
+                backHome[P.getColor()]++;
+            }
+        }
+        for(int i=0;i<backHome.length;i++){
+            teamScore[i]=addScore(i);
+            if(backHome[i]==4){
+                teamScore[i]+=winnerScore(i);
+            }
+        }
+    }
+    int addScore(int color){
+        int num=0;
+        for(int i=0;i<backHome.length;i++){
+            if(backHome[i]==color){
+                num+=1;
+            }
+        }
+        return num*5;
+    }
+    int winnerScore(int color){
+        int max=0;
+        for(int i=0;i<backHome.length;i++){
+            if(backHome[i]>backHome[i+1]){
+                max=backHome[i];
+            }
+        }
+        if(max==3){
+            return (16-backHome[1]+backHome[2]+backHome[3]+backHome[0])*5;
+        }
+        else if(max==2){
+            return 25;
+        }
+        else if(max==1){
+            return 50;
+        }else if(max==0){
+            return 100;
+        }
+        return 0;
+    }
+
 
     /**
      * Determines which AI will be loaded using previously loaded values
@@ -144,6 +192,7 @@ class gameBoard extends Display {
                         } else {
                             new UserTurn(gameBoard.this);
                         }
+                        checkHomes();
                     }
                 };
             } else {
@@ -155,6 +204,7 @@ class gameBoard extends Display {
                         } else {
                             new UserTurn(gameBoard.this);
                         }
+                        checkHomes();
                     }
                 };
             }
@@ -170,6 +220,7 @@ class gameBoard extends Display {
                         } else {
                             new UserTurn(gameBoard.this);
                         }
+                        checkHomes();
                     }
                 };
             } else {
@@ -181,12 +232,23 @@ class gameBoard extends Display {
                         } else {
                             new UserTurn(gameBoard.this);
                         }
+                        checkHomes();
                     }
                 };
             }
         }
     }
 
+    void finishGame(){
+        JTextArea Scores = new JTextArea("here",6,8);
+//        Scores.setText("Hello");
+        panel.add(Scores);
+        panel.setLayer(Scores, 9999);
+        Scores.setFont(Scores.getFont().deriveFont((float) (100*ratio)));
+        Scores.setForeground(Color.WHITE);
+        Scores.setBounds((int)(875*ratio),(int)(875*ratio),(int)(750*ratio),(int)(750*ratio));
+        Scores.setBackground(Color.BLACK);
+    }
     /**
      * Pre-loading all buttons on screen including options and draw card
      */
