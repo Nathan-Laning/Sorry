@@ -205,6 +205,18 @@ class gameBoard extends Display {
         }
     }
 
+    void finishGame(){
+        JTextArea Scores = new JTextArea("Score:",6,8);
+//        Scores.setText("Hello");
+        //testing
+        panel.add(Scores);
+        panel.setLayer(Scores, 9999);
+        Scores.setFont(Scores.getFont().deriveFont((float) (100*ratio)));
+        Scores.setForeground(Color.WHITE);
+        Scores.setBounds((int)(875*ratio),(int)(875*ratio),(int)(750*ratio),(int)(750*ratio));
+        Scores.setBackground(Color.BLACK);
+    }
+
     /**
      * Pre-loading all buttons on screen including options and draw card
      */
