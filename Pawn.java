@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 
 /**
  * /- PAWN -/
@@ -19,11 +20,13 @@
 class Pawn extends Display {
 
     private int color;
+    private int score;
     private int[] homeEntrance, boardEntrance, homeSpace, finishPosition, startPosition;
     private int x, y;
     private int originalX, originalY;
     private Display.image PAWN, PAWN_HIGHLIGHT;
     private boolean completed = false, isStart = true;
+
 
 
     /**
@@ -56,6 +59,7 @@ class Pawn extends Display {
                 finishPosition = new int[]{6, 13};
                 homeSpace = new int[]{originalX + 4, originalY + 2};
                 startPosition = new int[]{originalX, originalY};
+                //backHome=new ArrayList<Integer>(4);
                 break;
             case 1:
                 individualNumber = 4;
@@ -64,6 +68,7 @@ class Pawn extends Display {
                 finishPosition = new int[]{2, 6};
                 homeSpace = new int[]{originalX - 2, originalY + 4};
                 startPosition = new int[]{originalX, originalY};
+                //backHome=new ArrayList<Integer>(4);
                 break;
             case 2:
                 boardEntrance = new int[]{15, 4};
@@ -71,6 +76,7 @@ class Pawn extends Display {
                 finishPosition = new int[]{9, 2};
                 homeSpace = new int[]{originalX - 4, originalY - 2};
                 startPosition = new int[]{originalX, originalY};
+                //backHome=new ArrayList<Integer>(4);
                 break;
             case 3:
                 individualNumber = 2;
@@ -79,6 +85,7 @@ class Pawn extends Display {
                 finishPosition = new int[]{13, 9};
                 homeSpace = new int[]{originalX + 2, originalY - 4};
                 startPosition = new int[]{originalX, originalY};
+                //backHome=new ArrayList<Integer>(4);
                 break;
         }
         PAWN = new image("Sorry-pawns.png", 4, individualNumber);
@@ -135,7 +142,9 @@ class Pawn extends Display {
             completed = true;
             x = homeSpace[0];
             y = homeSpace[1];
+
         }
+
         isStart = false;
         PAWN_HIGHLIGHT.move(convertFromCooridinate(x), convertFromCooridinate(y));
         PAWN_HIGHLIGHT.hide();
@@ -250,6 +259,10 @@ class Pawn extends Display {
         this.y = y;
     }
 
+    int getScore(){return score;}
+
+    void setScore(int score){this.score = score;}
+
     public boolean isCompleted() {
         return completed;
     }
@@ -292,6 +305,15 @@ class Pawn extends Display {
     boolean checkLeft() {
         if (x == 0 && y >= 0 && y < 15) {
             return true;
+        }
+        return false;
+    }
+
+    boolean allBackHome(int[] backHome){
+        for (int i=0;i<backHome.length;i++){
+           if(backHome[i]==4){
+               return true;
+           }
         }
         return false;
     }
