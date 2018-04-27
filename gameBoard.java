@@ -184,8 +184,9 @@ class gameBoard extends Display {
     }
 
     void finishGame(){
-        JTextArea Scores = new JTextArea("here",6,8);
+        JTextArea Scores = new JTextArea("Score:",6,8);
 //        Scores.setText("Hello");
+        //testing
         panel.add(Scores);
         panel.setLayer(Scores, 9999);
         Scores.setFont(Scores.getFont().deriveFont((float) (100*ratio)));
