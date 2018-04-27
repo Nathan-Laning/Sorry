@@ -184,11 +184,16 @@ class turn {
      * prioritizes moves that will harm other players
      */
     void meanMove() {
+        ArrayList<Move> MeanMoves = new ArrayList<>();
         for (Move M : moveablePositions) {
             if (containsPawn(M.getFinalPosition()) != -1 && containsPawn(M.getFinalPosition()) != color) {
-                M.start();
+                MeanMoves.add(M);
                 return;
             }
+        }
+        if(MeanMoves.size()!=0){
+            moveablePositions.clear();
+            moveablePositions.addAll(MeanMoves);
         }
     }
 
@@ -197,12 +202,16 @@ class turn {
      * prioritizes moves that will not harm moves that will not harm
      */
     void niceMove() {
+        ArrayList<Move> NiceMoves = new ArrayList<>();
         for (Move M : moveablePositions) {
             if (containsPawn(M.getFinalPosition()) == -1) {
-                M.start();
+                NiceMoves.add(M);
                 return;
             }
-
+        }
+        if(NiceMoves.size()!=0){
+            moveablePositions.clear();
+            moveablePositions.addAll(NiceMoves);
         }
     }
 
