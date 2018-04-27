@@ -23,6 +23,7 @@ class turn {
     gameBoard G;
 
     void findAllMoves() {
+        goAgain=false;
         for (Pawn P : TEAM_PAWNS) {
             switch (cardNumber) {
                 case 1:
@@ -118,9 +119,9 @@ class turn {
      * commits first move without thought
      */
     void dumbMove() {
-        int moveable = moveablePositions.size();
-        int moveChoice = rand_gen(moveable);
         if (!moveablePositions.isEmpty()) {
+            int moveable = moveablePositions.size();
+            int moveChoice = rand_gen(moveable);
             moveablePositions.get(moveChoice).start();
         }
     }
@@ -238,7 +239,7 @@ class turn {
         }
     }
     private int rand_gen(int bound){
-        int num = ThreadLocalRandom.current().nextInt(0, bound);
+        int num = ThreadLocalRandom.current().nextInt(bound);
         return num;
     }
 
@@ -466,15 +467,21 @@ class turn {
         }
 
         public void start() {
-            if (eleven) {
+            if (eleven&&containsPawn(FinalXY)!=-1) {
                 checkSlide(PAWN);
                 swap(PAWN, FinalXY);
-
             } else {
                 Thread BUMP = new Thread(() -> bump(FinalXY));
                 BUMP.start();
                 checkSlide(PAWN);
                 PAWN.move(FinalXY[0], FinalXY[1], .4);
+                if(goAgain){
+                    if(AI){
+                        AI(G);
+                    }else {
+                        new UserTurn(G);
+                    }
+                }
                 if (sevenDistance > 0) {
                     if (AI) {
                         AI(G, sevenDistance);

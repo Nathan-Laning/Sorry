@@ -23,7 +23,7 @@ class Pawn extends Display {
     private int x, y;
     private int originalX, originalY;
     private Display.image PAWN, PAWN_HIGHLIGHT;
-    private boolean completed = false, isStart = true;
+    public boolean completed = false, isStart = true;
 
 
     /**
