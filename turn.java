@@ -1,5 +1,4 @@
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 /**
@@ -217,9 +216,7 @@ class turn {
         for (int i = 0; i < bumpedLocations.size(); i++) {
             if (bumpedLocations.get(i)[0] == xy[0] && bumpedLocations.get(i)[1] == xy[1]) {
                 for (Pawn PAWNS : bumpedPawns.get(i)) {
-                    if(PAWNS!=SELECTED_PAWN) {
-                        PAWNS.moveToStart();
-                    }
+                    if(PAWNS!=SELECTED_PAWN) PAWNS.moveToStart();
                 }
 
             }
@@ -488,8 +485,6 @@ class turn {
             return PAWN;
         }
     }
-
-
 }
 
 /**
