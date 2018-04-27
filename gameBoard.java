@@ -64,6 +64,9 @@ class gameBoard extends Display {
         optionsAndDrawingLoad();
         this.mean = mean;
         this.smart = smart;
+        if(allBackHome()) {
+            finishGame();
+        }
         
             }
 
@@ -148,6 +151,58 @@ class gameBoard extends Display {
     }
 
 
+    void checkHomes(){
+        backHome=new int[4];
+        for (Pawn P:pawns) {
+            if(P.isCompleted()) {
+                backHome[P.getColor()]++;
+            }
+        }
+        for(int i=0;i<backHome.length;i++){
+            teamScore[i]=addScore(i);
+            if(backHome[i]==4){
+                teamScore[i]+=winnerScore(i);
+            }
+        }
+    }
+    int addScore(int color){
+        for(int i=0;i<backHome.length;i++){
+            if(backHome[i]==color){
+                return backHome[i]*5;
+            }
+        }
+        return 0;
+    }
+    int winnerScore(int color){
+        int max=0;
+        for(int i=0;i<backHome.length;i++){
+            if(backHome[i]>backHome[i+1]){
+                max=backHome[i];
+            }
+        }
+        if(max==3){
+            return (16-backHome[1]+backHome[2]+backHome[3]+backHome[0])*5;
+        }
+        else if(max==2){
+            return 25;
+        }
+        else if(max==1){
+            return 50;
+        }else if(max==0){
+            return 100;
+        }
+        return 0;
+    }
+    boolean allBackHome(){
+        for (int i=0;i<backHome.length;i++){
+            if(backHome[i]==4){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     /**
      * Determines which AI will be loaded using previously loaded values
      */
@@ -206,7 +261,7 @@ class gameBoard extends Display {
     }
 
     void finishGame(){
-        JTextArea Scores = new JTextArea("Score:",6,8);
+        JTextArea Scores = new JTextArea("Red Score:"+teamScore[0]+"\n"+"Blue score: "+teamScore[1]+"\n"+"Yellow score: "+teamScore[2]+"\n"+"Green score: "+teamScore[3],6,8);
 //        Scores.setText("Hello");
         //testing
         panel.add(Scores);
