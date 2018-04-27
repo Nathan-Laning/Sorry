@@ -26,7 +26,7 @@ import java.io.IOException;
  */
 class Display {
     private static int layer = 1;
-    public static final JLayeredPane panel = new JLayeredPane();
+    private static final JLayeredPane panel = new JLayeredPane();
     private static final JFrame frame = new JFrame("Sorry!");
     private static int heightGap = 22, widthGap = 0;//default for osx and linux
     public static int size = 700;

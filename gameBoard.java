@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.io.*;
-
+import java.sql.*;
 /**
  * /- GAME BOARD -/
  *      _________________
@@ -35,9 +35,21 @@ class gameBoard extends Display {
     private java.awt.event.MouseListener DrawDeck;
     private saveGame GAME;
     private String fileName = "saved.txt";
-    private int[] backHome = new int[4];
-    private int[] teamScore = new int[4];
-
+    //Database setup
+    private Connection connect = null;
+    private Statement statement = null;
+    private PreparedStatement prepStatement = null;
+    private ResultSet result = null;
+    final private String host = "mysql://webdb.uvm.edu";
+    final private String user = "anoor_admin";
+    final private String passwd = "Q5UdcJXRvQ9ZmBMB";
+    String player;
+    int score;
+    String playerName = System.getProperty("user.name");
+    int yourScore;
+    //StringBuffer outputList = new StringBuffer ("");
+    
+    
     /**
      * new game instance,newly determined items
      *
@@ -52,8 +64,66 @@ class gameBoard extends Display {
         optionsAndDrawingLoad();
         this.mean = mean;
         this.smart = smart;
-        finishGame();
+        
+            }
+
+    //reads Database
+    public String readDB() throws Exception{
+    	String failed = "System Failed";
+    	try {
+    		Class.forName("com.mysql.jdbc.Driver");
+    		connect = DriverManager.getConnection("jdbc:"+host+"/ANOOR_Sorry",
+    				user,passwd);
+    		
+    		statement = connect.createStatement();
+    		result = statement.executeQuery("SELECT * FROM Stat;");
+    		while(result.next()) {
+    			playerName = result.getString(player);
+    			yourScore = result.getInt(score);
+    			//outputList.append(playerName);
+    			//outputList.append(yourScore);
+    			
+    		}
+    	
+    	}catch(Exception e) {
+    		System.err.println(e);
+    		return failed;
+    	}finally {
+    		close();
+    	}
+    	//return outputList.toString();
+    	return null;
+    	
     }
+    public void write(String player, int score)throws SQLException{
+    	String query = " INSERT into Stat(player, score)" + "values(?, ?)";
+    	prepStatement = connect.prepareStatement(query);
+    	prepStatement.setString (1,playerName);
+    	prepStatement.setInt(2, score);
+    	prepStatement.executeQuery();
+    	close();
+    	
+    }
+    	private void close() {
+    	    try {
+    	      if (result != null) {
+    	        result.close();
+    	      }
+
+    	      if (statement != null) {
+    	        statement.close();
+    	      }
+
+    	      if (connect != null) {
+    	        connect.close();
+    	      }
+    	    } catch (Exception e) {
+
+    	    }
+    	  }
+    
+    	
+    
 
     /**
      * load game instance, where pawns and current turn is also passed
@@ -77,50 +147,6 @@ class gameBoard extends Display {
         this.smart = smart;
     }
 
-    void checkHomes(){
-        backHome=new int[4];
-        for (Pawn P:pawns) {
-            if(P.isCompleted()) {
-                backHome[P.getColor()]++;
-            }
-        }
-        for(int i=0;i<backHome.length;i++){
-            teamScore[i]=addScore(i);
-            if(backHome[i]==4){
-                teamScore[i]+=winnerScore(i);
-            }
-        }
-    }
-    int addScore(int color){
-        int num=0;
-        for(int i=0;i<backHome.length;i++){
-            if(backHome[i]==color){
-                num+=1;
-            }
-        }
-        return num*5;
-    }
-    int winnerScore(int color){
-        int max=0;
-        for(int i=0;i<backHome.length;i++){
-            if(backHome[i]>backHome[i+1]){
-                max=backHome[i];
-            }
-        }
-        if(max==3){
-            return (16-backHome[1]+backHome[2]+backHome[3]+backHome[0])*5;
-        }
-        else if(max==2){
-            return 25;
-        }
-        else if(max==1){
-            return 50;
-        }else if(max==0){
-            return 100;
-        }
-        return 0;
-    }
-
 
     /**
      * Determines which AI will be loaded using previously loaded values
@@ -136,7 +162,6 @@ class gameBoard extends Display {
                         } else {
                             new UserTurn(gameBoard.this);
                         }
-                        checkHomes();
                     }
                 };
             } else {
@@ -148,7 +173,6 @@ class gameBoard extends Display {
                         } else {
                             new UserTurn(gameBoard.this);
                         }
-                        checkHomes();
                     }
                 };
             }
@@ -164,7 +188,6 @@ class gameBoard extends Display {
                         } else {
                             new UserTurn(gameBoard.this);
                         }
-                        checkHomes();
                     }
                 };
             } else {
@@ -176,7 +199,6 @@ class gameBoard extends Display {
                         } else {
                             new UserTurn(gameBoard.this);
                         }
-                        checkHomes();
                     }
                 };
             }
@@ -194,6 +216,7 @@ class gameBoard extends Display {
         Scores.setBounds((int)(875*ratio),(int)(875*ratio),(int)(750*ratio),(int)(750*ratio));
         Scores.setBackground(Color.BLACK);
     }
+
     /**
      * Pre-loading all buttons on screen including options and draw card
      */
@@ -633,6 +656,8 @@ class gameBoard extends Display {
     void removeMouseClick(MouseListener ML) {
         board.removeClick(ML);
     }
+    
+   
 
     /**
      * /- SPACE -/
