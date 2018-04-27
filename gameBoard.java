@@ -52,7 +52,9 @@ class gameBoard extends Display {
         optionsAndDrawingLoad();
         this.mean = mean;
         this.smart = smart;
-        finishGame();
+        if(allBackHome()) {
+            finishGame();
+        }
     }
 
     /**
@@ -92,13 +94,12 @@ class gameBoard extends Display {
         }
     }
     int addScore(int color){
-        int num=0;
         for(int i=0;i<backHome.length;i++){
             if(backHome[i]==color){
-                num+=1;
+                return backHome[i]*5;
             }
         }
-        return num*5;
+        return 0;
     }
     int winnerScore(int color){
         int max=0;
@@ -119,6 +120,14 @@ class gameBoard extends Display {
             return 100;
         }
         return 0;
+    }
+    boolean allBackHome(){
+        for (int i=0;i<backHome.length;i++){
+            if(backHome[i]==4){
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -184,7 +193,7 @@ class gameBoard extends Display {
     }
 
     void finishGame(){
-        JTextArea Scores = new JTextArea("Score:",6,8);
+        JTextArea Scores = new JTextArea("Red Score:"+teamScore[0]+"\n"+"Blue score: "+teamScore[1]+"\n"+"Yellow score: "+teamScore[2]+"\n"+"Green score: "+teamScore[3],6,8);
 //        Scores.setText("Hello");
         //testing
         panel.add(Scores);

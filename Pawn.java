@@ -309,12 +309,5 @@ class Pawn extends Display {
         return false;
     }
 
-    boolean allBackHome(int[] backHome){
-        for (int i=0;i<backHome.length;i++){
-           if(backHome[i]==4){
-               return true;
-           }
-        }
-        return false;
-    }
+
 }
