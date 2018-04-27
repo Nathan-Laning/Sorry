@@ -29,7 +29,7 @@ class Display {
     public static final JLayeredPane panel = new JLayeredPane();
     private static final JFrame frame = new JFrame("Sorry!");
     private static int heightGap = 22, widthGap = 0;//default for osx and linux
-    public static int size = 1000;
+    public static int size = 700;
     public static double ratio = size / 2500.0;
 
     /**
@@ -59,7 +59,7 @@ class Display {
      * @return realtime positioning (0->size)
      */
     public int convertFromCooridinate(int num) {
-        return (int) (num * ((5+size - (ratio * 66)) / 16) + (ratio * 30));
+        return (int) (num * ((size - (ratio * 66)) / 16) + (ratio * 30));
     }
 
 

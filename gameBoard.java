@@ -65,10 +65,6 @@ class gameBoard extends Display {
         optionsAndDrawingLoad();
         this.mean = mean;
         this.smart = smart;
-        pawns[0].completed=true;
-        pawns[1].completed=true;
-        pawns[2].completed=true;
-        pawns[3].completed=true;
             }
 
 
