@@ -40,11 +40,15 @@ class gameBoard extends Display {
     private Statement statement = null;
     private PreparedStatement prepStatement = null;
     private ResultSet result = null;
-    //final private String host = "xxxxx";
-    //inal private String write_user = "anoor_writer";
-    //final private String write_passwd = "7DQPtMC4xALd8ZCx";
-    //final private String read_user = "anoor_reader";
-    //final private String read_passwd = "NdwVwrXC4Cm3w99J";
+    final private String host = "mysql://webdb.uvm.edu";
+    final private String user = "anoor_admin";
+    final private String passwd = "Q5UdcJXRvQ9ZmBMB";
+    String player;
+    int score;
+    String playerName = System.getProperty("user.name");
+    int yourScore;
+    //StringBuffer outputList = new StringBuffer ("");
+    
     
     /**
      * new game instance,newly determined items
@@ -60,31 +64,45 @@ class gameBoard extends Display {
         optionsAndDrawingLoad();
         this.mean = mean;
         this.smart = smart;
-      
-         }
+        
+            }
 
     //reads Database
-    public void readDB() throws Exception{
+    public String readDB() throws Exception{
+    	String failed = "System Failed";
     	try {
     		Class.forName("com.mysql.jdbc.Driver");
-    		connect = DriverManager.getConnection("jdbc:mysql://localhost/test","root","" );
-    		System.out.println("connected");
+    		connect = DriverManager.getConnection("jdbc:"+host+"/ANOOR_Sorry",
+    				user,passwd);
+    		
     		statement = connect.createStatement();
-    		result = statement.executeQuery("SELECT stement");
-    		writeResult(result);
-    		
-    		//prepStatement = connect.prepareStatement("INSERT statement");
-    		
+    		result = statement.executeQuery("SELECT * FROM Stat;");
+    		while(result.next()) {
+    			playerName = result.getString(player);
+    			yourScore = result.getInt(score);
+    			//outputList.append(playerName);
+    			//outputList.append(yourScore);
+    			
+    		}
+    	
     	}catch(Exception e) {
     		System.err.println(e);
+    		return failed;
     	}finally {
     		close();
     	}
+    	//return outputList.toString();
+    	return null;
+    	
     }
-    public void writeResult(ResultSet result) throws SQLException {
-    	while(result.next()) {
-    		
-    	}
+    public void write(String player, int score)throws SQLException{
+    	String query = " INSERT into Stat(player, score)" + "values(?, ?)";
+    	prepStatement = connect.prepareStatement(query);
+    	prepStatement.setString (1,playerName);
+    	prepStatement.setInt(2, score);
+    	prepStatement.executeQuery();
+    	close();
+    	
     }
     	private void close() {
     	    try {
