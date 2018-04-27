@@ -273,9 +273,24 @@ class mainMenu extends Display {
     private void Rules() {
         image back = new image("back.png");
         image infoPage = new image("Sorry-rules.png");
-        back.reSize(70, 20);
-        back.move(10, 10);
-        clickSpace backButton = new clickSpace(back);
+        back.reSize(220, 95);
+        back.move(-50, -35);
+        clickSpace backButton = new clickSpace(330, 100, 50, 0);
+        backButton.MouseEntered(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                backButton.button.setBorderPainted(true);
+                backButton.button.setBorder(new LineBorder(Color.MAGENTA));
+            }
+
+        });
+        backButton.MouseExited(new MouseAdapter() {
+            @Override
+            public void mouseExited(MouseEvent e) {
+                backButton.button.setBorderPainted(false);
+            }
+
+        });
         backButton.addClick(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
