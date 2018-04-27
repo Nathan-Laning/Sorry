@@ -1,6 +1,6 @@
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-
+import java.util.concurrent.ThreadLocalRandom;
 /**
  * /- TURN -/
  * <p>
@@ -118,8 +118,10 @@ class turn {
      * commits first move without thought
      */
     void dumbMove() {
+        int moveable = moveablePositions.size();
+        int moveChoice = rand_gen(moveable);
         if (!moveablePositions.isEmpty()) {
-            moveablePositions.get(0).start();
+            moveablePositions.get(moveChoice).start();
         }
     }
     /**
@@ -225,6 +227,10 @@ class turn {
                 return;
             }
         }
+    }
+    private int rand_gen(int bound){
+        int num = ThreadLocalRandom.current().nextInt(0, bound);
+        return num;
     }
 
     void clearPawnHighlights() {
